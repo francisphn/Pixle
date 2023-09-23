@@ -1,17 +1,14 @@
 package app.pixle.model
 
 import app.pixle.asset.SERVER_ENDPOINT
-import com.google.gson.annotations.SerializedName
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Date
 
 @Serializable
 data class Answer (
