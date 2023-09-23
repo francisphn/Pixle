@@ -1,8 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-
     kotlin("plugin.serialization") version embeddedKotlinVersion
+    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -19,6 +20,14 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["room.schemaLocation"] = "$projectDir/schemas"
+                arguments["room.incremental"] = "true"
+                arguments["room.expandProjection"] = "true"
+            }
         }
     }
 
@@ -77,4 +86,10 @@ dependencies {
     implementation("io.ktor:ktor-client-okhttp:2.0.0")
     implementation("io.ktor:ktor-client-content-negotiation:2.0.0")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.0")
+
+    val room_version = "2.5.2"
+    implementation("androidx.room:room-runtime:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    testImplementation("androidx.room:room-testing:$room_version")
 }
