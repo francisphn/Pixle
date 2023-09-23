@@ -1,15 +1,17 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+
+    kotlin("plugin.serialization") version embeddedKotlinVersion
 }
 
 android {
     namespace = "app.pixle"
-    compileSdk = 34
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "app.pixle"
-        minSdk = 34
+        minSdk = 33
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -50,7 +52,7 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.10.1") // Do not upgrade
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
@@ -66,5 +68,13 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation("androidx.navigation:navigation-compose:2.7.2")
+    implementation("androidx.navigation:navigation-compose:2.6.0") // Do not ugrade
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+
+    implementation("io.ktor:ktor-client-core:2.0.0")
+    implementation("io.ktor:ktor-client-okhttp:2.0.0")
+    implementation("io.ktor:ktor-client-content-negotiation:2.0.0")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.0")
 }
