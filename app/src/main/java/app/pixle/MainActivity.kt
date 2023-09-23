@@ -15,19 +15,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.pixle.ui.composable.BottomNavigation
+import app.pixle.ui.composable.PreviewPhoto
+import app.pixle.ui.composable.SnapProvider
 import app.pixle.ui.tabs.MainScreen
 import app.pixle.ui.tabs.ProfileScreen
 import app.pixle.ui.theme.PixleTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PixleTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
                     App()
                 }
@@ -44,22 +46,31 @@ fun App() {
         modifier = Modifier.fillMaxSize(),
     ) {
 
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .background(MaterialTheme.colorScheme.background),
-        ) {
-            NavHost(navController = navController, startDestination = "main") {
-                composable("main") {
-                    MainScreen()
-                }
-                composable("profile") {
-                    ProfileScreen()
+        SnapProvider {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .background(MaterialTheme.colorScheme.background),
+            ) {
+                NavHost(navController = navController, startDestination = "main") {
+                    composable("main") {
+                        MainScreen()
+                    }
+                    composable("profile") {
+                        ProfileScreen()
+                    }
                 }
             }
+
+            BottomNavigation(navController, onStartCamera = {
+                takePhoto(it)
+            })
+
+            PreviewPhoto(uri = uri, onDismiss = {
+                delete()
+            })
         }
 
-        BottomNavigation(navController)
     }
 }
 
