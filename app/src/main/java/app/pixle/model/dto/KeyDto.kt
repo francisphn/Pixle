@@ -1,28 +1,22 @@
-package app.pixle.model
+package app.pixle.model.dto
 
 import app.pixle.asset.SERVER_ENDPOINT
-import com.google.gson.annotations.SerializedName
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Date
+import app.pixle.model.entity.Key
 
 @Serializable
-data class Answer (
-    val items: List<Item>,
+data class KeyDto (
+    val items: List<ItemDto>,
     val difficulty: String,
     val day: String,
 ) {
-    fun date() = LocalDate.parse(day, DateTimeFormatter.ISO_DATE)
-
     companion object {
-        suspend fun getAnswerOfTheDay() : Answer {
+        suspend fun getAnswerOfTheDay() : KeyDto {
             val client = HttpClient {
                 install(ContentNegotiation) {
                     json()
@@ -33,5 +27,7 @@ data class Answer (
             return response.body()
         }
     }
+
+    fun asKey() = Key(day, difficulty)
 }
 

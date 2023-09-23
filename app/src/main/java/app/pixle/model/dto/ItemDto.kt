@@ -1,9 +1,9 @@
-package app.pixle.model
+package app.pixle.model.dto
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Item(
+data class ItemDto(
     val name: String,
     val icon: String,
     val category: String,
