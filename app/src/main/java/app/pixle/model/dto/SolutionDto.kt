@@ -7,16 +7,17 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
-import app.pixle.model.entity.Key
+import app.pixle.model.entity.solution.Solution
+import app.pixle.model.entity.solution.SolutionItem
 
 @Serializable
-data class KeyDto (
-    val items: List<ItemDto>,
+data class SolutionDto (
+    val items: List<SolutionItemDto>,
     val difficulty: String,
     val day: String,
 ) {
     companion object {
-        suspend fun getAnswerOfTheDay() : KeyDto {
+        suspend fun getAnswerOfTheDay() : SolutionDto {
             val client = HttpClient {
                 install(ContentNegotiation) {
                     json()
@@ -28,6 +29,20 @@ data class KeyDto (
         }
     }
 
-    fun asKey() = Key(day, difficulty)
+    fun asSolution() : Solution {
+        val solutionItems = arrayListOf<SolutionItem>()
+
+        for (item in this.items) {
+            solutionItems.add(SolutionItem(
+                emoji = item.icon,
+                solutionDate = this.day,
+                positionInSolution = solutionItems.size.plus(1L)
+            ))
+        }
+
+        return Solution(day, difficulty, solutionItems)
+    }
+
+    fun countItems() = this.items.count()
 }
 
