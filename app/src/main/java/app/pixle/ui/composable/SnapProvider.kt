@@ -13,7 +13,9 @@ fun SnapProvider(
     content: @Composable Snap.() -> Unit
 ) {
     val (photoUri, setPhotoUri) = remember { mutableStateOf<Uri?>(null) }
+
     val (tempUri, setTempUri) = remember { mutableStateOf<Uri?>(null) }
+
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture()
     ) {
@@ -24,12 +26,18 @@ fun SnapProvider(
     }
 
     val snap = remember(photoUri) {
-        Snap(uri = photoUri, launchCamera = {
-            setTempUri(it)
-            launcher.launch(it)
-        }, remove = {
-            setPhotoUri(null)
-        })
+        Snap(
+            uri = photoUri,
+
+            launchCamera = {
+                setTempUri(it)
+                launcher.launch(it)
+            },
+
+            remove = {
+                setPhotoUri(null)
+            }
+        )
     }
 
     snap.content()

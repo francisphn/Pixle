@@ -27,7 +27,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PixleTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
@@ -36,6 +35,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
 
 @Composable
@@ -63,10 +63,10 @@ fun App() {
             }
 
             BottomNavigation(navController, onStartCamera = {
-                takePhoto(it)
+                this.takePhoto(it)
             })
 
-            PreviewPhoto(uri = uri, onDismiss = {
+            PreviewPhoto(uri = this.uri, onDismiss = {
                 delete()
             })
         }
