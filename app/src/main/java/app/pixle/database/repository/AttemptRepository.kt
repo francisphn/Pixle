@@ -1,6 +1,7 @@
 package app.pixle.database.repository
 
 import app.pixle.database.dao.AttemptDao
+import app.pixle.lib.Utils
 import app.pixle.model.entity.attempt.AttemptWithItems
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -16,11 +17,11 @@ class AttemptRepository(private val attemptDao: AttemptDao) {
     }
 
     suspend fun getTodayAttemptsWithItems(): List<AttemptWithItems> {
-        return this.getAttemptsWithItemsForUtcDate(LocalDate.now(ZoneId.of("UTC")))
+        return this.getAttemptsWithItemsForUtcDate(Utils.utcDate())
     }
 
     private suspend fun getAttemptsWithItemsForUtcDate(date: LocalDate) : List<AttemptWithItems> {
-        val dateAsString = date.format(DateTimeFormatter.ISO_DATE).toString()
+        val dateAsString = date.toString()
         return attemptDao.getAttemptsWithItems(dateAsString)
     }
 }
