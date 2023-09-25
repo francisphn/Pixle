@@ -4,7 +4,6 @@ import app.pixle.database.dao.SolutionDao
 import app.pixle.model.entity.solution.Solution
 import app.pixle.model.entity.solution.SolutionWithItems
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
