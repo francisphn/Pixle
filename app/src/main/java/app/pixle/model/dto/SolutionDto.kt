@@ -9,6 +9,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 import app.pixle.model.entity.solution.Solution
 import app.pixle.model.entity.solution.SolutionItem
+import app.pixle.model.entity.solution.SolutionWithItems
 
 @Serializable
 data class SolutionDto (
@@ -29,7 +30,7 @@ data class SolutionDto (
         }
     }
 
-    fun asSolution() : Solution {
+    fun asEntity() : SolutionWithItems {
         val solutionItems = arrayListOf<SolutionItem>()
 
         for (item in this.items) {
@@ -40,7 +41,9 @@ data class SolutionDto (
             ))
         }
 
-        return Solution(day, difficulty, solutionItems)
+        val solution = Solution(day, difficulty)
+
+        return SolutionWithItems(solution, solutionItems)
     }
 
     fun countItems() = this.items.count()
