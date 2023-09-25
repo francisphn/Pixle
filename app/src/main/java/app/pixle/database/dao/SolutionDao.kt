@@ -22,11 +22,11 @@ interface SolutionDao {
     @Transaction
     @Query("SELECT * FROM solution" +
             " JOIN solutionItem ON solutionItem.solutionDate = solution.date" +
-            " ORDER BY date LIMIT 1")
+            " ORDER BY date desc LIMIT 1")
     @RewriteQueriesToDropUnusedColumns
     suspend fun getLatestSolutionWithItems(): SolutionWithItems?
 
-    @Query("SELECT * FROM solution ORDER by date LIMIT 1")
+    @Query("SELECT * FROM solution ORDER by date desc LIMIT 1")
     @RewriteQueriesToDropUnusedColumns
     suspend fun getLatest(): Solution?
 }
