@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     kotlin("plugin.serialization") version embeddedKotlinVersion
     id("com.google.devtools.ksp")
+
 }
 
 android {
@@ -12,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "app.pixle"
         minSdk = 33
-        targetSdk = 33
+        targetSdk = 33 // Do not upgrade to API 34 until mid October
         versionCode = 1
         versionName = "1.0"
 
@@ -62,6 +63,19 @@ android {
 }
 
 dependencies {
+    // Kotlin
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+
+    // Ktor HTTP client
+    implementation("io.ktor:ktor-client-core:2.3.4")
+    implementation("io.ktor:ktor-client-okhttp:2.3.4")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.4")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.4")
+
+    // Jetpack Compose, Material Design and Android Core
+    // Avoid upgrading as things are breaking as Google is releasing Android 14 soon
     implementation("androidx.core:core-ktx:1.10.1") // Do not upgrade
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.7.2")
@@ -71,6 +85,27 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3:1.2.0-alpha01")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.navigation:navigation-compose:2.6.0") // Do not upgrade
+
+    // Android Room
+    val roomVersion = "2.5.2"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    testImplementation("androidx.room:room-testing:$roomVersion")
+
+    // CameraX
+    implementation("androidx.camera:camera-core:1.2.3")
+    implementation("androidx.camera:camera-camera2:1.2.3")
+    implementation("androidx.camera:camera-lifecycle:1.2.3")
+    implementation("androidx.camera:camera-video:1.2.3")
+    implementation("androidx.camera:camera-view:1.2.3")
+    implementation("androidx.camera:camera-extensions:1.2.3")
+
+    // Others
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Testing and debugging
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -78,31 +113,5 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-
-    implementation("androidx.navigation:navigation-compose:2.6.0") // Do not upgrade
-
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-
-    implementation("io.ktor:ktor-client-core:2.0.0")
-    implementation("io.ktor:ktor-client-okhttp:2.0.0")
-    implementation("io.ktor:ktor-client-content-negotiation:2.0.0")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.0")
-
-    val room_version = "2.5.2"
-    implementation("androidx.room:room-runtime:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
-    testImplementation("androidx.room:room-testing:$room_version")
-
-    implementation("androidx.camera:camera-core:1.2.3")
-    implementation("androidx.camera:camera-camera2:1.2.3")
-    implementation("androidx.camera:camera-lifecycle:1.2.3")
-    implementation("androidx.camera:camera-video:1.2.3")
-
-    implementation("androidx.camera:camera-view:1.2.3")
-    implementation("androidx.camera:camera-extensions:1.2.3")
-
-    implementation("io.coil-kt:coil-compose:2.4.0")
 }
+
