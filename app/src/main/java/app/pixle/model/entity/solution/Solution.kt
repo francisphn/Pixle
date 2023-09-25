@@ -1,7 +1,10 @@
 package app.pixle.model.entity.solution
 
+import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+
+@Entity
 class Solution (
     /**
      * The ID of this solution, and because there is only one

@@ -1,8 +1,10 @@
 package app.pixle.model.entity.attempt
 
 import androidx.room.Embedded
+import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+@Entity
 class Attempt(
     /**
      * The ID of this attempt
