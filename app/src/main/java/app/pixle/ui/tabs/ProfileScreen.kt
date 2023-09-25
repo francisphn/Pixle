@@ -7,6 +7,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import app.pixle.ui.theme.Manrope
+
 
 @Composable
 fun ProfileScreen() {
@@ -16,7 +18,8 @@ fun ProfileScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Profile"
+            text = "Profile",
+            fontFamily = Manrope
         )
     }
 }
