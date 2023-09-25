@@ -8,8 +8,8 @@ data class AttemptWithItems(
     val attempt: Attempt,
 
     @Relation(
-        parentColumn = "id",
-        entityColumn = "attemptId"
+        parentColumn = "uuid",
+        entityColumn = "attemptUuid"
     )
     val attemptItems: List<AttemptItem>,
 ) {

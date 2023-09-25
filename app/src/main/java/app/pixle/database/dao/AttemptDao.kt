@@ -21,14 +21,14 @@ interface AttemptDao {
 
     @Transaction
     @Query("SELECT * FROM attempt" +
-            " JOIN attemptItem on attemptItem.attemptId = attempt.id" +
+            " JOIN attemptItem on attemptItem.attemptUuid = attempt.uuid" +
             " WHERE attempt.solutionDate = :utcIsoDate")
     @RewriteQueriesToDropUnusedColumns
     suspend fun getAttemptsWithItems(utcIsoDate: String) : List<AttemptWithItems>
 
     @Transaction
     @Query("SELECT * FROM attempt" +
-            " JOIN attemptItem on attemptItem.attemptId = attempt.id")
+            " JOIN attemptItem on attemptItem.attemptUuid = attempt.uuid")
     @RewriteQueriesToDropUnusedColumns
     suspend fun getAttemptsWithItems() : List<AttemptWithItems>
 }
