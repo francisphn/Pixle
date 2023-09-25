@@ -2,10 +2,11 @@ package app.pixle.model.entity.attempt
 
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity
-class Attempt(
+data class Attempt(
     /**
      * The ID of this attempt
      */
@@ -18,9 +19,4 @@ class Attempt(
      */
     var solutionDate: Long,
 
-    /**
-     * The items associated with this attempt
-     */
-    var attemptItems: List<AttemptItem>
-) {
-}
+)

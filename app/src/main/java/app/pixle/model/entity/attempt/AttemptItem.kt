@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(primaryKeys = ["attemptId", "positionInAttempt"])
-class AttemptItem(
+data class AttemptItem(
     /**
      * The content of this attempt item, which is a singular emoji
      */
