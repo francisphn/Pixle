@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.stream.Collectors
 
 class AttemptRepository(private val attemptDao: AttemptDao) {
     suspend fun add(attemptWithItems: AttemptWithItems) = coroutineScope {
@@ -16,12 +17,12 @@ class AttemptRepository(private val attemptDao: AttemptDao) {
         launch (Dispatchers.IO) { attemptDao.insert(attemptWithItems.attemptItems) }
     }
 
-    suspend fun getTodayAttemptsWithItems(): List<AttemptWithItems> {
+    suspend fun getTodayAttemptsWithItems(): Set<AttemptWithItems> {
         return this.getAttemptsWithItemsForUtcDate(Utils.utcDate())
     }
 
-    private suspend fun getAttemptsWithItemsForUtcDate(date: LocalDate) : List<AttemptWithItems> {
+    private suspend fun getAttemptsWithItemsForUtcDate(date: LocalDate) : Set<AttemptWithItems> {
         val dateAsString = date.toString()
-        return attemptDao.getAttemptsWithItems(dateAsString)
+        return attemptDao.getAttemptsWithItems(dateAsString).stream().collect(Collectors.toSet())
     }
 }

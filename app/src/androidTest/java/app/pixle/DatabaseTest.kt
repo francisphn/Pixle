@@ -107,8 +107,8 @@ class DatabaseTest {
 
         val fetchedToday = attemptRepository.getTodayAttemptsWithItems()
 
-        assertEquals(fetchedToday.size, 1)
-        assertEquals(today, fetchedToday[0])
+        assertEquals(1, fetchedToday.size)
+        assertEquals(today, fetchedToday.first())
     }
 
 }
