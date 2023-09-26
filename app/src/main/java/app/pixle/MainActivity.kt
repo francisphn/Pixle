@@ -1,5 +1,6 @@
 package app.pixle
 
+import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,17 +34,15 @@ import app.pixle.ui.tabs.ProfileScreen
 import app.pixle.ui.theme.PixleTheme
 import app.pixle.ui.theme.md_theme_dark_surfaceTint
 import app.pixle.ui.theme.md_theme_dark_surfaceVariant
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.common.util.concurrent.ListenableFuture
 
 class MainActivity : ComponentActivity() {
-    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-
         setContent {
             PixleTheme {
 //                val systemUiController = rememberSystemUiController()
@@ -71,9 +70,9 @@ class MainActivity : ComponentActivity() {
 
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun App() {
-
     val navController = rememberNavController()
 
     val navBuilder = NavigationBuilder.getInstance()
@@ -81,34 +80,30 @@ fun App() {
                         .toCamera { navController.navigate(CAMERA_ROUTE) }
                         .toProfile { navController.navigate(PROFILE_ROUTE) }
 
+    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
-
-        SnapProvider {
-            NavHost(navController = navController, startDestination = MAIN_ROUTE) {
-                this.composable(MAIN_ROUTE) {
-                    Bootstrap(navBuilder) {
-                        MainScreen()
-                    }
-                }
-
-                this.composable(CAMERA_ROUTE) {
-                    CameraScreen()
-                }
-
-                this.composable(PROFILE_ROUTE) {
-                    Bootstrap(navBuilder) {
-                        ProfileScreen()
-                    }
+        NavHost(navController = navController, startDestination = MAIN_ROUTE) {
+            this.composable(MAIN_ROUTE) {
+                Bootstrap(navBuilder) {
+                    MainScreen()
                 }
             }
 
-            PhotoAnalysisSheet(uri = this.uri, onDismiss = {
-                delete()
-            })
-        }
+            this.composable(CAMERA_ROUTE) {
+                CameraScreen(cameraPermissionState.status.isGranted) {
+                    cameraPermissionState.launchPermissionRequest()
+                }
+            }
 
+            this.composable(PROFILE_ROUTE) {
+                Bootstrap(navBuilder) {
+                    ProfileScreen()
+                }
+            }
+        }
     }
 }
 

@@ -68,11 +68,13 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
+
     // Ktor HTTP client
     implementation("io.ktor:ktor-client-core:2.3.4")
     implementation("io.ktor:ktor-client-okhttp:2.3.4")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.4")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.4")
+
 
     // Jetpack Compose, Material Design and Android Core
     // Avoid upgrading as things are breaking as Google is releasing Android 14 soon
@@ -89,7 +91,11 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Do not upgrade
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
+
+    val accompanistVersion = "0.30.1"
+    implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
+    implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+
 
     // Android Room
     val roomVersion = "2.5.2"
@@ -97,6 +103,7 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     testImplementation("androidx.room:room-testing:$roomVersion")
+
 
     // CameraX
     implementation("androidx.camera:camera-core:1.2.3")
@@ -110,6 +117,7 @@ dependencies {
 
     // Others
     implementation("io.coil-kt:coil-compose:2.4.0")
+
 
     // Testing and debugging
     testImplementation("junit:junit:4.13.2")
