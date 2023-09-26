@@ -15,6 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import app.pixle.asset.CAMERA_ROUTE
+import app.pixle.asset.MAIN_ROUTE
+import app.pixle.asset.PROFILE_ROUTE
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.BottomNavigation
 import app.pixle.ui.tabs.CameraScreen
@@ -50,13 +53,6 @@ class MainActivity : ComponentActivity() {
 fun App() {
     val navController = rememberNavController()
 
-    val (mainRoute, profileRoute, cameraRoute) = Triple("main", "profile", "camera")
-
-    val navigationBuilder = NavigationBuilder()
-        .toMain { navController.navigate(mainRoute) }
-        .toCamera { navController.navigate(cameraRoute) }
-        .toProfile { navController.navigate(cameraRoute) }
-
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -67,22 +63,27 @@ fun App() {
                     .weight(1f)
                     .background(MaterialTheme.colorScheme.background),
             ) {
-                NavHost(navController = navController, startDestination = mainRoute) {
-                    this.composable(mainRoute) {
+                NavHost(navController = navController, startDestination = MAIN_ROUTE) {
+                    this.composable(MAIN_ROUTE) {
                         MainScreen()
                     }
 
-                    this.composable(cameraRoute) {
+                    this.composable(CAMERA_ROUTE) {
                         CameraScreen()
                     }
 
-                    this.composable(profileRoute) {
+                    this.composable(PROFILE_ROUTE) {
                         ProfileScreen()
                     }
                 }
             }
 
-            BottomNavigation(navigationBuilder)
+            BottomNavigation(
+                NavigationBuilder()
+                    .toMain { navController.navigate(MAIN_ROUTE) }
+                    .toCamera { navController.navigate(CAMERA_ROUTE) }
+                    .toProfile { navController.navigate(PROFILE_ROUTE) }
+            )
 
             PhotoAnalysisSheet(uri = this.uri, onDismiss = {
                 delete()
