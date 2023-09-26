@@ -89,8 +89,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Do not upgrade
-
-
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
 
     // Android Room
     val roomVersion = "2.5.2"

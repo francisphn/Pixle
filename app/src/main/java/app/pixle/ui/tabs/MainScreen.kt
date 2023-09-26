@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun MainScreen() {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
