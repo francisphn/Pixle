@@ -1,17 +1,24 @@
 package app.pixle
 
-import app.pixle.model.Answer
+import app.pixle.lib.Utils
+import app.pixle.model.dto.SolutionDto
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.Assert.*
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class UnitTest {
     @Test
-    fun getAnswerOfTheDay_isCorrect() = runBlocking {
-        val answer = Answer.getAnswerOfTheDay()
-        assertNotNull(answer)
-        assertEquals(answer.date(), LocalDate.now(ZoneId.of("UTC")))
+    fun getSolutionOfTheDay_isCorrect() = runBlocking {
+        val solution = SolutionDto.getAnswerOfTheDay().asEntity()
+
+        assertNotNull(solution)
+
+        assertEquals(
+            LocalDate.parse(solution.solution.date, DateTimeFormatter.ISO_DATE),
+            Utils.utcDate()
+        )
     }
 }

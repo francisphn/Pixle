@@ -1,8 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-
     kotlin("plugin.serialization") version embeddedKotlinVersion
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -20,6 +20,14 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["room.schemaLocation"] = "$projectDir/schemas"
+                arguments["room.incremental"] = "true"
+                arguments["room.expandProjection"] = "true"
+            }
+        }
     }
 
     buildTypes {
@@ -32,11 +40,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -71,8 +79,9 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation("androidx.navigation:navigation-compose:2.6.0") // Do not ugrade
+    implementation("androidx.navigation:navigation-compose:2.6.0") // Do not upgrade
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
@@ -80,6 +89,12 @@ dependencies {
     implementation("io.ktor:ktor-client-okhttp:2.0.0")
     implementation("io.ktor:ktor-client-content-negotiation:2.0.0")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.0")
+
+    val room_version = "2.5.2"
+    implementation("androidx.room:room-runtime:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    testImplementation("androidx.room:room-testing:$room_version")
 
     implementation("androidx.camera:camera-core:1.2.3")
     implementation("androidx.camera:camera-camera2:1.2.3")
