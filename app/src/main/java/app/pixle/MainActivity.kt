@@ -53,6 +53,11 @@ class MainActivity : ComponentActivity() {
 fun App() {
     val navController = rememberNavController()
 
+    val navBuilder = NavigationBuilder.getInstance()
+                        .toMain { navController.navigate(MAIN_ROUTE) }
+                        .toCamera { navController.navigate(CAMERA_ROUTE) }
+                        .toProfile { navController.navigate(PROFILE_ROUTE) }
+
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -78,12 +83,7 @@ fun App() {
                 }
             }
 
-            BottomNavigation(
-                NavigationBuilder()
-                    .toMain { navController.navigate(MAIN_ROUTE) }
-                    .toCamera { navController.navigate(CAMERA_ROUTE) }
-                    .toProfile { navController.navigate(PROFILE_ROUTE) }
-            )
+            BottomNavigation(navBuilder)
 
             PhotoAnalysisSheet(uri = this.uri, onDismiss = {
                 delete()

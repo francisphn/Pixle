@@ -1,11 +1,8 @@
 package app.pixle.ui.composable
 
-import androidx.navigation.NavController
-import app.pixle.asset.CAMERA_ROUTE
-import app.pixle.asset.MAIN_ROUTE
-import app.pixle.asset.PROFILE_ROUTE
+import android.content.Context
 
-class NavigationBuilder() {
+class NavigationBuilder {
     lateinit var navigateToMain: () -> Unit
 
     lateinit var navigateToCamera: () -> Unit
@@ -25,5 +22,10 @@ class NavigationBuilder() {
     fun toProfile(action: () -> Unit): NavigationBuilder {
         this.navigateToProfile = action
         return this
+    }
+
+    companion object {
+        private var instance: NavigationBuilder = NavigationBuilder()
+        fun getInstance() = instance
     }
 }

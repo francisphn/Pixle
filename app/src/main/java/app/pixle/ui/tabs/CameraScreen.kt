@@ -43,29 +43,3 @@ fun CameraScreen() {
         )
     }
 }
-
-//@Composable
-//fun cameraScreen() {
-//    val context = LocalContext.current
-//
-//    val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-//
-//    cameraProviderFuture.addListener({
-//        val cameraProvider = cameraProviderFuture.get()
-//        bindPreview(cameraProvider, context)
-//
-//    }, ContextCompat.getMainExecutor(context))
-//}
-//
-//fun bindPreview(cameraProvider : ProcessCameraProvider, context: Context) {
-//    val preview : Preview = Preview.Builder()
-//        .build()
-//
-//    val cameraSelector : CameraSelector = CameraSelector.Builder()
-//        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-//        .build()
-//
-//    preview.setSurfaceProvider(previewView.getSurfaceProvider())
-//
-//    var camera = cameraProvider.bindToLifecycle(context as LifecycleOwner, cameraSelector, preview)
-//}
