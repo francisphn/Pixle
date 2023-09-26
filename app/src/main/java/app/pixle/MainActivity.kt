@@ -3,6 +3,7 @@ package app.pixle
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,16 +16,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.pixle.ui.composable.BottomNavigation
-import app.pixle.ui.composable.PreviewPhoto
+import app.pixle.ui.composable.CameraScreen
+import app.pixle.ui.composable.PhotoAnalysis
 import app.pixle.ui.composable.SnapProvider
 import app.pixle.ui.tabs.MainScreen
 import app.pixle.ui.tabs.ProfileScreen
 import app.pixle.ui.theme.PixleTheme
+import com.google.common.util.concurrent.ListenableFuture
 
 class MainActivity : ComponentActivity() {
+    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+
         setContent {
             PixleTheme {
                 Surface(
@@ -53,11 +60,12 @@ fun App() {
                     .background(MaterialTheme.colorScheme.background),
             ) {
                 NavHost(navController = navController, startDestination = "main") {
-                    composable("main") {
+                    this.composable("main") {
                         MainScreen()
                     }
-                    composable("profile") {
-                        ProfileScreen()
+
+                    this.composable("profile") {
+                        CameraScreen()
                     }
                 }
             }
@@ -66,7 +74,7 @@ fun App() {
                 this.takePhoto(it)
             })
 
-            PreviewPhoto(uri = this.uri, onDismiss = {
+            PhotoAnalysis(uri = this.uri, onDismiss = {
                 delete()
             })
         }

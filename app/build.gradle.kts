@@ -65,7 +65,7 @@ android {
 dependencies {
     // Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
     // Ktor HTTP client
@@ -85,7 +85,12 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3:1.2.0-alpha01")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.navigation:navigation-compose:2.6.0") // Do not upgrade
+    implementation("androidx.navigation:navigation-compose:2.6.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Do not upgrade
+
+
 
     // Android Room
     val roomVersion = "2.5.2"
@@ -101,6 +106,8 @@ dependencies {
     implementation("androidx.camera:camera-video:1.2.3")
     implementation("androidx.camera:camera-view:1.2.3")
     implementation("androidx.camera:camera-extensions:1.2.3")
+
+
 
     // Others
     implementation("io.coil-kt:coil-compose:2.4.0")

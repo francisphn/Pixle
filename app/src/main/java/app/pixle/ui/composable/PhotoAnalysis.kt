@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PreviewPhoto(
+fun PhotoAnalysis(
     uri: Uri?,
     onDismiss: () -> Unit
 ) {
