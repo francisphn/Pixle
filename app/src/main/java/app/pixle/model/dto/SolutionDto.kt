@@ -1,5 +1,6 @@
 package app.pixle.model.dto
 
+import androidx.compose.runtime.Composable
 import app.pixle.asset.SERVER_ENDPOINT
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -10,6 +11,10 @@ import kotlinx.serialization.Serializable
 import app.pixle.model.entity.solution.Solution
 import app.pixle.model.entity.solution.SolutionItem
 import app.pixle.model.entity.solution.SolutionWithItems
+import app.pixle.ui.state.rememberQuery
+import com.kazakago.swr.compose.config.SWRConfig
+import com.kazakago.swr.compose.state.SWRState
+import kotlinx.coroutines.CoroutineScope
 
 @Serializable
 data class SolutionDto (
@@ -27,6 +32,19 @@ data class SolutionDto (
 
             val response = client.get(SERVER_ENDPOINT)
             return response.body()
+        }
+
+        @Composable
+        fun rememberOfTheDay(
+            scope: CoroutineScope? = null,
+            options: SWRConfig<List<String>, SolutionDto>.() -> Unit = {}
+        ): SWRState<List<String>, SolutionDto> {
+            return rememberQuery(
+                key = listOf("goal", "today"),
+                scope = scope,
+                fetcher = { _ -> getAnswerOfTheDay() },
+                options = options
+            )
         }
     }
 

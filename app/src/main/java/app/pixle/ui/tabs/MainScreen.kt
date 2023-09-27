@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,11 +25,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.R
+import app.pixle.model.dto.SolutionDto
 import app.pixle.model.entity.attempt.AttemptItem
+import app.pixle.ui.composable.LoadingScreen
+import app.pixle.ui.composable.main.MissingRowAttempt
 import app.pixle.ui.composable.main.NoWinningPhoto
 import app.pixle.ui.composable.main.RowAttempt
 import app.pixle.ui.modifier.leftBorder
@@ -44,8 +45,28 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val (difficulty, setDifficulty) = remember { mutableStateOf("easy") }
-    val difficultyColor = remember(difficulty) { rarityColor(difficulty) }
+    val (goal, _) = SolutionDto.rememberOfTheDay()
+    val difficultyColor = remember(goal) { goal?.difficulty?.let { rarityColor(it) } }
+    val attempts = remember(goal) {
+        val successfulAttempt = goal?.items?.mapIndexed { idx, item ->
+            AttemptItem(
+                emoji = item.icon,
+                attemptUuid = "",
+                positionInAttempt = idx.toLong(),
+                kind = if (Math.random() < 0.5f) AttemptItem.KIND_SIMILAR else AttemptItem.KIND_NONE
+            )
+        }
+
+        if (successfulAttempt == null)
+            listOf()
+        else
+            listOf(successfulAttempt)
+    }
+
+    if (goal == null || difficultyColor == null) {
+        LoadingScreen()
+        return
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -99,7 +120,8 @@ fun MainScreen() {
                     Box(
                         modifier = Modifier
                             .background(
-                                MaterialTheme.colorScheme.onBackground, shape = CircleShape
+                                MaterialTheme.colorScheme.onBackground,
+                                shape = CircleShape
                             )
                             .padding(8.dp)
                     ) {
@@ -143,7 +165,7 @@ fun MainScreen() {
 
                 // Info
                 Text(
-                    text = "4 items • $difficulty difficulty",
+                    text = "${goal.items.size} items • ${goal.difficulty} difficulty",
                     fontFamily = Manrope,
                     fontSize = 16.sp,
                     lineHeight = 24.sp,
@@ -169,12 +191,14 @@ fun MainScreen() {
                             ),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        listOf(1, 2, 3, 4, 5, 6).forEach { _ ->
-                            RowAttempt(items = listOf(
-                                AttemptItem("🐶", "", 0, AttemptItem.KIND_EXACT),
-                                AttemptItem("🐱", "", 1, AttemptItem.KIND_SIMILAR),
-                                AttemptItem("🐭", "", 2, AttemptItem.KIND_NONE),
-                            ))
+                        attempts.forEach {
+                            RowAttempt(
+                                items = it
+                            )
+                        }
+
+                        (0 until (6 - attempts.size)).forEach { _ ->
+                            MissingRowAttempt(size = goal.items.size)
                         }
                     }
                 }
