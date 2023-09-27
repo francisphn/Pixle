@@ -47,21 +47,7 @@ import java.util.Locale
 fun MainScreen() {
     val (goal, _) = SolutionDto.rememberOfTheDay()
     val difficultyColor = remember(goal) { goal?.difficulty?.let { rarityColor(it) } }
-    val attempts = remember(goal) {
-        val successfulAttempt = goal?.items?.mapIndexed { idx, item ->
-            AttemptItem(
-                emoji = item.icon,
-                attemptUuid = "",
-                positionInAttempt = idx.toLong(),
-                kind = if (Math.random() < 0.5f) AttemptItem.KIND_SIMILAR else AttemptItem.KIND_NONE
-            )
-        }
-
-        if (successfulAttempt == null)
-            listOf()
-        else
-            listOf(successfulAttempt)
-    }
+    val attempts = remember(goal) { listOf<List<AttemptItem>>() }
 
     if (goal == null || difficultyColor == null) {
         LoadingScreen()
