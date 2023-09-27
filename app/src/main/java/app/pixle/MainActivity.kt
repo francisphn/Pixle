@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -42,6 +44,8 @@ import app.pixle.ui.composable.PhotoAnalysisSheet
 import app.pixle.ui.composable.SnapProvider
 import app.pixle.ui.tabs.MainScreen
 import app.pixle.ui.tabs.ProfileScreen
+import app.pixle.ui.theme.DarkColors
+import app.pixle.ui.theme.LightColors
 import app.pixle.ui.theme.PixleTheme
 import app.pixle.ui.theme.md_theme_dark_surfaceTint
 import app.pixle.ui.theme.md_theme_dark_surfaceVariant
@@ -58,20 +62,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PixleTheme {
-//                val systemUiController = rememberSystemUiController()
-//
-//                SideEffect {
-//                    systemUiController.setStatusBarColor(
-//                        color = Ligh,
-//                        darkIcons = true,
-//                    )
-//
-//                    systemUiController.setNavigationBarColor(
-//                        color = md_theme_dark_surfaceVariant,
-//                        darkIcons = true
-//                    )
-//                }
-
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
