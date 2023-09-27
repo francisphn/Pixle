@@ -36,6 +36,7 @@ import app.pixle.ui.composable.main.NoWinningPhoto
 import app.pixle.ui.composable.main.RowAttempt
 import app.pixle.ui.modifier.leftBorder
 import app.pixle.ui.modifier.opacity
+import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import app.pixle.ui.theme.rarityColor
 import java.time.LocalDate
@@ -45,7 +46,7 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val (goal, _) = SolutionDto.rememberOfTheDay()
+    val (goal, _) = rememberQueryable(SolutionDto)
     val difficultyColor = remember(goal) { goal?.difficulty?.let { rarityColor(it) } }
     val attempts = remember(goal) { listOf<List<AttemptItem>>() }
 

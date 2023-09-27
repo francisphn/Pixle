@@ -1,6 +1,7 @@
 package app.pixle.ui.state
 
 import androidx.compose.runtime.Composable
+import app.pixle.model.dto.Queryable
 import com.kazakago.swr.compose.config.SWRConfig
 import com.kazakago.swr.compose.state.SWRState
 import com.kazakago.swr.compose.useSWR
@@ -14,4 +15,18 @@ fun <KEY, DATA> rememberQuery(
     options: SWRConfig<KEY, DATA>.() -> Unit = {},
 ): SWRState<KEY, DATA> {
     return useSWR(key, fetcher, scope, options)
+}
+
+@Composable
+fun <KEY, DATA> rememberQueryable(
+    queryable: Queryable<KEY, DATA>,
+    scope: CoroutineScope? = null,
+    options: SWRConfig<KEY, DATA>.() -> Unit = {},
+): SWRState<KEY, DATA> {
+    return useSWR(
+        key = queryable.key,
+        fetcher = queryable::queryFn,
+        scope = scope,
+        options = options
+    )
 }

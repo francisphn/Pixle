@@ -22,7 +22,14 @@ data class SolutionDto (
     val difficulty: String,
     val day: String,
 ) {
-    companion object {
+    companion object : Queryable<List<String>, SolutionDto>  {
+        override val key: List<String>
+            get() = listOf("goal", "today")
+
+        override suspend fun queryFn(keys: List<String>): SolutionDto {
+            return getAnswerOfTheDay()
+        }
+
         suspend fun getAnswerOfTheDay() : SolutionDto {
             val client = HttpClient {
                 install(ContentNegotiation) {
@@ -32,19 +39,6 @@ data class SolutionDto (
 
             val response = client.get(SERVER_ENDPOINT)
             return response.body()
-        }
-
-        @Composable
-        fun rememberOfTheDay(
-            scope: CoroutineScope? = null,
-            options: SWRConfig<List<String>, SolutionDto>.() -> Unit = {}
-        ): SWRState<List<String>, SolutionDto> {
-            return rememberQuery(
-                key = listOf("goal", "today"),
-                scope = scope,
-                fetcher = { _ -> getAnswerOfTheDay() },
-                options = options
-            )
         }
     }
 
