@@ -1,9 +1,14 @@
 package app.pixle
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,10 +19,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -39,6 +50,8 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.common.util.concurrent.ListenableFuture
+import java.time.Duration
+import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +93,6 @@ fun App() {
                         .toCamera { navController.navigate(CAMERA_ROUTE) }
                         .toProfile { navController.navigate(PROFILE_ROUTE) }
 
-    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -93,9 +105,8 @@ fun App() {
             }
 
             this.composable(CAMERA_ROUTE) {
-                CameraScreen(cameraPermissionState.status.isGranted) {
-                    cameraPermissionState.launchPermissionRequest()
-                }
+                println("changing to camera")
+                CameraScreen()
             }
 
             this.composable(PROFILE_ROUTE) {

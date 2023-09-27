@@ -1,5 +1,10 @@
 package app.pixle.ui.composable
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,16 +21,41 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 
 @Composable
 fun BottomNavigation(
     navBuilder: NavigationBuilder
 ) {
+
+    val context = LocalContext.current
+
+    var cameraPermissionState by remember { mutableStateOf(ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED) }
+
+    val permissionsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            cameraPermissionState = true
+            navBuilder.navigateToCamera()
+        } else {
+            cameraPermissionState = false
+            Toast.makeText(context, "Pixle does not have permissions to access camera", Toast.LENGTH_LONG).show()
+        }
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,7 +80,13 @@ fun BottomNavigation(
                 .scale(1.2f)
                 .background(MaterialTheme.colorScheme.onBackground, CircleShape)
                 .padding(2.dp),
-            onClick = navBuilder.navigateToCamera
+            onClick = {
+                if (cameraPermissionState) {
+                    navBuilder.navigateToCamera()
+                } else {
+                    permissionsLauncher.launch(Manifest.permission.CAMERA)
+                }
+            }
         ) {
             Icon(
                 Icons.Filled.Camera, contentDescription = "Camera",
