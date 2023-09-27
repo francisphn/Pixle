@@ -1,5 +1,6 @@
 package app.pixle.ui.tabs
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,11 +21,12 @@ fun ProfileScreen() {
 
     val defaultNavBarColour = MaterialTheme.colorScheme.surfaceVariant;
     val defaultStatusBarColour = MaterialTheme.colorScheme.background;
+    val useDarkTheme = isSystemInDarkTheme()
 
     SideEffect {
         systemUiController.setStatusBarColor(
             color = defaultStatusBarColour,
-            darkIcons = false,
+            darkIcons = !useDarkTheme,
         )
 
         systemUiController.setNavigationBarColor(
