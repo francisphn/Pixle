@@ -1,7 +1,7 @@
 package app.pixle.model.entity.attempt
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
+
 
 @Entity(primaryKeys = ["attemptUuid", "positionInAttempt"])
 data class AttemptItem(
@@ -19,5 +19,15 @@ data class AttemptItem(
      * The position of this emoji in the attempt
      */
     var positionInAttempt: Long,
+
+    /**
+     * The kind of this attempt item, which is either "exact", "similar", or "none"
+     */
+    var kind: String
 ) {
+    companion object {
+        const val KIND_EXACT = "exact"
+        const val KIND_SIMILAR = "similar"
+        const val KIND_NONE = "none"
+    }
 }
