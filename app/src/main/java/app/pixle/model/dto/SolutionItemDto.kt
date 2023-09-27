@@ -9,6 +9,4 @@ data class SolutionItemDto(
     val icon: String,
     val category: String,
     val difficulty: Long
-) {
-
-}
+)

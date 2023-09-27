@@ -96,6 +96,9 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 
+    // Data fetching
+    implementation("com.kazakago.swr.compose:swr-android:0.6.2")
+
 
     // Android Room
     val roomVersion = "2.5.2"

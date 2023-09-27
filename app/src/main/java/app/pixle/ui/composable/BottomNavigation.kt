@@ -38,7 +38,6 @@ fun BottomNavigation(
 ) {
 
     val context = LocalContext.current
-
     var cameraPermissionState by remember { mutableStateOf(ActivityCompat.checkSelfPermission(
         context,
         Manifest.permission.CAMERA

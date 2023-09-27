@@ -1,5 +1,6 @@
 package app.pixle.model.dto
 
+import androidx.compose.runtime.Composable
 import app.pixle.asset.SERVER_ENDPOINT
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -10,6 +11,10 @@ import kotlinx.serialization.Serializable
 import app.pixle.model.entity.solution.Solution
 import app.pixle.model.entity.solution.SolutionItem
 import app.pixle.model.entity.solution.SolutionWithItems
+import app.pixle.ui.state.rememberQuery
+import com.kazakago.swr.compose.config.SWRConfig
+import com.kazakago.swr.compose.state.SWRState
+import kotlinx.coroutines.CoroutineScope
 
 @Serializable
 data class SolutionDto (
@@ -17,7 +22,14 @@ data class SolutionDto (
     val difficulty: String,
     val day: String,
 ) {
-    companion object {
+    companion object : Queryable<List<String>, SolutionDto>  {
+        override val key: List<String>
+            get() = listOf("goal", "today")
+
+        override suspend fun queryFn(keys: List<String>): SolutionDto {
+            return getAnswerOfTheDay()
+        }
+
         suspend fun getAnswerOfTheDay() : SolutionDto {
             val client = HttpClient {
                 install(ContentNegotiation) {
