@@ -1,7 +1,5 @@
 package app.pixle.ui.composable
 
-import android.content.Context
-
 class NavigationBuilder {
     lateinit var navigateToMain: () -> Unit
 
