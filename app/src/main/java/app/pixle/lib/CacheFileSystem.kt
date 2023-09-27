@@ -14,7 +14,7 @@ fun Context.createTempPictureUri(
     val tempFile = File.createTempFile(
         fileName, fileExtension, cacheDir
     ).apply {
-        createNewFile()
+        this.createNewFile()
     }
 
     return FileProvider.getUriForFile(applicationContext, provider, tempFile)

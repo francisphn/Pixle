@@ -22,7 +22,6 @@ class AttemptRepository(private val attemptDao: AttemptDao) {
     }
 
     private suspend fun getAttemptsWithItemsForUtcDate(date: LocalDate) : Set<AttemptWithItems> {
-        val dateAsString = date.toString()
-        return attemptDao.getAttemptsWithItems(dateAsString).stream().collect(Collectors.toSet())
+        return attemptDao.getAttemptsWithItems(date.toString()).stream().collect(Collectors.toSet())
     }
 }
