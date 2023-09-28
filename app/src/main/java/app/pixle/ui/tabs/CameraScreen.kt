@@ -51,12 +51,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
+import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.modifier.opacity
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @Composable
-fun CameraScreen() {
+fun CameraScreen(navBuilder: NavigationBuilder) {
     val context = LocalContext.current
 
     val systemUiController = rememberSystemUiController()
@@ -180,7 +181,9 @@ fun CameraScreen() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                        navBuilder.navigateToMain()
+                    }
                 ) {
                     Icon(
                         Icons.Filled.Close,

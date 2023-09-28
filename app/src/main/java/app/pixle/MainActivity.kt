@@ -69,7 +69,7 @@ fun App() {
                 }
 
                 this.composable(CAMERA_ROUTE) {
-                    CameraScreen()
+                    CameraScreen(navBuilder)
                 }
 
                 this.composable(PROFILE_ROUTE) {
