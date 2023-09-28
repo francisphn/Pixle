@@ -2,6 +2,7 @@ package app.pixle.ui.tabs
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
 import androidx.camera.core.ImageCapture
@@ -82,7 +83,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 .fillMaxSize()
                 .background(Color.Black),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
+            verticalArrangement = Arrangement.spacedBy(70.dp, Alignment.CenterVertically)
         ) {
             AndroidView(
                 modifier = Modifier
@@ -100,8 +101,6 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 }
             )
 
-
-
             IconButton(
                 onClick = {
                     if (!isCapturing) {
@@ -111,9 +110,11 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                                 val buffer = image.planes[0].buffer
                                 val bytes = ByteArray(buffer.capacity())
                                 buffer.get(bytes)
-                                bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
+                                val tempBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
 
-                                // TODO: Handle where bitmap is sent
+                                val matrix = Matrix();
+                                matrix.postRotate(90f);
+                                bitmap = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.getWidth(), tempBitmap.getHeight(), matrix, true)
 
                                 image.close()
                                 isCapturing = false
@@ -182,7 +183,9 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 }
 
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                        /* TODO: Toggle flash */
+                    }
                 ) {
                     Icon(
                         Icons.Filled.FlashAuto,
@@ -194,7 +197,9 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 }
 
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                        /* TODO: More settings stuff if needed */
+                    }
                 ) {
                     Icon(
                         Icons.Filled.Settings,
@@ -240,7 +245,9 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
 
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                        /* TODO: Switch camera */
+                    }
                 ) {
                     Icon(
                         Icons.Filled.Cameraswitch,
@@ -251,8 +258,16 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                     )
                 }
             }
-
         }
+
+
+        // Photo analysis sheet
+        PhotoAnalysisSheet(
+            bitmap = bitmap,
+            onDismiss = {
+                bitmap = null
+            }
+        )
     }
 
 }

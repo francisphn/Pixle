@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -31,7 +32,6 @@ import app.pixle.ui.tabs.CameraScreen
 import app.pixle.ui.tabs.MainScreen
 import app.pixle.ui.tabs.ProfileScreen
 import app.pixle.ui.theme.PixleTheme
-import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class MainActivity : ComponentActivity() {
@@ -50,7 +50,6 @@ class MainActivity : ComponentActivity() {
 
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun App() {
     val navController = rememberNavController()
@@ -68,6 +67,7 @@ fun App() {
     val defaultStatusBarColour = MaterialTheme.colorScheme.background
     val useDarkTheme = isSystemInDarkTheme()
 
+    // Change system bars color when the screen state changes
     LaunchedEffect(navBackStackEntry?.destination?.route) {
         if (navBackStackEntry?.destination?.route == CAMERA_ROUTE) {
             systemUiController.setStatusBarColor(
@@ -101,7 +101,7 @@ fun App() {
         ) {
 
             // This is deprecated but we can't upgrade Compose Navigation unless we upgrade to 34
-            AnimatedNavHost(navController = navController, startDestination = MAIN_ROUTE) {
+            NavHost(navController = navController, startDestination = MAIN_ROUTE) {
                 composable(
                     route = MAIN_ROUTE,
                     enterTransition = {
@@ -145,7 +145,6 @@ fun App() {
                                 animationSpec = tween(500)
                             )
                         }
-
                     }
                 ) {
                     CameraScreen(navBuilder)
