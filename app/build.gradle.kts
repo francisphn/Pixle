@@ -87,10 +87,11 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3:1.2.0-alpha01")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.navigation:navigation-compose:2.6.0")
+    implementation("androidx.navigation:navigation-compose:2.6.0") // Do not upgrade
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.31.5-beta")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Do not upgrade
+//    implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Do not upgrade
 
     val accompanistVersion = "0.30.1"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")

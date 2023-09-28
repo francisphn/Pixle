@@ -1,5 +1,6 @@
-package app.pixle.ui.composable
+package app.pixle.ui.composable.camera
 
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.theme.Manrope
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
@@ -44,20 +46,20 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoAnalysisSheet(
-    uri: Uri?,
+    bitmap: Bitmap?,
     onDismiss: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val rotation = remember(uri) { if (Math.random() < 0.5f) 1.5f else -1.5f }
+    val rotation = remember(bitmap) { if (Math.random() < 0.5f) 1.5f else -1.5f }
     val animatedRotation = animateFloatAsState(
-        targetValue = uri?.let { rotation } ?: 0f,
+        targetValue = bitmap?.let { rotation } ?: 0f,
         label = "rotation",
         animationSpec = tween(300, 100)
     )
 
-    if (uri != null) {
+    if (bitmap != null) {
         ModalBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
@@ -94,7 +96,7 @@ fun PhotoAnalysisSheet(
                         .rotate(animatedRotation.value)
                 ) {
                     AsyncImage(
-                        model = uri,
+                        model = bitmap,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .width(250.dp)

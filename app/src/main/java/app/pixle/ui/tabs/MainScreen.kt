@@ -1,9 +1,9 @@
 package app.pixle.ui.tabs
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +40,6 @@ import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import app.pixle.ui.theme.rarityColor
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -49,7 +47,11 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val (goal, _) = rememberQueryable(SolutionDto)
+    val (goal, _) = rememberQueryable(SolutionDto) {
+        onError = { err, _, _ ->
+            Log.d("pixle:main", "got an error: $err")
+        }
+    }
     val difficultyColor = remember(goal) { goal?.difficulty?.let { rarityColor(it) } }
     val attempts = remember(goal) { listOf<List<AttemptItem>>() }
 

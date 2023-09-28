@@ -52,6 +52,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import app.pixle.ui.composable.NavigationBuilder
+import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -60,7 +61,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 fun CameraScreen(navBuilder: NavigationBuilder) {
     val context = LocalContext.current
 
-    val systemUiController = rememberSystemUiController()
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraController = remember { LifecycleCameraController(context) }
     var isCapturing by remember { mutableStateOf(false) }
@@ -70,19 +70,6 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         label = "scale",
         animationSpec = tween(125)
     )
-
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = Color.Black,
-            darkIcons = false,
-        )
-
-        systemUiController.setNavigationBarColor(
-            color = Color.Black,
-            darkIcons = false
-        )
-    }
-
 
     Box(
         modifier = Modifier
@@ -182,7 +169,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             ) {
                 IconButton(
                     onClick = {
-                        navBuilder.navigateToMain()
+                        navBuilder.navigateBack()
                     }
                 ) {
                     Icon(
