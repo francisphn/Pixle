@@ -20,6 +20,7 @@ import app.pixle.asset.CAMERA_ROUTE
 import app.pixle.asset.MAIN_ROUTE
 import app.pixle.asset.PROFILE_ROUTE
 import app.pixle.ui.composable.BottomNavigation
+import app.pixle.ui.composable.CustomSystemUI
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.tabs.CameraScreen
 import app.pixle.ui.tabs.MainScreen
@@ -31,20 +32,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PixleTheme {
-//                val systemUiController = rememberSystemUiController()
-//
-//                SideEffect {
-//                    systemUiController.setStatusBarColor(
-//                        color = Ligh,
-//                        darkIcons = true,
-//                    )
-//
-//                    systemUiController.setNavigationBarColor(
-//                        color = md_theme_dark_surfaceVariant,
-//                        darkIcons = true
-//                    )
-//                }
-
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
@@ -74,9 +61,11 @@ fun App() {
         Box(
             modifier = Modifier.weight(1f)
         ) {
-            NavHost(navController = navController, startDestination = MAIN_ROUTE) {
+            NavHost(navController = navController, startDestination = CAMERA_ROUTE) {
                 this.composable(MAIN_ROUTE) {
-                    MainScreen()
+                    CustomSystemUI {
+                        MainScreen()
+                    }
                 }
 
                 this.composable(CAMERA_ROUTE) {
@@ -84,7 +73,9 @@ fun App() {
                 }
 
                 this.composable(PROFILE_ROUTE) {
-                    ProfileScreen()
+                    CustomSystemUI {
+                        ProfileScreen()
+                    }
                 }
             }
         }

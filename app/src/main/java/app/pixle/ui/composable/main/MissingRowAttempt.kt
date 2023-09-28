@@ -30,7 +30,7 @@ fun MissingRowAttempt(
                     MaterialTheme.colorScheme.onBackground, CircleShape
                 )
                 .size(8.dp)
-        ) {}
+        )
 
         (0 until size).forEach { _ ->
             PhotoItem()

@@ -49,28 +49,9 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val systemUiController = rememberSystemUiController()
-
-    val defaultNavBarColour = MaterialTheme.colorScheme.surfaceVariant;
-    val defaultStatusBarColour = MaterialTheme.colorScheme.background;
-    val useDarkTheme = isSystemInDarkTheme()
-
     val (goal, _) = rememberQueryable(SolutionDto)
     val difficultyColor = remember(goal) { goal?.difficulty?.let { rarityColor(it) } }
     val attempts = remember(goal) { listOf<List<AttemptItem>>() }
-
-
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = defaultStatusBarColour,
-            darkIcons = !useDarkTheme,
-        )
-
-        systemUiController.setNavigationBarColor(
-            color = defaultNavBarColour,
-            darkIcons = false
-        )
-    }
 
     if (goal == null || difficultyColor == null) {
         LoadingScreen()

@@ -2,31 +2,38 @@ package app.pixle.ui.tabs
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.Environment
-import android.util.Size
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
-import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Camera
+import androidx.compose.material.icons.filled.Cameraswitch
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FlashAuto
+import androidx.compose.material.icons.filled.FlashOn
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -37,18 +44,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
+import app.pixle.ui.modifier.opacity
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import java.io.File
 
 
 @Composable
@@ -56,35 +60,47 @@ fun CameraScreen() {
     val context = LocalContext.current
 
     val systemUiController = rememberSystemUiController()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val cameraController = remember { LifecycleCameraController(context) }
+    var isCapturing by remember { mutableStateOf(false) }
+    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    val scale by animateFloatAsState(
+        targetValue = if (isCapturing) 40f else 60f,
+        label = "scale",
+        animationSpec = tween(125)
+    )
 
     SideEffect {
         systemUiController.setStatusBarColor(
-            color = androidx.compose.ui.graphics.Color.Black,
+            color = Color.Black,
             darkIcons = false,
         )
 
         systemUiController.setNavigationBarColor(
-            color = androidx.compose.ui.graphics.Color.Black,
+            color = Color.Black,
             darkIcons = false
         )
     }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraController = remember { LifecycleCameraController(context) }
-    var isCapturing by remember { mutableStateOf(false) }
-    var bitmap : Bitmap? by remember { mutableStateOf(null) }
 
     Box(
         modifier = Modifier
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize().background(Color.Black)
 
+        // Camera preview and capture button
+        Column(
+            modifier = Modifier
+                .zIndex(1f)
+                .fillMaxSize()
+                .background(Color.Black),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
             AndroidView(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .aspectRatio(1F)
-                    .clip(RoundedCornerShape(10.dp)),
+                    .clip(RoundedCornerShape(2.dp)),
                 factory = { ctx ->
                     PreviewView(ctx).apply {
                         this.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
@@ -96,17 +112,10 @@ fun CameraScreen() {
                 }
             )
 
-            bitmap?.let {
-                Image(
-                    bitmap = it.asImageBitmap(),
-                    contentDescription = null,
-                    modifier = Modifier.size(250.dp)
-                )
-            }
 
-            Button(
+
+            IconButton(
                 onClick = {
-
                     if (!isCapturing) {
                         isCapturing = true
                         val imageCaptureCallback = object : ImageCapture.OnImageCapturedCallback() {
@@ -134,11 +143,125 @@ fun CameraScreen() {
                     }
                 },
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 50.dp)
+                    .size(74.dp)
+                    .border(
+                        width = 4.dp,
+                        color = Color.White,
+                        shape = CircleShape
+                    )
+                    .align(Alignment.CenterHorizontally),
             ) {
-                Text(text = if (isCapturing) "Capturing..." else "Capture Photo")
+
+                Icon(
+                    imageVector = Icons.Filled.Camera,
+                    contentDescription = "snap",
+                    modifier = Modifier
+                        .size(scale.dp)
+                        .background(Color.White, CircleShape),
+                    tint = Color.Black.opacity(.025f)
+                )
             }
+        }
+
+        // Top and bottom tool bars
+        Column(
+            modifier = Modifier
+                .zIndex(2f)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            // Top bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp, horizontal = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        Icons.Filled.Close,
+                        contentDescription = "close",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(28.dp)
+                    )
+                }
+
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        Icons.Filled.FlashAuto,
+                        contentDescription = "switch flash",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(28.dp)
+                    )
+                }
+
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        Icons.Filled.Settings,
+                        contentDescription = "settings",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(28.dp)
+                    )
+                }
+            }
+
+            // Bottom bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp, horizontal = 20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                bitmap?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = "captured image",
+                        modifier = Modifier
+                            .size(35.dp)
+                            .clip(RoundedCornerShape(9.dp))
+                            .border(
+                                width = 2.dp,
+                                color = Color.White,
+                                shape = RoundedCornerShape(9.dp)
+                            )
+                    )
+                } ?:
+                Box(
+                    modifier = Modifier
+                        .size(35.dp)
+                        .background(Color.DarkGray.opacity(.5f), RoundedCornerShape(9.dp))
+                        .border(
+                            width = 2.dp,
+                            color = Color.White,
+                            shape = RoundedCornerShape(9.dp)
+                        )
+                )
+
+
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        Icons.Filled.Cameraswitch,
+                        contentDescription = "switch camera",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(28.dp)
+                    )
+                }
+            }
+
         }
     }
 
