@@ -22,8 +22,4 @@ abstract class PixleDatabase : RoomDatabase() {
     abstract fun solutionDao(): SolutionDao
 
     abstract fun attemptDao(): AttemptDao
-
-    fun solutionRepository() = SolutionRepository(solutionDao())
-
-    fun attemptRepository() = AttemptRepository(attemptDao())
 }

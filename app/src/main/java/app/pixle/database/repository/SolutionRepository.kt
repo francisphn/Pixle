@@ -3,11 +3,14 @@ package app.pixle.database.repository
 import app.pixle.database.dao.SolutionDao
 import app.pixle.model.entity.solution.Solution
 import app.pixle.model.entity.solution.SolutionWithItems
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SolutionRepository(private val solutionDao: SolutionDao) {
+@AndroidEntryPoint
+class SolutionRepository(@Inject private val solutionDao: SolutionDao) {
     suspend fun add(solutionWithItems: SolutionWithItems) = coroutineScope {
         launch (Dispatchers.IO) { solutionDao.insert(solutionWithItems.solution) }
         launch (Dispatchers.IO) { solutionDao.insert(solutionWithItems.solutionItems) }

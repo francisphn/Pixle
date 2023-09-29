@@ -9,7 +9,9 @@ import androidx.room.Transaction
 import app.pixle.model.entity.solution.Solution
 import app.pixle.model.entity.solution.SolutionItem
 import app.pixle.model.entity.solution.SolutionWithItems
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 @Dao
 interface SolutionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)

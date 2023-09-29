@@ -145,5 +145,9 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Hilt for testing
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.44")
+    kspAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
 }
 

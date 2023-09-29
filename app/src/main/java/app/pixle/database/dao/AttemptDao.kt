@@ -9,8 +9,10 @@ import androidx.room.Transaction
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.model.entity.attempt.AttemptItem
 import app.pixle.model.entity.attempt.AttemptWithItems
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 
+@AndroidEntryPoint
 @Dao
 interface AttemptDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
