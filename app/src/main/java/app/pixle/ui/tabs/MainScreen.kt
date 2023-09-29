@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.R
-import app.pixle.model.dto.SolutionDto
+import app.pixle.model.api.Goal
 import app.pixle.model.entity.attempt.AttemptItem
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.main.MissingRowAttempt
@@ -47,7 +47,7 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val (goal, _) = rememberQueryable(SolutionDto) {
+    val (goal, _) = rememberQueryable(Goal) {
         onError = { err, _, _ ->
             Log.d("pixle:main", "got an error: $err")
         }
