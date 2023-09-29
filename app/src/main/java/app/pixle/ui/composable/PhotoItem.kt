@@ -33,12 +33,10 @@ fun PhotoItem(item: String? = null, kind: String = AttemptItem.KIND_NONE) {
     Box(
         modifier = Modifier
             .background(
-                color,
-                RoundedCornerShape(10.dp)
+                color, RoundedCornerShape(10.dp)
             )
             .padding(12.dp)
-            .size(24.dp),
-        contentAlignment = Alignment.Center
+            .size(24.dp), contentAlignment = Alignment.Center
     ) {
         item?.let {
             Text(

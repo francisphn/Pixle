@@ -1,5 +1,6 @@
 package app.pixle.ui.tabs
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.R
-import app.pixle.model.dto.SolutionDto
+import app.pixle.model.api.Goal
 import app.pixle.model.entity.attempt.AttemptItem
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.main.MissingRowAttempt
@@ -46,7 +47,11 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val (goal, _) = rememberQueryable(SolutionDto)
+    val (goal, _) = rememberQueryable(Goal) {
+        onError = { err, _, _ ->
+            Log.d("pixle:main", "got an error: $err")
+        }
+    }
     val difficultyColor = remember(goal) { goal?.difficulty?.let { rarityColor(it) } }
     val attempts = remember(goal) { listOf<List<AttemptItem>>() }
 

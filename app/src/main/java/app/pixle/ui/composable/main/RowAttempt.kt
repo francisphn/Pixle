@@ -30,7 +30,7 @@ fun RowAttempt(
                     MaterialTheme.colorScheme.onBackground, CircleShape
                 )
                 .size(8.dp)
-        ) {}
+        )
 
         items.forEach {
             PhotoItem(item = it.emoji, kind = it.kind)

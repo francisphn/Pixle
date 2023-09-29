@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -18,7 +17,7 @@ fun PolaroidFrame(
 ) {
     Box(
         modifier = modifier
-            .background(Color.White, RoundedCornerShape(4.dp))
+            .background(Color.White, RoundedCornerShape(0.dp))
             .padding(
                 top = 20.dp,
                 start = 20.dp,

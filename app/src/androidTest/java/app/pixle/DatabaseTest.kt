@@ -83,7 +83,7 @@ class DatabaseTest {
         )
 
         val yesterdayAttemptItems = listOf("😱", "😭").mapIndexed { index, emoji ->
-            AttemptItem(emoji, yesterdayAttemptUuid, index + 1L)
+            AttemptItem(emoji, yesterdayAttemptUuid, index + 1L, AttemptItem.KIND_NONE)
         }
 
         val yesterday = AttemptWithItems(yesterdayAttempt, yesterdayAttemptItems)
@@ -97,7 +97,7 @@ class DatabaseTest {
         )
 
         val todayAttemptItems = listOf("😁", "🇬🇧").mapIndexed { index, emoji ->
-            AttemptItem(emoji, yesterdayAttemptUuid, index + 1L)
+            AttemptItem(emoji, yesterdayAttemptUuid, index + 1L, AttemptItem.KIND_NONE)
         }
 
         val today = AttemptWithItems(todayAttempt, todayAttemptItems)
