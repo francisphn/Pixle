@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     kotlin("plugin.serialization") version embeddedKotlinVersion
     id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android") version "2.44" apply false
 
 }
 
@@ -92,9 +93,11 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Do not upgrade
 
+
+    // Accompanist
     val accompanistVersion = "0.30.1"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
-    implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+
 
     // Data fetching
     implementation("com.kazakago.swr.compose:swr-android:0.6.2")
@@ -108,13 +111,21 @@ dependencies {
     testImplementation("androidx.room:room-testing:$roomVersion")
 
 
+    // Hilt dependency injection
+    val hiltVersion = "2.44"
+    implementation("com.google.dagger:hilt-android:$hiltVersion")
+    ksp("com.google.dagger:hilt-android-compiler:$hiltVersion")
+
+
     // CameraX
-    implementation("androidx.camera:camera-core:1.2.3")
-    implementation("androidx.camera:camera-camera2:1.2.3")
-    implementation("androidx.camera:camera-lifecycle:1.2.3")
-    implementation("androidx.camera:camera-video:1.2.3")
-    implementation("androidx.camera:camera-view:1.2.3")
-    implementation("androidx.camera:camera-extensions:1.2.3")
+    val cameraXVersion = "1.2.3"
+    implementation("androidx.camera:camera-core:$cameraXVersion")
+    implementation("androidx.camera:camera-camera2:$cameraXVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraXVersion")
+    implementation("androidx.camera:camera-video:$cameraXVersion")
+    implementation("androidx.camera:camera-view:$cameraXVersion")
+    implementation("androidx.camera:camera-extensions:$cameraXVersion")
+
 
     // TensorFlow Lite
     implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.0")
