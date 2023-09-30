@@ -111,12 +111,6 @@ dependencies {
     testImplementation("androidx.room:room-testing:$roomVersion")
 
 
-    // Hilt dependency injection
-    val hiltVersion = "2.44"
-    implementation("com.google.dagger:hilt-android:$hiltVersion")
-    ksp("com.google.dagger:hilt-android-compiler:$hiltVersion")
-
-
     // CameraX
     val cameraXVersion = "1.2.3"
     implementation("androidx.camera:camera-core:$cameraXVersion")
@@ -145,9 +139,5 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-
-    // Hilt for testing
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.44")
-    kspAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
 }
 

@@ -1,7 +1,11 @@
 package app.pixle.database
 
+import android.content.Context
 import androidx.room.Database
+import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
+import app.pixle.asset.PIXLE_DATABASE_NAME
 import app.pixle.database.dao.AttemptDao
 import app.pixle.database.dao.SolutionDao
 import app.pixle.database.repository.AttemptRepository
@@ -22,4 +26,30 @@ abstract class PixleDatabase : RoomDatabase() {
     abstract fun solutionDao(): SolutionDao
 
     abstract fun attemptDao(): AttemptDao
+
+    fun attemptRepository() = AttemptRepository(attemptDao())
+
+    fun solutionRepository() = SolutionRepository(solutionDao())
+
+    companion object {
+        @Volatile
+        private var instance: PixleDatabase? = null
+
+        fun getInstance(context: Context): PixleDatabase {
+            return instance ?: synchronized(this) {
+                buildDatabase(context)
+                    .also { instance = it }
+                    .also { return it }
+            }
+        }
+
+        private fun buildDatabase(context: Context): PixleDatabase {
+            return Room
+                .databaseBuilder(
+                    context,
+                    PixleDatabase::class.java,
+                    PIXLE_DATABASE_NAME
+                ).build()
+        }
+    }
 }

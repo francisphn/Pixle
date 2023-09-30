@@ -37,7 +37,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +58,8 @@ fun App() {
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
 
-    val navBuilder = NavigationBuilder.getInstance().toMain { navController.navigate(MAIN_ROUTE) }
+    val navBuilder = NavigationBuilder.getInstance()
+        .toMain { navController.navigate(MAIN_ROUTE) }
         .toCamera { navController.navigate(CAMERA_ROUTE) }
         .toProfile { navController.navigate(PROFILE_ROUTE) }.back { navController.popBackStack() }
 

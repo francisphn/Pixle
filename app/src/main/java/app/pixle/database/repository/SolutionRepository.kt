@@ -9,8 +9,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class SolutionRepository(@Inject private val solutionDao: SolutionDao) {
+class SolutionRepository(private val solutionDao: SolutionDao) {
     suspend fun add(solutionWithItems: SolutionWithItems) = coroutineScope {
         launch (Dispatchers.IO) { solutionDao.insert(solutionWithItems.solution) }
         launch (Dispatchers.IO) { solutionDao.insert(solutionWithItems.solutionItems) }
