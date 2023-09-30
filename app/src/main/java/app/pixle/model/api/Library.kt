@@ -1,13 +1,24 @@
 package app.pixle.model.api
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
+import app.pixle.database.PixleDatabase
 import app.pixle.model.dto.Queryable
 import app.pixle.model.dto.SolutionItemDto
+import app.pixle.model.entity.item.Item
 
-object Library : Queryable<List<String>, List<SolutionItemDto>> {
+object Library : Queryable<List<String>, List<Item>> {
     override val key: List<String>
         get() = listOf("lib")
 
-    override suspend fun queryFn(keys: List<String>): List<SolutionItemDto> {
-        return SolutionItemDto.getLibraryOfItems()
+    override suspend fun queryFn(keys: List<String>, context: Context): List<Item> {
+        return try {
+            SolutionItemDto.getLibraryOfItems().map { it.asEntity() }
+        } catch (e: Exception) {
+            PixleDatabase.getInstance(context).itemDao().getAll()
+        }
     }
 }

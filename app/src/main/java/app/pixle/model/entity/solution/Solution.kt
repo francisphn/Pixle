@@ -1,22 +1,28 @@
 package app.pixle.model.entity.solution
 
-import androidx.room.Entity
+import androidx.room.Embedded
 import androidx.room.Ignore
-import androidx.room.PrimaryKey
+import androidx.room.Relation
 
+data class Solution(
+    @Embedded val solution: AtomicSolution,
 
-@Entity
-data class Solution (
-    /**
-     * The ID of this solution, and because there is only one
-     * solution for a given date, it can be used as a primary
-     * key.
-     */
-    @PrimaryKey(autoGenerate = false)
-    var date: String,
+    @Relation(
+        parentColumn = "date",
+        entityColumn = "solutionDate"
+    )
+    val solutionItems: List<AtomicSolutionItem>
+) {
+    @Ignore
+    val date = solution.date
 
-    /**
-     * Difficulty level
-     */
-    var difficulty: String,
-)
+    @Ignore
+    val difficulty = solution.difficulty
+
+    override fun toString(): String {
+        return solutionItems
+            .sortedBy { it.positionInSolution }
+            .map { it.icon }
+            .reduce { acc, icon -> acc.plus(icon) }
+    }
+}

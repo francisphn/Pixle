@@ -1,6 +1,7 @@
 package app.pixle.ui.state
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import app.pixle.model.dto.Queryable
 import com.kazakago.swr.compose.config.SWRConfig
 import com.kazakago.swr.compose.preload.SWRPreload
@@ -25,8 +26,13 @@ fun <KEY, DATA> rememberQueryable(
     scope: CoroutineScope? = null,
     options: SWRConfig<KEY, DATA>.() -> Unit = {},
 ): SWRState<KEY, DATA> {
+    val context = LocalContext.current
+
     return useSWR(
-        key = queryable.key, fetcher = queryable::queryFn, scope = scope, options = options
+        key = queryable.key,
+        fetcher = { queryable.queryFn(it, context) },
+        scope = scope,
+        options = options
     )
 }
 
@@ -34,8 +40,10 @@ fun <KEY, DATA> rememberQueryable(
 fun <KEY, DATA> rememberQueryablePreload(
     queryable: Queryable<KEY, DATA>,
 ): SWRPreload {
+    val context = LocalContext.current
+
     return useSWRPreload(
         key = queryable.key,
-        fetcher = queryable::queryFn,
+        fetcher = { queryable.queryFn(it, context) },
     )
 }

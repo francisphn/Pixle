@@ -3,7 +3,6 @@ plugins {
     id("org.jetbrains.kotlin.android")
     kotlin("plugin.serialization") version embeddedKotlinVersion
     id("com.google.devtools.ksp")
-
 }
 
 android {
@@ -68,7 +67,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
-
     // Ktor HTTP client
     implementation("io.ktor:ktor-client-core:2.3.4")
     implementation("io.ktor:ktor-client-okhttp:2.3.4")
@@ -92,9 +90,11 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Do not upgrade
 
+
+    // Accompanist
     val accompanistVersion = "0.30.1"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
-    implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+
 
     // Data fetching
     implementation("com.kazakago.swr.compose:swr-android:0.6.2")
@@ -109,12 +109,14 @@ dependencies {
 
 
     // CameraX
-    implementation("androidx.camera:camera-core:1.2.3")
-    implementation("androidx.camera:camera-camera2:1.2.3")
-    implementation("androidx.camera:camera-lifecycle:1.2.3")
-    implementation("androidx.camera:camera-video:1.2.3")
-    implementation("androidx.camera:camera-view:1.2.3")
-    implementation("androidx.camera:camera-extensions:1.2.3")
+    val cameraXVersion = "1.2.3"
+    implementation("androidx.camera:camera-core:$cameraXVersion")
+    implementation("androidx.camera:camera-camera2:$cameraXVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraXVersion")
+    implementation("androidx.camera:camera-video:$cameraXVersion")
+    implementation("androidx.camera:camera-view:$cameraXVersion")
+    implementation("androidx.camera:camera-extensions:$cameraXVersion")
+
 
     // TensorFlow Lite
     implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.0")

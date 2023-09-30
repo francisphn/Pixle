@@ -6,26 +6,23 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RewriteQueriesToDropUnusedColumns
 import androidx.room.Transaction
+import app.pixle.model.entity.solution.AtomicSolution
+import app.pixle.model.entity.solution.AtomicSolutionItem
 import app.pixle.model.entity.solution.Solution
-import app.pixle.model.entity.solution.SolutionItem
-import app.pixle.model.entity.solution.SolutionWithItems
 
 @Dao
 interface SolutionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(solution: Solution)
+    suspend fun insert(solution: AtomicSolution)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(solutionItems: List<SolutionItem>)
+    suspend fun insert(solutionItems: List<AtomicSolutionItem>)
 
     @Transaction
-    @Query("SELECT * FROM solution" +
-            " JOIN solutionItem ON solutionItem.solutionDate = solution.date" +
-            " ORDER BY date desc LIMIT 1")
+    @Query("SELECT * FROM atomicSolution" +
+            " JOIN atomicSolutionItem ON atomicSolutionItem.solutionDate = atomicSolution.date" +
+            " WHERE atomicSolution.date = :utcDate" +
+            " LIMIT 1")
     @RewriteQueriesToDropUnusedColumns
-    suspend fun getLatestSolutionWithItems(): SolutionWithItems?
-
-    @Query("SELECT * FROM solution ORDER by date desc LIMIT 1")
-    @RewriteQueriesToDropUnusedColumns
-    suspend fun getLatest(): Solution?
+    suspend fun getSolutionForDate(utcDate: String): Solution?
 }

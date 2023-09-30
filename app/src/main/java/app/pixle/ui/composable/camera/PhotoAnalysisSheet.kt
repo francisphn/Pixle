@@ -39,11 +39,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import app.pixle.model.api.Goal
+import app.pixle.model.api.SolutionOfToday
 import app.pixle.model.api.Library
+import app.pixle.model.entity.attempt.AtomicAttemptItem
+import app.pixle.model.entity.attempt.AtomicAttempt
 import app.pixle.model.entity.attempt.Attempt
-import app.pixle.model.entity.attempt.AttemptItem
-import app.pixle.model.entity.attempt.AttemptWithItems
 import app.pixle.ui.composable.PhotoItem
 import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.state.ObjectDetectionModel
@@ -65,26 +65,26 @@ fun PhotoAnalysisSheet(
     val scroll = rememberScrollState()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val rotation = remember(bitmap) { if (Math.random() < 0.5f) 1.5f else -1.5f }
+
     val animatedRotation = animateFloatAsState(
         targetValue = bitmap?.let { rotation } ?: 0f,
         label = "rotation",
         animationSpec = tween(300, 100)
     )
 
-    val (goal, _) = rememberQueryable(Goal)
+    val (goal, _) = rememberQueryable(SolutionOfToday)
     val (lib, _) = rememberQueryable(Library)
     val objectDetector = rememberObjectDetector(model = ObjectDetectionModel.EDL1)
 
-    val (attempt, setAttempt) = remember { mutableStateOf<AttemptWithItems?>(null) }
+    val (attempt, setAttempt) = remember { mutableStateOf<Attempt?>(null) }
 
 
     LaunchedEffect(objectDetector, bitmap, lib, goal, attempt) {
         if (attempt != null) return@LaunchedEffect
-
         val detector = objectDetector ?: return@LaunchedEffect
         val image = bitmap ?: return@LaunchedEffect
         val knowledgeBase = lib ?: return@LaunchedEffect
-        val items = goal?.items ?: return@LaunchedEffect
+        val items = goal?.solutionItems ?: return@LaunchedEffect
 
         val predictions = detector.detect(TensorImage.fromBitmap(image))
         val givens = predictions
@@ -95,9 +95,9 @@ fun PhotoAnalysisSheet(
             }
             .toMutableList()
 
-        val currentAttempt = Attempt(
+        val currentAttempt = AtomicAttempt(
             uuid = UUID.randomUUID().toString(),
-            solutionDate = goal.day,
+            solutionDate = goal.solution.date,
         )
 
         val exacts = items.map { item ->
@@ -128,47 +128,46 @@ fun PhotoAnalysisSheet(
             val exact = exacts[idx]
 
             if (exact != null) {
-                return@mapIndexed AttemptItem(
-                    emoji = exact.icon,
+                return@mapIndexed AtomicAttemptItem(
+                    icon = exact.icon,
                     attemptUuid = currentAttempt.uuid,
                     positionInAttempt = idx.toLong(),
-                    kind = AttemptItem.KIND_EXACT
+                    kind = AtomicAttemptItem.KIND_EXACT
                 )
             }
 
             val similar = similars[idx]
 
             if (similar != null) {
-                return@mapIndexed AttemptItem(
-                    emoji = similar.icon,
+                return@mapIndexed AtomicAttemptItem(
+                    icon = similar.icon,
                     attemptUuid = currentAttempt.uuid,
                     positionInAttempt = idx.toLong(),
-                    kind = AttemptItem.KIND_SIMILAR
+                    kind = AtomicAttemptItem.KIND_SIMILAR
                 )
             }
 
             val unmatched = givens.removeFirstOrNull()?.firstOrNull()
 
             if (unmatched != null) {
-                return@mapIndexed AttemptItem(
-                    emoji = unmatched.icon,
+                return@mapIndexed AtomicAttemptItem(
+                    icon = unmatched.icon,
                     attemptUuid = currentAttempt.uuid,
                     positionInAttempt = idx.toLong(),
-                    kind = AttemptItem.KIND_NONE
+                    kind = AtomicAttemptItem.KIND_NONE
                 )
             }
 
-            return@mapIndexed AttemptItem(
-                emoji = "",
+            return@mapIndexed AtomicAttemptItem(
+                icon = "",
                 attemptUuid = currentAttempt.uuid,
                 positionInAttempt = idx.toLong(),
-                kind = AttemptItem.KIND_NONE
+                kind = AtomicAttemptItem.KIND_NONE
             )
         }
 
-        Log.d("pixle:analyse", "result: ${result.map { it.emoji }.joinToString(", ")}")
-
-        setAttempt(AttemptWithItems(currentAttempt, result))
+        setAttempt(Attempt(currentAttempt, result))
+        Log.d("pixle:analyse", "result: ${result.map { it.icon }.joinToString(", ")}")
     }
 
     if (bitmap != null) {
@@ -232,7 +231,7 @@ fun PhotoAnalysisSheet(
                         key = { it.positionInAttempt }
                     ) {
                         PhotoItem(
-                            item = it.emoji,
+                            item = it.icon,
                             kind = it.kind,
                         )
                     }

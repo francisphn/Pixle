@@ -15,17 +15,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import app.pixle.model.entity.attempt.AttemptItem
+import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.theme.Manrope
 
 @Composable
-fun PhotoItem(item: String? = null, kind: String = AttemptItem.KIND_NONE) {
+fun PhotoItem(item: String? = null, kind: String = AtomicAttemptItem.KIND_NONE) {
     val gray = MaterialTheme.colorScheme.onBackground
     val color = remember(kind) {
         when (kind) {
-            AttemptItem.KIND_EXACT -> Color(52, 211, 153).opacity(0.25f)
-            AttemptItem.KIND_SIMILAR -> Color(251, 191, 36).opacity(0.25f)
+            AtomicAttemptItem.KIND_EXACT -> Color(52, 211, 153).opacity(0.25f)
+            AtomicAttemptItem.KIND_SIMILAR -> Color(251, 191, 36).opacity(0.25f)
             else -> gray.opacity(0.1f)
         }
     }

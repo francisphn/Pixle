@@ -1,23 +1,29 @@
 package app.pixle.model.entity.attempt
 
 import androidx.room.Embedded
-import androidx.room.Entity
 import androidx.room.Ignore
-import androidx.room.PrimaryKey
-import java.util.UUID
+import androidx.room.Relation
 
-@Entity
 data class Attempt(
-    /**
-     * The ID of this attempt
-     */
-    @PrimaryKey(autoGenerate = false)
-    val uuid: String,
+    @Embedded
+    val attempt: AtomicAttempt,
 
-    /**
-     * The date of the solution that this attempt should be checked against,
-     * this is the foreign key to link this attempt to a solution
-     */
-    var solutionDate: String,
+    @Relation(
+        parentColumn = "uuid",
+        entityColumn = "attemptUuid"
+    )
+    val attemptItems: List<AtomicAttemptItem>,
+) {
+    @Ignore
+    val uuid = attempt.uuid
 
-)
+    @Ignore
+    val solutionDate = attempt.solutionDate
+
+    override fun toString(): String {
+        return attemptItems
+            .sortedBy { it.positionInAttempt }
+            .map { it.icon }
+            .reduce { acc, icon -> acc.plus(icon) }
+    }
+}

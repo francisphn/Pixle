@@ -57,7 +57,8 @@ fun App() {
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
 
-    val navBuilder = NavigationBuilder.getInstance().toMain { navController.navigate(MAIN_ROUTE) }
+    val navBuilder = NavigationBuilder.getInstance()
+        .toMain { navController.navigate(MAIN_ROUTE) }
         .toCamera { navController.navigate(CAMERA_ROUTE) }
         .toProfile { navController.navigate(PROFILE_ROUTE) }.back { navController.popBackStack() }
 
@@ -168,13 +169,5 @@ fun App() {
         if (navBackStackEntry?.destination?.route != CAMERA_ROUTE) {
             BottomNavigation(navBuilder)
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PixleTheme {
-        App()
     }
 }

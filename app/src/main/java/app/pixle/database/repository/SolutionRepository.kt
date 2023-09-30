@@ -1,23 +1,25 @@
 package app.pixle.database.repository
 
+import android.util.Log
 import app.pixle.database.dao.SolutionDao
+import app.pixle.lib.Utils
+import app.pixle.model.dto.SolutionDto
 import app.pixle.model.entity.solution.Solution
-import app.pixle.model.entity.solution.SolutionWithItems
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 class SolutionRepository(private val solutionDao: SolutionDao) {
-    suspend fun add(solutionWithItems: SolutionWithItems) = coroutineScope {
+    suspend fun add(solutionWithItems: Solution) = coroutineScope {
         launch (Dispatchers.IO) { solutionDao.insert(solutionWithItems.solution) }
         launch (Dispatchers.IO) { solutionDao.insert(solutionWithItems.solutionItems) }
     }
 
-    suspend fun getLatestLazily() : Solution? {
-        return solutionDao.getLatest()
-    }
+    suspend fun getToday(): Solution? {
+        val today = Utils.utcDate().toString()
 
-    suspend fun getLatestEagerly() : SolutionWithItems? {
-        return solutionDao.getLatestSolutionWithItems()
+        Log.d("", "Getting solution for today, $today, from Room")
+        return solutionDao.getSolutionForDate(today)
+
     }
 }

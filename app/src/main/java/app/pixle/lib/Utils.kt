@@ -6,6 +6,6 @@ import java.time.ZoneId
 
 class Utils {
     companion object {
-        fun utcDate() = LocalDate.now(Clock.systemUTC())
+        fun utcDate(): LocalDate = LocalDate.now(Clock.systemUTC())
     }
 }
