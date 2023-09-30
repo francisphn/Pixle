@@ -3,7 +3,6 @@ package app.pixle.database.repository
 import android.util.Log
 import app.pixle.database.dao.SolutionDao
 import app.pixle.lib.Utils
-import app.pixle.model.dto.SolutionDto
 import app.pixle.model.entity.solution.Solution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope

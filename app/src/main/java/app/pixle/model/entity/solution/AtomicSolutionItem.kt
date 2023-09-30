@@ -1,6 +1,7 @@
 package app.pixle.model.entity.solution
 
 import androidx.room.Entity
+import java.time.LocalDate
 
 @Entity(primaryKeys = ["solutionDate", "positionInSolution", "category", "icon", "name"])
 data class AtomicSolutionItem(
@@ -15,7 +16,7 @@ data class AtomicSolutionItem(
      * The solution that this solution item is associated with,
      * identified by a foreign key as solution date.
      */
-    var solutionDate: String,
+    var solutionDate: LocalDate,
 
     /**
      * The position of this emoji in the solution

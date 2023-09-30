@@ -7,7 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.util.stream.Collectors
 
 class AttemptRepository(private val attemptDao: AttemptDao) {
     suspend fun add(attempt: Attempt) = coroutineScope {

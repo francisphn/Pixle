@@ -1,5 +1,6 @@
 package app.pixle.model.entity.attempt
 
+import android.net.Uri
 import androidx.room.Embedded
 import androidx.room.Ignore
 import androidx.room.Relation
@@ -19,6 +20,10 @@ data class Attempt(
 
     @Ignore
     val solutionDate = attempt.solutionDate
+
+    var winningPhoto: Uri?
+        get() = attempt.winningPhoto
+        set(value) { attempt.winningPhoto = value }
 
     override fun toString(): String {
         return attemptItems

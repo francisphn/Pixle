@@ -2,6 +2,7 @@ package app.pixle.model.entity.solution
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.LocalDate
 
 
 @Entity
@@ -12,7 +13,7 @@ data class AtomicSolution (
      * key.
      */
     @PrimaryKey(autoGenerate = false)
-    var date: String,
+    var date: LocalDate,
 
     /**
      * Difficulty level

@@ -11,6 +11,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 @Serializable
 data class SolutionDto(
@@ -28,21 +29,17 @@ data class SolutionDto(
     }
 
     fun asEntity(): Solution {
-        val solutionItems = arrayListOf<AtomicSolutionItem>()
-
-        for (item in this.items) {
-            solutionItems.add(
-                AtomicSolutionItem(
-                    icon = item.icon,
-                    solutionDate = this.day,
-                    positionInSolution = solutionItems.size.plus(1L),
-                    category = item.category,
-                    name = item.name
-                )
+        val solutionItems = this.items.mapIndexed { index, item ->
+            AtomicSolutionItem(
+                icon = item.icon,
+                solutionDate = LocalDate.parse(this.day),
+                positionInSolution = index.plus(1L),
+                category = item.category,
+                name = item.name
             )
         }
 
-        val solution = AtomicSolution(day, difficulty)
+        val solution = AtomicSolution(LocalDate.parse(this.day), difficulty)
 
         return Solution(solution, solutionItems)
     }
