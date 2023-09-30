@@ -54,29 +54,34 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import app.pixle.database.PixleDatabase
+import app.pixle.model.api.AttemptsOfToday
+import app.pixle.model.api.ConfirmAttempt
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
+import app.pixle.ui.state.rememberInvalidate
+import app.pixle.ui.state.rememberMutable
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun CameraScreen(navBuilder: NavigationBuilder) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
 
-    val attemptRepository = PixleDatabase
-        .getInstance(context)
-        .attemptRepository()
-
-    val onConfirm: (Attempt?) -> Unit = {
-        scope.launch {
-            if (it != null) attemptRepository.add(it)
-        }.invokeOnCompletion { navBuilder.navigateBack() }
+    val invalidate = rememberInvalidate(AttemptsOfToday)
+    val (_, _, mutate) = rememberMutable(ConfirmAttempt) {
+        onSuccess = { _, _, _ ->
+            scope.launch {
+                invalidate()
+            }.invokeOnCompletion {
+                navBuilder.navigateToMain()
+            }
+        }
     }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
     val cameraController = remember { LifecycleCameraController(context) }
     var isCapturing by remember { mutableStateOf(false) }
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
@@ -281,7 +286,12 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             onDismiss = {
                 bitmap = null
             },
-            onConfirm = onConfirm
+            onConfirm = {
+                val attempt = it ?: return@PhotoAnalysisSheet
+                scope.launch {
+                    mutate(attempt)
+                }
+            }
         )
     }
 

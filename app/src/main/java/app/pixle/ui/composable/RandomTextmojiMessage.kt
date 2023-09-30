@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.ui.modifier.opacity
@@ -31,9 +32,16 @@ val TEXTMOJIS = listOf(
     "(งòᗜó)ง",
 )
 
+enum class TextmojiSize(val emoji: TextUnit, val message: TextUnit) {
+    SMALL(40.sp, 12.sp),
+    MEDIUM(60.sp, 16.sp),
+    LARGE(80.sp, 20.sp),
+}
+
 @Composable
 fun RandomTextmojiMessage(
-    message: String
+    message: String,
+    size: TextmojiSize = TextmojiSize.MEDIUM
 ) {
     val (emoji, setEmoji) = remember { mutableStateOf(TEXTMOJIS.random()) }
 
@@ -49,16 +57,14 @@ fun RandomTextmojiMessage(
         Text(
             text = emoji,
             fontFamily = Manrope,
-            fontSize = 60.sp,
-            lineHeight = 60.sp,
+            fontSize = size.emoji,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground.opacity(0.35f)
         )
         Text(
             text = message,
             fontFamily = Manrope,
-            fontSize = 16.sp,
-            lineHeight = 24.sp,
+            fontSize = size.message,
             fontWeight = FontWeight.Medium,
         )
     }

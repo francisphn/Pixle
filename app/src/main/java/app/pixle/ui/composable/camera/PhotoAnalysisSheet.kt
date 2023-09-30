@@ -239,7 +239,7 @@ fun PhotoAnalysisSheet(
                     ) {
                         PhotoItem(
                             item = it.icon,
-                            kind = it.kind,
+                            kind = AtomicAttemptItem.KIND_NONE,
                         )
                     }
                 }

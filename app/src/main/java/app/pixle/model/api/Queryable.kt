@@ -1,4 +1,4 @@
-package app.pixle.model.dto
+package app.pixle.model.api
 
 import android.content.Context
 
