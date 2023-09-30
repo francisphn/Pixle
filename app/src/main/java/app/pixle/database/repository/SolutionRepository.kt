@@ -1,5 +1,6 @@
 package app.pixle.database.repository
 
+import android.util.Log
 import app.pixle.database.dao.SolutionDao
 import app.pixle.lib.Utils
 import app.pixle.model.dto.SolutionDto
@@ -15,7 +16,10 @@ class SolutionRepository(private val solutionDao: SolutionDao) {
     }
 
     suspend fun getToday(): Solution? {
-        return solutionDao.getSolutionForDate(Utils.utcDate().toString())
+        val today = Utils.utcDate().toString()
+
+        Log.d("", "Getting solution for today, $today, from Room")
+        return solutionDao.getSolutionForDate(today)
 
     }
 }

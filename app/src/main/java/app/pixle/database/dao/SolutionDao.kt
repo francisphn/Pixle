@@ -19,9 +19,9 @@ interface SolutionDao {
     suspend fun insert(solutionItems: List<AtomicSolutionItem>)
 
     @Transaction
-    @Query("SELECT * FROM solution" +
-            " JOIN solutionItem ON solutionItem.solutionDate = solution.date" +
-            " WHERE solution.date = :utcDate" +
+    @Query("SELECT * FROM atomicSolution" +
+            " JOIN atomicSolutionItem ON atomicSolutionItem.solutionDate = atomicSolution.date" +
+            " WHERE atomicSolution.date = :utcDate" +
             " LIMIT 1")
     @RewriteQueriesToDropUnusedColumns
     suspend fun getSolutionForDate(utcDate: String): Solution?

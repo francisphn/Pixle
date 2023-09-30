@@ -38,7 +38,8 @@ data class SolutionDto(
                 AtomicSolutionItem(
                     icon = item.icon,
                     solutionDate = this.day,
-                    positionInSolution = solutionItems.size.plus(1L)
+                    positionInSolution = solutionItems.size.plus(1L),
+                    category = item.category
                 )
             )
         }

@@ -1,8 +1,9 @@
 package app.pixle.model.entity.item
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Entity
+@Entity(primaryKeys = ["name", "icon", "category"])
 data class Item(
     val name: String,
 

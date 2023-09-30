@@ -1,10 +1,12 @@
 package app.pixle.database.dao
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import app.pixle.model.entity.item.Item
 
+@Dao
 interface ItemDao {
     @Transaction
     @Insert

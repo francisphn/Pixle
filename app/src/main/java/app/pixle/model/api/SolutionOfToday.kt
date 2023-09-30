@@ -1,6 +1,7 @@
 package app.pixle.model.api
 
 import android.content.Context
+import android.util.Log
 import app.pixle.database.PixleDatabase
 import app.pixle.model.dto.Queryable
 import app.pixle.model.dto.SolutionDto
@@ -11,6 +12,8 @@ object SolutionOfToday: Queryable<List<String>, Solution> {
         get() = listOf("goal", "today")
 
     override suspend fun queryFn(keys: List<String>, context: Context): Solution {
+        Log.d("", "Querying solution of the day")
+
         val repository = PixleDatabase.getInstance(context).solutionRepository()
 
         return repository.getToday()

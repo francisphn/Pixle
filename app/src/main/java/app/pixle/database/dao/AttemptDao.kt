@@ -19,15 +19,15 @@ interface AttemptDao {
     suspend fun insert(attemptItems: List<AtomicAttemptItem>)
 
     @Transaction
-    @Query("SELECT * FROM attempt" +
-            " JOIN attemptItem on attemptItem.attemptUuid = attempt.uuid" +
-            " WHERE attempt.solutionDate = :utcIsoDate")
+    @Query("SELECT * FROM atomicAttempt" +
+            " JOIN atomicAttemptItem on atomicAttemptItem.attemptUuid = atomicAttempt.uuid" +
+            " WHERE atomicAttempt.solutionDate = :utcIsoDate")
     @RewriteQueriesToDropUnusedColumns
     suspend fun getAttemptsWithItems(utcIsoDate: String) : List<Attempt>
 
     @Transaction
-    @Query("SELECT * FROM attempt" +
-            " JOIN attemptItem on attemptItem.attemptUuid = attempt.uuid")
+    @Query("SELECT * FROM atomicAttempt" +
+            " JOIN atomicAttemptItem on AtomicAttemptItem.attemptUuid = atomicAttempt.uuid")
     @RewriteQueriesToDropUnusedColumns
     suspend fun getAttemptsWithItems() : List<Attempt>
 }
