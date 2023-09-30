@@ -167,7 +167,7 @@ fun PhotoAnalysisSheet(
         }
 
         setAttempt(Attempt(currentAttempt, result))
-        Log.d("pixle:analyse", "result: ${result.map { it.emoji }.joinToString(", ")}")
+        Log.d("pixle:analyse", "result: ${result.map { it.icon }.joinToString(", ")}")
     }
 
     if (bitmap != null) {

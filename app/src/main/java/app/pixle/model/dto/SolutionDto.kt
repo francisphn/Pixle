@@ -39,7 +39,8 @@ data class SolutionDto(
                     icon = item.icon,
                     solutionDate = this.day,
                     positionInSolution = solutionItems.size.plus(1L),
-                    category = item.category
+                    category = item.category,
+                    name = item.name
                 )
             )
         }
