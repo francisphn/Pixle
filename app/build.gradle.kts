@@ -3,8 +3,6 @@ plugins {
     id("org.jetbrains.kotlin.android")
     kotlin("plugin.serialization") version embeddedKotlinVersion
     id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android") version "2.44" apply false
-
 }
 
 android {
