@@ -1,6 +1,6 @@
-package app.pixle.database.repository
+package app.pixle.database.room.repository
 
-import app.pixle.database.dao.AttemptDao
+import app.pixle.database.room.dao.AttemptDao
 import app.pixle.lib.Utils
 import app.pixle.model.entity.attempt.Attempt
 import kotlinx.coroutines.Dispatchers
@@ -10,9 +10,9 @@ import java.time.LocalDate
 import java.util.stream.Collectors
 
 class AttemptRepository(private val attemptDao: AttemptDao) {
-    suspend fun add(attemptWithItems: Attempt) = coroutineScope {
-        launch (Dispatchers.IO) { attemptDao.insert(attemptWithItems.attempt) }
-        launch (Dispatchers.IO) { attemptDao.insert(attemptWithItems.attemptItems) }
+    suspend fun add(attempt: Attempt) = coroutineScope {
+        launch (Dispatchers.IO) { attemptDao.insert(attempt.attempt) }
+        launch (Dispatchers.IO) { attemptDao.insert(attempt.attemptItems) }
     }
 
     suspend fun getTodayAttemptsWithItems(): Set<Attempt> {

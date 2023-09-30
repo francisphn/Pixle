@@ -1,6 +1,6 @@
-package app.pixle.database.repository
+package app.pixle.database.room.repository
 
-import app.pixle.database.dao.SolutionDao
+import app.pixle.database.room.dao.SolutionDao
 import app.pixle.lib.Utils
 import app.pixle.model.dto.SolutionDto
 import app.pixle.model.entity.solution.SolutionWithItems

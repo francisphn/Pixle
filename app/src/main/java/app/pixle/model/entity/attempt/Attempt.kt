@@ -5,7 +5,7 @@ import androidx.room.Relation
 
 data class Attempt(
     @Embedded
-    private val attempt: AtomicAttempt,
+    val attempt: AtomicAttempt,
 
     @Relation(
         parentColumn = "uuid",

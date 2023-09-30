@@ -1,9 +1,8 @@
 package app.pixle.model.api
 
 import android.content.Context
-import app.pixle.database.PixleDatabase
+import app.pixle.database.room.PixleDatabase
 import app.pixle.model.dto.Queryable
-import app.pixle.model.dto.SolutionDto
 import app.pixle.model.entity.solution.SolutionWithItems
 
 object Goal: Queryable<List<String>, SolutionWithItems> {

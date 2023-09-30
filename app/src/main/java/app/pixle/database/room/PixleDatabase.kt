@@ -1,17 +1,16 @@
-package app.pixle.database
+package app.pixle.database.room
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import app.pixle.asset.PIXLE_DATABASE_NAME
-import app.pixle.database.dao.AttemptDao
-import app.pixle.database.dao.SolutionDao
-import app.pixle.database.repository.AttemptRepository
-import app.pixle.database.repository.SolutionRepository
+import app.pixle.database.room.dao.AttemptDao
+import app.pixle.database.room.dao.SolutionDao
+import app.pixle.database.room.repository.AttemptRepository
+import app.pixle.database.room.repository.SolutionRepository
 import app.pixle.model.entity.attempt.AtomicAttempt
 import app.pixle.model.entity.attempt.AtomicAttemptItem
-import app.pixle.model.entity.item.Item
 import app.pixle.model.entity.solution.Solution
 import app.pixle.model.entity.solution.SolutionItem
 

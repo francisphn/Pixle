@@ -1,4 +1,4 @@
-package app.pixle.database.dao
+package app.pixle.database.room.dao
 
 import androidx.room.Dao
 import androidx.room.Insert

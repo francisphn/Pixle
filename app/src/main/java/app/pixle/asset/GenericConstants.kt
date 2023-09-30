@@ -7,3 +7,4 @@ const val PROFILE_ROUTE = "profile"
 const val CAMERA_ROUTE = "camera"
 
 const val PIXLE_DATABASE_NAME = "pixle"
+const val PIXLE_DATASTORE_NAME = PIXLE_DATABASE_NAME
