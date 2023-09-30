@@ -10,12 +10,12 @@ import kotlinx.coroutines.launch
 
 class SolutionRepository(private val solutionDao: SolutionDao) {
     suspend fun add(solutionWithItems: Solution) = coroutineScope {
-        launch (Dispatchers.IO) { solutionDao.insert(solutionWithItems.solution) }
-        launch (Dispatchers.IO) { solutionDao.insert(solutionWithItems.solutionItems) }
+        launch(Dispatchers.IO) { solutionDao.insert(solutionWithItems.solution) }
+        launch(Dispatchers.IO) { solutionDao.insert(solutionWithItems.solutionItems) }
     }
 
     suspend fun getToday(): Solution? {
-        val today = Utils.utcDate().toString()
+        val today = Utils.utcDate()
         Log.d("solution", "Getting solution for today, $today, from Room")
         return solutionDao.getSolutionForDate(today).also { Log.d("Solution", "$it") }
     }
