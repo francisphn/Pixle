@@ -3,6 +3,7 @@ package app.pixle.model.api
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.model.entity.solution.Solution
@@ -17,6 +18,7 @@ import java.io.FileOutputStream
 object ConfirmAttempt: Mutable<List<String>, Triple<Attempt, Bitmap?, Solution?>, Unit> {
 
     private val saveAttempt: suspend (Attempt, Context) -> Unit = { it, ctx ->
+        Log.d("database", "Saving attempt to database...")
         PixleDatabase.getInstance(ctx).attemptRepository().add(it)
     }
 
@@ -36,6 +38,7 @@ object ConfirmAttempt: Mutable<List<String>, Triple<Attempt, Bitmap?, Solution?>
 
     private suspend fun saveWinningPhoto(attempt: Attempt, bitmap: Bitmap,
                                          context: Context): Flow<Uri> = flow {
+        Log.d("Media", "Saving winning photo...")
 
         val filename = "${attempt.solutionDate}_${attempt.uuid}"
         val file = File(context.filesDir, filename)
