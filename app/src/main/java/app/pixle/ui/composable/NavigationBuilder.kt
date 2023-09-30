@@ -30,7 +30,11 @@ class NavigationBuilder {
     }
 
     companion object {
-        private var instance: NavigationBuilder = NavigationBuilder()
-        fun getInstance() = instance
+        private var instance: NavigationBuilder? = null
+        fun getInstance() : NavigationBuilder {
+            return instance ?: synchronized(this) {
+                NavigationBuilder().also { instance = it }
+            }
+        }
     }
 }
