@@ -1,6 +1,7 @@
 package app.pixle.model.entity.attempt
 
 import androidx.room.Entity
+import java.util.UUID
 
 
 @Entity(primaryKeys = ["attemptUuid", "positionInAttempt"])
@@ -13,7 +14,7 @@ data class AtomicAttemptItem(
     /**
      * The attempt that this attempt item is associated with.
      */
-    var attemptUuid: String,
+    var attemptUuid: UUID,
 
     /**
      * The position of this emoji in the attempt
