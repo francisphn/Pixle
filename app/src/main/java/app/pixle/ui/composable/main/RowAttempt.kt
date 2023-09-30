@@ -13,11 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.pixle.model.entity.attempt.AtomicAttemptItem
+import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.PhotoItem
 
 @Composable
 fun RowAttempt(
-    items: List<AtomicAttemptItem>
+    items: Attempt
 ) {
     Row(
         modifier = Modifier.offset(x = (-4).dp),
@@ -32,7 +33,7 @@ fun RowAttempt(
                 .size(8.dp)
         )
 
-        items.forEach {
+        items.attemptItems.forEach {
             PhotoItem(item = it.icon, kind = it.kind)
         }
     }

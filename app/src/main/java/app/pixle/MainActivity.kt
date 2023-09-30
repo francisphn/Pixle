@@ -60,7 +60,9 @@ fun App() {
     val navBuilder = NavigationBuilder.getInstance()
         .toMain { navController.navigate(MAIN_ROUTE) }
         .toCamera { navController.navigate(CAMERA_ROUTE) }
-        .toProfile { navController.navigate(PROFILE_ROUTE) }.back { navController.popBackStack() }
+        .toProfile { navController.navigate(PROFILE_ROUTE) }
+        .back { navController.popBackStack() }
+
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 

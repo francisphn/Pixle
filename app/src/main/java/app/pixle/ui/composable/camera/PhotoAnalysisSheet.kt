@@ -35,10 +35,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import app.pixle.database.PixleDatabase
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.model.api.Library
 import app.pixle.model.entity.attempt.AtomicAttemptItem
@@ -51,6 +53,7 @@ import app.pixle.ui.state.rememberObjectDetector
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import coil.compose.AsyncImage
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.tensorflow.lite.support.image.TensorImage
 import java.util.UUID
@@ -59,10 +62,14 @@ import java.util.UUID
 @Composable
 fun PhotoAnalysisSheet(
     bitmap: Bitmap?,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onConfirm: (Attempt?) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
+
+
+
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val rotation = remember(bitmap) { if (Math.random() < 0.5f) 1.5f else -1.5f }
 
@@ -267,9 +274,10 @@ fun PhotoAnalysisSheet(
                             fontWeight = FontWeight.Bold
                         )
                     }
+
                     Button(
                         shape = RoundedCornerShape(8.dp),
-                        onClick = { /*TODO*/ }
+                        onClick = { onConfirm.invoke(attempt) }
                     ) {
                         Text(
                             text = "Confirm",

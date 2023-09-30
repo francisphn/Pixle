@@ -40,6 +40,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,15 +53,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
+import app.pixle.database.PixleDatabase
+import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun CameraScreen(navBuilder: NavigationBuilder) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val attemptRepository = PixleDatabase
+        .getInstance(context)
+        .attemptRepository()
+
+    val onConfirm: (Attempt?) -> Unit = {
+        scope.launch {
+            if (it != null) attemptRepository.add(it)
+        }.invokeOnCompletion { navBuilder.navigateBack() }
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraController = remember { LifecycleCameraController(context) }
@@ -266,7 +280,8 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             bitmap = bitmap,
             onDismiss = {
                 bitmap = null
-            }
+            },
+            onConfirm = onConfirm
         )
     }
 

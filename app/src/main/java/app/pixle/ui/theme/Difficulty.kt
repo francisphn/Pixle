@@ -3,7 +3,7 @@ package app.pixle.ui.theme
 import androidx.compose.ui.graphics.Color
 
 
-fun rarityColor(difficulty: String): Color {
+fun rarityColour(difficulty: String): Color {
     return when (difficulty) {
         "easiest" -> Color(0xFF3B82F6)
         "easy" -> Color(0xFFA855F7)
