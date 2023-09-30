@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     kotlin("plugin.serialization") version embeddedKotlinVersion
     id("com.google.devtools.ksp")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -126,10 +127,6 @@ dependencies {
 
     // Others
     implementation("io.coil-kt:coil-compose:2.4.0")
-
-
-    // Jetpack DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
 
     // Testing and debugging
