@@ -1,6 +1,6 @@
-package app.pixle.database.room.repository
+package app.pixle.database.repository
 
-import app.pixle.database.room.dao.AttemptDao
+import app.pixle.database.dao.AttemptDao
 import app.pixle.lib.Utils
 import app.pixle.model.entity.attempt.Attempt
 import kotlinx.coroutines.Dispatchers

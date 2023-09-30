@@ -101,12 +101,12 @@ fun PhotoAnalysisSheet(
 
         val exacts = items.map { item ->
             val index = givens.indexOfFirst { given ->
-                given.any { each -> each.name == item.emoji }
+                given.any { each -> each.name == item.icon }
             }
             if (index == -1) return@map null
             val chosen = givens[index]
             givens.removeAt(index)
-            return@map chosen.find { it.name == item.emoji }
+            return@map chosen.find { it.name == item.icon }
         }
 
         val similars = items.map { item ->
@@ -124,7 +124,7 @@ fun PhotoAnalysisSheet(
 
             if (exact != null) {
                 return@mapIndexed AtomicAttemptItem(
-                    emoji = exact.icon,
+                    icon = exact.icon,
                     attemptUuid = currentAttempt.uuid,
                     positionInAttempt = idx.toLong(),
                     kind = AtomicAttemptItem.KIND_EXACT
@@ -135,7 +135,7 @@ fun PhotoAnalysisSheet(
 
             if (similar != null) {
                 return@mapIndexed AtomicAttemptItem(
-                    emoji = similar.icon,
+                    icon = similar.icon,
                     attemptUuid = currentAttempt.uuid,
                     positionInAttempt = idx.toLong(),
                     kind = AtomicAttemptItem.KIND_SIMILAR
@@ -143,7 +143,7 @@ fun PhotoAnalysisSheet(
             }
 
             return@mapIndexed AtomicAttemptItem(
-                emoji = "",
+                icon = "",
                 attemptUuid = currentAttempt.uuid,
                 positionInAttempt = idx.toLong(),
                 kind = AtomicAttemptItem.KIND_NONE
@@ -214,7 +214,7 @@ fun PhotoAnalysisSheet(
                         key = { it.positionInAttempt }
                     ) {
                         PhotoItem(
-                            item = it.emoji,
+                            item = it.icon,
                             kind = it.kind,
                         )
                     }

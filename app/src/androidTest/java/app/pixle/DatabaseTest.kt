@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import app.pixle.database.room.PixleDatabase
-import app.pixle.database.room.repository.AttemptRepository
-import app.pixle.database.room.repository.SolutionRepository
+import app.pixle.database.PixleDatabase
+import app.pixle.database.repository.AttemptRepository
+import app.pixle.database.repository.SolutionRepository
 import app.pixle.lib.Utils
 import app.pixle.model.dto.SolutionDto
 import app.pixle.model.entity.attempt.AtomicAttempt

@@ -1,9 +1,9 @@
 package app.pixle.model.dto
 
 import app.pixle.asset.SERVER_ENDPOINT
+import app.pixle.model.entity.solution.AtomicSolution
+import app.pixle.model.entity.solution.AtomicSolutionItem
 import app.pixle.model.entity.solution.Solution
-import app.pixle.model.entity.solution.SolutionItem
-import app.pixle.model.entity.solution.SolutionWithItems
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -30,22 +30,22 @@ data class SolutionDto(
         }
     }
 
-    fun asEntity(): SolutionWithItems {
-        val solutionItems = arrayListOf<SolutionItem>()
+    fun asEntity(): Solution {
+        val solutionItems = arrayListOf<AtomicSolutionItem>()
 
         for (item in this.items) {
             solutionItems.add(
-                SolutionItem(
-                    emoji = item.icon,
+                AtomicSolutionItem(
+                    icon = item.icon,
                     solutionDate = this.day,
                     positionInSolution = solutionItems.size.plus(1L)
                 )
             )
         }
 
-        val solution = Solution(day, difficulty)
+        val solution = AtomicSolution(day, difficulty)
 
-        return SolutionWithItems(solution, solutionItems)
+        return Solution(solution, solutionItems)
     }
 
     fun countItems() = this.items.count()

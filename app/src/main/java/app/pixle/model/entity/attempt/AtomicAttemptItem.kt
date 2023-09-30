@@ -8,7 +8,7 @@ data class AtomicAttemptItem(
     /**
      * The content of this attempt item, which is a singular emoji
      */
-    var emoji : String,
+    var icon : String,
 
     /**
      * The attempt that this attempt item is associated with.

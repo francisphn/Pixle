@@ -33,7 +33,7 @@ fun RowAttempt(
         )
 
         items.forEach {
-            PhotoItem(item = it.emoji, kind = it.kind)
+            PhotoItem(item = it.icon, kind = it.kind)
         }
     }
 }

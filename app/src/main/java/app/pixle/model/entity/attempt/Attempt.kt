@@ -1,6 +1,7 @@
 package app.pixle.model.entity.attempt
 
 import androidx.room.Embedded
+import androidx.room.Ignore
 import androidx.room.Relation
 
 data class Attempt(
@@ -13,7 +14,16 @@ data class Attempt(
     )
     val attemptItems: List<AtomicAttemptItem>,
 ) {
+    @Ignore
     val uuid = attempt.uuid
 
+    @Ignore
     val solutionDate = attempt.solutionDate
+
+    fun stringRepresentation(): String {
+        return attemptItems
+            .sortedBy { it.positionInAttempt }
+            .map { it.icon }
+            .reduce { acc, icon -> acc.plus(icon) }
+    }
 }

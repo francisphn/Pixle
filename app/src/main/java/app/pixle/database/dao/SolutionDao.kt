@@ -1,4 +1,4 @@
-package app.pixle.database.room.dao
+package app.pixle.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -6,17 +6,17 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RewriteQueriesToDropUnusedColumns
 import androidx.room.Transaction
+import app.pixle.model.entity.solution.AtomicSolution
+import app.pixle.model.entity.solution.AtomicSolutionItem
 import app.pixle.model.entity.solution.Solution
-import app.pixle.model.entity.solution.SolutionItem
-import app.pixle.model.entity.solution.SolutionWithItems
 
 @Dao
 interface SolutionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(solution: Solution)
+    suspend fun insert(solution: AtomicSolution)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(solutionItems: List<SolutionItem>)
+    suspend fun insert(solutionItems: List<AtomicSolutionItem>)
 
     @Transaction
     @Query("SELECT * FROM solution" +
@@ -24,5 +24,5 @@ interface SolutionDao {
             " WHERE solution.date = :utcDate" +
             " LIMIT 1")
     @RewriteQueriesToDropUnusedColumns
-    suspend fun getSolutionForDate(utcDate: String): SolutionWithItems?
+    suspend fun getSolutionForDate(utcDate: String): Solution?
 }
