@@ -1,12 +1,7 @@
 package app.pixle.model.api
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.getSystemService
 import app.pixle.database.PixleDatabase
-import app.pixle.model.dto.Queryable
 import app.pixle.model.dto.SolutionItemDto
 import app.pixle.model.entity.item.Item
 

@@ -3,13 +3,13 @@ package app.pixle.model.api
 import android.content.Context
 import android.util.Log
 import app.pixle.database.PixleDatabase
-import app.pixle.model.dto.Queryable
+import app.pixle.lib.Utils
 import app.pixle.model.dto.SolutionDto
 import app.pixle.model.entity.solution.Solution
 
 object SolutionOfToday: Queryable<List<String>, Solution> {
     override val key: List<String>
-        get() = listOf("goal", "today")
+        get() = listOf("goal", Utils.utcDate().toString())
 
     override suspend fun queryFn(keys: List<String>, context: Context): Solution {
         Log.d("", "Querying solution of the day")
