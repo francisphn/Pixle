@@ -40,9 +40,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import app.pixle.model.api.Goal
 import app.pixle.model.api.Library
+import app.pixle.model.entity.attempt.AtomicAttempt
+import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.model.entity.attempt.Attempt
-import app.pixle.model.entity.attempt.AttemptItem
-import app.pixle.model.entity.attempt.AttemptWithItems
 import app.pixle.ui.composable.PhotoItem
 import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.state.ObjectDetectionModel
@@ -74,7 +74,7 @@ fun PhotoAnalysisSheet(
     val (lib, _) = rememberQueryable(Library)
     val objectDetector = rememberObjectDetector(model = ObjectDetectionModel.EDL1)
 
-    val (attempt, setAttempt) = remember { mutableStateOf<AttemptWithItems?>(null) }
+    val (attempt, setAttempt) = remember { mutableStateOf<Attempt?>(null) }
 
 
     LaunchedEffect(objectDetector, bitmap, lib, goal, attempt) {
@@ -83,7 +83,7 @@ fun PhotoAnalysisSheet(
         val detector = objectDetector ?: return@LaunchedEffect
         val image = bitmap ?: return@LaunchedEffect
         val knowledgeBase = lib ?: return@LaunchedEffect
-        val items = goal?.items ?: return@LaunchedEffect
+        val items = goal?.solutionItems ?: return@LaunchedEffect
 
         val predictions = detector.detect(TensorImage.fromBitmap(image))
         val givens = predictions
@@ -94,19 +94,19 @@ fun PhotoAnalysisSheet(
             }
             .toMutableList()
 
-        val currentAttempt = Attempt(
+        val currentAttempt = AtomicAttempt(
             uuid = UUID.randomUUID().toString(),
-            solutionDate = goal.day,
+            solutionDate = goal.solution.date,
         )
 
         val exacts = items.map { item ->
             val index = givens.indexOfFirst { given ->
-                given.any { each -> each.name == item.name }
+                given.any { each -> each.name == item.emoji }
             }
             if (index == -1) return@map null
             val chosen = givens[index]
             givens.removeAt(index)
-            return@map chosen.find { it.name == item.name }
+            return@map chosen.find { it.name == item.emoji }
         }
 
         val similars = items.map { item ->
@@ -123,34 +123,34 @@ fun PhotoAnalysisSheet(
             val exact = exacts[idx]
 
             if (exact != null) {
-                return@mapIndexed AttemptItem(
+                return@mapIndexed AtomicAttemptItem(
                     emoji = exact.icon,
                     attemptUuid = currentAttempt.uuid,
                     positionInAttempt = idx.toLong(),
-                    kind = AttemptItem.KIND_EXACT
+                    kind = AtomicAttemptItem.KIND_EXACT
                 )
             }
 
             val similar = similars[idx]
 
             if (similar != null) {
-                return@mapIndexed AttemptItem(
+                return@mapIndexed AtomicAttemptItem(
                     emoji = similar.icon,
                     attemptUuid = currentAttempt.uuid,
                     positionInAttempt = idx.toLong(),
-                    kind = AttemptItem.KIND_SIMILAR
+                    kind = AtomicAttemptItem.KIND_SIMILAR
                 )
             }
 
-            return@mapIndexed AttemptItem(
+            return@mapIndexed AtomicAttemptItem(
                 emoji = "",
                 attemptUuid = currentAttempt.uuid,
                 positionInAttempt = idx.toLong(),
-                kind = AttemptItem.KIND_NONE
+                kind = AtomicAttemptItem.KIND_NONE
             )
         }
 
-        setAttempt(AttemptWithItems(currentAttempt, result))
+        setAttempt(Attempt(currentAttempt, result))
     }
 
     if (bitmap != null) {
@@ -209,7 +209,7 @@ fun PhotoAnalysisSheet(
                     ),
                 ) {
                     items(
-                        items = attempt?.attemptItems?.filter { it.kind != AttemptItem.KIND_NONE }
+                        items = attempt?.attemptItems?.filter { it.kind != AtomicAttemptItem.KIND_NONE }
                             ?: listOf(),
                         key = { it.positionInAttempt }
                     ) {

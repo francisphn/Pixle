@@ -6,13 +6,12 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.Assert.*
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class UnitTest {
     @Test
     fun getSolutionOfTheDay_isCorrect() = runBlocking {
-        val solution = SolutionDto.getAnswerOfTheDay().asEntity()
+        val solution = SolutionDto.ofTheDay().asEntity()
 
         assertNotNull(solution)
 

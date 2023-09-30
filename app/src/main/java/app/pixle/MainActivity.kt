@@ -34,7 +34,6 @@ import app.pixle.ui.tabs.MainScreen
 import app.pixle.ui.tabs.ProfileScreen
 import app.pixle.ui.theme.PixleTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {

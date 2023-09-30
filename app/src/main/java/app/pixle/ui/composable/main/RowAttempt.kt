@@ -12,12 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import app.pixle.model.entity.attempt.AttemptItem
+import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.ui.composable.PhotoItem
 
 @Composable
 fun RowAttempt(
-    items: List<AttemptItem>
+    items: List<AtomicAttemptItem>
 ) {
     Row(
         modifier = Modifier.offset(x = (-4).dp),

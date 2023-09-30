@@ -18,7 +18,7 @@ data class SolutionDto(
     val day: String,
 ) {
     companion object {
-        suspend fun getAnswerOfTheDay(): SolutionDto {
+        suspend fun ofTheDay(): SolutionDto {
             val client = HttpClient {
                 install(ContentNegotiation) {
                     json()

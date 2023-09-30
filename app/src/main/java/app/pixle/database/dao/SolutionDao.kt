@@ -9,9 +9,7 @@ import androidx.room.Transaction
 import app.pixle.model.entity.solution.Solution
 import app.pixle.model.entity.solution.SolutionItem
 import app.pixle.model.entity.solution.SolutionWithItems
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 @Dao
 interface SolutionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -23,11 +21,8 @@ interface SolutionDao {
     @Transaction
     @Query("SELECT * FROM solution" +
             " JOIN solutionItem ON solutionItem.solutionDate = solution.date" +
-            " ORDER BY date desc LIMIT 1")
+            " WHERE solution.date = :utcDate" +
+            " LIMIT 1")
     @RewriteQueriesToDropUnusedColumns
-    suspend fun getLatestSolutionWithItems(): SolutionWithItems?
-
-    @Query("SELECT * FROM solution ORDER by date desc LIMIT 1")
-    @RewriteQueriesToDropUnusedColumns
-    suspend fun getLatest(): Solution?
+    suspend fun getSolutionForDate(utcDate: String): SolutionWithItems?
 }
