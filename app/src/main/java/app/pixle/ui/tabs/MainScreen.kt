@@ -19,18 +19,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.R
+import app.pixle.database.PixleDatabase
 import app.pixle.model.api.SolutionOfToday
-import app.pixle.model.entity.attempt.AtomicAttemptItem
+import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.main.MissingRowAttempt
 import app.pixle.ui.composable.main.NoWinningPhoto
@@ -39,7 +46,8 @@ import app.pixle.ui.modifier.leftBorder
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
-import app.pixle.ui.theme.rarityColor
+import app.pixle.ui.theme.rarityColour
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -47,15 +55,29 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
+    val context = LocalContext.current
+
+    val scope = rememberCoroutineScope()
+
+    val attemptRepository = PixleDatabase
+        .getInstance(context)
+        .attemptRepository()
+
     val (goal, _) = rememberQueryable(SolutionOfToday) {
         onError = { err, _, _ ->
             Log.d("pixle:main", "got an error: $err")
         }
     }
-    val difficultyColor = remember(goal) { goal?.difficulty?.let { rarityColor(it) } }
-    val attempts = remember(goal) { listOf<List<AtomicAttemptItem>>() }
+    val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
+    var attempts by remember { mutableStateOf(listOf<Attempt>()) }
 
-    if (goal == null || difficultyColor == null) {
+    LaunchedEffect(Unit) {
+        attempts = attemptRepository.getAttemptsOfToday()
+
+        return@LaunchedEffect
+    }
+
+    if (goal == null || difficultyColour == null) {
         LoadingScreen()
         return
     }
@@ -99,7 +121,7 @@ fun MainScreen() {
                     .padding(bottom = 20.dp)
                     .fillMaxWidth()
                     .border(
-                        width = 1.dp, color = difficultyColor, shape = RoundedCornerShape(12.dp)
+                        width = 1.dp, color = difficultyColour, shape = RoundedCornerShape(12.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 20.dp),
             ) {
@@ -121,7 +143,7 @@ fun MainScreen() {
                             modifier = Modifier.size(18.dp),
                             painter = painterResource(R.drawable.bling),
                             contentDescription = "bling",
-                            colorFilter = ColorFilter.tint(difficultyColor)
+                            colorFilter = ColorFilter.tint(difficultyColour)
                         )
                     }
 
@@ -144,7 +166,7 @@ fun MainScreen() {
                         Text(
                             text = "${
                                 LocalDate.now().month.getDisplayName(
-                                    TextStyle.SHORT, Locale.US
+                                    TextStyle.SHORT, Locale.UK
                                 )
                             } ${LocalDate.now().year}",
                             fontFamily = Manrope,
