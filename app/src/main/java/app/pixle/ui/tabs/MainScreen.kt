@@ -232,15 +232,18 @@ fun MainScreen() {
                             ),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        attempts.forEach {
-                            RowAttempt(
-                                items = it
-                            )
-                        }
+                        attempts
+                            .takeLast(attempts.size.coerceAtMost(6))
+                            .forEach {
+                                RowAttempt(
+                                    items = it
+                                )
+                            }
 
-                        (0 until (6 - attempts.size)).forEach { _ ->
-                            MissingRowAttempt(size = goal.solutionItems.size)
-                        }
+                        (0 until (6 - attempts.size).coerceAtLeast(0))
+                            .forEach { _ ->
+                                MissingRowAttempt(size = goal.solutionItems.size)
+                            }
                     }
                 }
 
