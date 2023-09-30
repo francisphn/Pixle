@@ -1,48 +1,114 @@
 package app.pixle.ui.tabs
 
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.FileUpload
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import app.pixle.ui.theme.Manrope
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.compose.ui.unit.dp
+import app.pixle.ui.composable.NavigationBuilder
+import app.pixle.ui.composable.RandomTextmojiMessage
+import app.pixle.ui.composable.profile.About
+import app.pixle.ui.modifier.opacity
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen() {
-    val systemUiController = rememberSystemUiController()
-
-    val defaultNavBarColour = MaterialTheme.colorScheme.surfaceVariant;
-    val defaultStatusBarColour = MaterialTheme.colorScheme.background;
-    val useDarkTheme = isSystemInDarkTheme()
-
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = defaultStatusBarColour,
-            darkIcons = !useDarkTheme,
-        )
-
-        systemUiController.setNavigationBarColor(
-            color = defaultNavBarColour,
-            darkIcons = false
-        )
-    }
-
+fun ProfileScreen(navBuilder: NavigationBuilder) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start
     ) {
-        Text(
-            text = "Profile",
-            fontFamily = Manrope
+        TopAppBar(
+            title = {},
+            navigationIcon = {
+                IconButton(
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                        .background(
+                            MaterialTheme.colorScheme.onBackground.opacity(0.8f),
+                            CircleShape
+                        )
+                        .size(30.dp),
+                    onClick = navBuilder.navigateBack,
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "close",
+                        tint = MaterialTheme.colorScheme.background,
+                        modifier = Modifier
+                            .size(18.dp)
+                    )
+                }
+            },
+            actions = {
+                IconButton(
+                    modifier = Modifier
+                        .background(
+                            MaterialTheme.colorScheme.onBackground.opacity(0.8f),
+                            CircleShape
+                        )
+                        .size(30.dp),
+                    onClick = {
+                    },
+                ) {
+                    Icon(
+                        Icons.Filled.FileUpload,
+                        contentDescription = "search",
+                        tint = MaterialTheme.colorScheme.background,
+                        modifier = Modifier
+                            .size(18.dp)
+                    )
+                }
+                IconButton(
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                        .background(
+                            MaterialTheme.colorScheme.onBackground.opacity(0.8f),
+                            CircleShape
+                        )
+                        .size(30.dp),
+                    onClick = {
+                    },
+                ) {
+                    Icon(
+                        Icons.Filled.Settings,
+                        contentDescription = "settings",
+                        tint = MaterialTheme.colorScheme.background,
+                        modifier = Modifier
+                            .size(18.dp)
+                    )
+                }
+            },
+            modifier = Modifier.padding(top = 10.dp)
         )
+
+        About()
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+        ) {
+            RandomTextmojiMessage(
+                message = "We haven't implemented this yet."
+            )
+        }
     }
 }

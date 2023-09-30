@@ -112,7 +112,7 @@ fun MainScreen() {
                     Box(
                         modifier = Modifier
                             .background(
-                                MaterialTheme.colorScheme.onBackground,
+                                MaterialTheme.colorScheme.surfaceVariant,
                                 shape = CircleShape
                             )
                             .padding(8.dp)
