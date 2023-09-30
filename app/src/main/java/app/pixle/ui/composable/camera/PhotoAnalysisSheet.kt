@@ -1,6 +1,7 @@
 package app.pixle.ui.composable.camera
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -40,8 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.model.api.Library
-import app.pixle.model.entity.attempt.AtomicAttempt
 import app.pixle.model.entity.attempt.AtomicAttemptItem
+import app.pixle.model.entity.attempt.AtomicAttempt
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.PhotoItem
 import app.pixle.ui.composable.PolaroidFrame
@@ -101,13 +102,15 @@ fun PhotoAnalysisSheet(
 
         val exacts = items.map { item ->
             val index = givens.indexOfFirst { given ->
-                given.any { each -> each.name == item.icon }
+                given.any { each -> each.name == item.name }
             }
             if (index == -1) return@map null
             val chosen = givens[index]
             givens.removeAt(index)
-            return@map chosen.find { it.name == item.icon }
+            return@map chosen.find { it.name == item.name }
         }
+
+        Log.d("pixle:analyse", "exacts: ${exacts.map { it?.icon }.joinToString(", ")}")
 
         val similars = items.map { item ->
             val index = givens.indexOfFirst { given ->
@@ -118,6 +121,8 @@ fun PhotoAnalysisSheet(
             givens.removeAt(index)
             return@map chosen.find { it.category == item.category }
         }
+
+        Log.d("pixle:analyse", "similar: ${similars.map { it?.icon }.joinToString(", ")}")
 
         val result = items.mapIndexed { idx, _ ->
             val exact = exacts[idx]
@@ -142,6 +147,17 @@ fun PhotoAnalysisSheet(
                 )
             }
 
+            val unmatched = givens.removeFirstOrNull()?.firstOrNull()
+
+            if (unmatched != null) {
+                return@mapIndexed AtomicAttemptItem(
+                    icon = unmatched.icon,
+                    attemptUuid = currentAttempt.uuid,
+                    positionInAttempt = idx.toLong(),
+                    kind = AtomicAttemptItem.KIND_NONE
+                )
+            }
+
             return@mapIndexed AtomicAttemptItem(
                 icon = "",
                 attemptUuid = currentAttempt.uuid,
@@ -151,6 +167,7 @@ fun PhotoAnalysisSheet(
         }
 
         setAttempt(Attempt(currentAttempt, result))
+        Log.d("pixle:analyse", "result: ${result.map { it.emoji }.joinToString(", ")}")
     }
 
     if (bitmap != null) {
@@ -209,7 +226,7 @@ fun PhotoAnalysisSheet(
                     ),
                 ) {
                     items(
-                        items = attempt?.attemptItems?.filter { it.kind != AtomicAttemptItem.KIND_NONE }
+                        items = attempt?.attemptItems
                             ?: listOf(),
                         key = { it.positionInAttempt }
                     ) {
