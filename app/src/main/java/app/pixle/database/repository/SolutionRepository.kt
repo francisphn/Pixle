@@ -14,8 +14,8 @@ class SolutionRepository(private val solutionDao: SolutionDao) {
         launch (Dispatchers.IO) { solutionDao.insert(solutionWithItems.solutionItems) }
     }
 
-    suspend fun getToday() : Solution {
+    suspend fun getToday(): Solution? {
         return solutionDao.getSolutionForDate(Utils.utcDate().toString())
-            ?: SolutionDto.ofTheDay().asEntity().also { this.add(it) }
+
     }
 }

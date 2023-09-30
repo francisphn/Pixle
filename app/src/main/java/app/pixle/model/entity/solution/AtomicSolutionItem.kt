@@ -2,7 +2,7 @@ package app.pixle.model.entity.solution
 
 import androidx.room.Entity
 
-@Entity(primaryKeys = ["solutionDate", "positionInSolution"])
+@Entity(primaryKeys = ["solutionDate", "positionInSolution", "category"])
 data class AtomicSolutionItem(
     /**
      * The content of this solution item, which is a singular emoji
@@ -19,5 +19,7 @@ data class AtomicSolutionItem(
      * The position of this emoji in the solution
      */
     var positionInSolution: Long,
+
+    var category: String
 ) {
 }

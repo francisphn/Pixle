@@ -10,5 +10,5 @@ data class Item(
 
     val category: String,
 
-    val difficulty: Int
+    val difficulty: Long
 )

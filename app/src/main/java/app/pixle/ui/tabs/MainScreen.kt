@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.R
-import app.pixle.model.api.Goal
+import app.pixle.model.api.SolutionOfToday
 import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.main.MissingRowAttempt
@@ -47,7 +47,7 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val (goal, _) = rememberQueryable(Goal) {
+    val (goal, _) = rememberQueryable(SolutionOfToday) {
         onError = { err, _, _ ->
             Log.d("pixle:main", "got an error: $err")
         }
@@ -157,7 +157,7 @@ fun MainScreen() {
 
                 // Info
                 Text(
-                    text = "${goal.items.size} items • ${goal.difficulty} difficulty",
+                    text = "${goal.solutionItems.size} items • ${goal.difficulty} difficulty",
                     fontFamily = Manrope,
                     fontSize = 16.sp,
                     lineHeight = 24.sp,
@@ -190,7 +190,7 @@ fun MainScreen() {
                         }
 
                         (0 until (6 - attempts.size)).forEach { _ ->
-                            MissingRowAttempt(size = goal.items.size)
+                            MissingRowAttempt(size = goal.solutionItems.size)
                         }
                     }
                 }

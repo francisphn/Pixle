@@ -19,7 +19,7 @@ data class Solution(
     @Ignore
     val difficulty = solution.difficulty
 
-    fun stringRepresentation(): String {
+    override fun toString(): String {
         return solutionItems
             .sortedBy { it.positionInSolution }
             .map { it.icon }

@@ -38,7 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import app.pixle.model.api.Goal
+import app.pixle.model.api.SolutionOfToday
 import app.pixle.model.api.Library
 import app.pixle.model.entity.attempt.AtomicAttempt
 import app.pixle.model.entity.attempt.AtomicAttemptItem
@@ -64,13 +64,14 @@ fun PhotoAnalysisSheet(
     val scroll = rememberScrollState()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val rotation = remember(bitmap) { if (Math.random() < 0.5f) 1.5f else -1.5f }
+
     val animatedRotation = animateFloatAsState(
         targetValue = bitmap?.let { rotation } ?: 0f,
         label = "rotation",
         animationSpec = tween(300, 100)
     )
 
-    val (goal, _) = rememberQueryable(Goal)
+    val (goal, _) = rememberQueryable(SolutionOfToday)
     val (lib, _) = rememberQueryable(Library)
     val objectDetector = rememberObjectDetector(model = ObjectDetectionModel.EDL1)
 
@@ -79,7 +80,6 @@ fun PhotoAnalysisSheet(
 
     LaunchedEffect(objectDetector, bitmap, lib, goal, attempt) {
         if (attempt != null) return@LaunchedEffect
-
         val detector = objectDetector ?: return@LaunchedEffect
         val image = bitmap ?: return@LaunchedEffect
         val knowledgeBase = lib ?: return@LaunchedEffect

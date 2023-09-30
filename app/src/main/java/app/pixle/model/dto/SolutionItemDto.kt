@@ -1,6 +1,7 @@
 package app.pixle.model.dto
 
 import app.pixle.asset.SERVER_ENDPOINT
+import app.pixle.model.entity.item.Item
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -26,7 +27,10 @@ data class SolutionItemDto(
             }
 
             val response = client.get("$SERVER_ENDPOINT/lib")
+
             return response.body()
         }
     }
+
+    fun asEntity() = Item(name, icon, category, difficulty)
 }

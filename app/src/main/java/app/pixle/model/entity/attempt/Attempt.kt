@@ -20,7 +20,7 @@ data class Attempt(
     @Ignore
     val solutionDate = attempt.solutionDate
 
-    fun stringRepresentation(): String {
+    override fun toString(): String {
         return attemptItems
             .sortedBy { it.positionInAttempt }
             .map { it.icon }
