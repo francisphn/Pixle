@@ -15,11 +15,13 @@ class AttemptRepository(private val attemptDao: AttemptDao) {
         launch (Dispatchers.IO) { attemptDao.insert(attempt.attemptItems) }
     }
 
-    suspend fun getTodayAttemptsWithItems(): Set<Attempt> {
-        return this.getAttemptsWithItemsForUtcDate(Utils.utcDate())
+    suspend fun getAttemptsOfToday(): List<Attempt> {
+        return this.getAttemptsOfUtcDate(Utils.utcDate())
     }
 
-    private suspend fun getAttemptsWithItemsForUtcDate(date: LocalDate) : Set<Attempt> {
-        return attemptDao.getAttemptsWithItems(date.toString()).stream().collect(Collectors.toSet())
+    private suspend fun getAttemptsOfUtcDate(date: LocalDate) : List<Attempt> {
+        return attemptDao
+            .getAttemptsWithItems(date.toString())
+            .distinct()
     }
 }
