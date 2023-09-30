@@ -16,6 +16,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.LiveHelp
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.LiveHelp
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.LightbulbCircle
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +31,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.R
 import app.pixle.database.PixleDatabase
+import app.pixle.lib.Utils
+import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.LoadingScreen
@@ -47,7 +56,6 @@ import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import app.pixle.ui.theme.rarityColour
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -55,29 +63,14 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val context = LocalContext.current
+    val (goal, _) = rememberQueryable(SolutionOfToday)
+    val (attempts, _) = rememberQueryable(AttemptsOfToday)
 
-    val scope = rememberCoroutineScope()
-
-    val attemptRepository = PixleDatabase
-        .getInstance(context)
-        .attemptRepository()
-
-    val (goal, _) = rememberQueryable(SolutionOfToday) {
-        onError = { err, _, _ ->
-            Log.d("pixle:main", "got an error: $err")
-        }
-    }
+    val today = remember(goal) { Utils.utcDate() }
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
-    var attempts by remember { mutableStateOf(listOf<Attempt>()) }
 
-    LaunchedEffect(Unit) {
-        attempts = attemptRepository.getAttemptsOfToday()
 
-        return@LaunchedEffect
-    }
-
-    if (goal == null || difficultyColour == null) {
+    if (goal == null || attempts == null || difficultyColour == null) {
         LoadingScreen()
         return
     }
@@ -97,6 +90,7 @@ fun MainScreen() {
                     .padding(top = 32.dp, bottom = 28.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
+                // TODO: Show user's name
                 Text(
                     text = "Hi, player",
                     fontFamily = Manrope,
@@ -159,16 +153,16 @@ fun MainScreen() {
 
                     Column {
                         Text(
-                            text = "${LocalDate.now().dayOfMonth}",
+                            text = "${if (today.dayOfMonth < 10) "0" else ""}${today.dayOfMonth}",
                             fontFamily = Manrope,
                             fontWeight = FontWeight.SemiBold,
                         )
                         Text(
                             text = "${
-                                LocalDate.now().month.getDisplayName(
+                                today.month.getDisplayName(
                                     TextStyle.SHORT, Locale.UK
                                 )
-                            } ${LocalDate.now().year}",
+                            } ${today.year}",
                             fontFamily = Manrope,
                             fontSize = 10.sp,
                             lineHeight = 10.sp,
@@ -178,16 +172,49 @@ fun MainScreen() {
                 }
 
                 // Info
-                Text(
-                    text = "${goal.solutionItems.size} items • ${goal.difficulty} difficulty",
-                    fontFamily = Manrope,
-                    fontSize = 16.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight.Medium,
+                Row(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(top = 16.dp)
                         .padding(horizontal = 8.dp),
-                )
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "${goal.solutionItems.size} items • ${goal.difficulty} difficulty",
+                        fontFamily = Manrope,
+                        fontSize = 16.sp,
+                        lineHeight = 24.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+
+                    // Hint
+                    // TODO: atm only shows if there are more than 3 attempts, should be smarter
+                    if (attempts.size > 3) {
+                        Text(
+                            text = " •",
+                            fontFamily = Manrope,
+                            fontSize = 16.sp,
+                            lineHeight = 24.sp,
+                            fontWeight = FontWeight.Medium,
+                        )
+
+                        IconButton(
+                            modifier = Modifier
+                                .size(21.dp),
+                            onClick = {
+                            },
+                        ) {
+                            Icon(
+                                Icons.Filled.Lightbulb,
+                                contentDescription = "hint",
+                                tint = difficultyColour,
+                                modifier = Modifier
+                                    .size(14.dp)
+                            )
+                        }
+                    }
+                }
+
 
                 // Attempts
                 Column(
@@ -218,6 +245,7 @@ fun MainScreen() {
                 }
 
                 // No winning photo
+                // TODO: Show winning photo
                 NoWinningPhoto()
             }
         }
