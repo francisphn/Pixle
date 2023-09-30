@@ -1,6 +1,7 @@
 package app.pixle.model.dto
 
 import app.pixle.asset.SERVER_ENDPOINT
+import app.pixle.lib.Utils
 import app.pixle.model.entity.item.Item
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -20,13 +21,9 @@ data class SolutionItemDto(
 ) {
     companion object {
         suspend fun getLibraryOfItems(): List<SolutionItemDto> {
-            val client = HttpClient {
-                install(ContentNegotiation) {
-                    json()
-                }
-            }
-
-            val response = client.get("$SERVER_ENDPOINT/lib")
+            val response = Utils
+                .getHttpClient()
+                .get("$SERVER_ENDPOINT/lib")
 
             return response.body()
         }

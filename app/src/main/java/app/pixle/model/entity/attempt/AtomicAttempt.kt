@@ -16,5 +16,4 @@ data class AtomicAttempt(
      * this is the foreign key to link this attempt to a solution
      */
     var solutionDate: String,
-
 )

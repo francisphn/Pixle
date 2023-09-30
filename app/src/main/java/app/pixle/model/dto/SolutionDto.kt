@@ -1,6 +1,7 @@
 package app.pixle.model.dto
 
 import app.pixle.asset.SERVER_ENDPOINT
+import app.pixle.lib.Utils
 import app.pixle.model.entity.solution.AtomicSolution
 import app.pixle.model.entity.solution.AtomicSolutionItem
 import app.pixle.model.entity.solution.Solution
@@ -19,13 +20,9 @@ data class SolutionDto(
 ) {
     companion object {
         suspend fun ofTheDay(): SolutionDto {
-            val client = HttpClient {
-                install(ContentNegotiation) {
-                    json()
-                }
-            }
-
-            val response = client.get("$SERVER_ENDPOINT/oftheday")
+            val response = Utils
+                .getHttpClient()
+                .get("$SERVER_ENDPOINT/oftheday")
             return response.body()
         }
     }
