@@ -1,6 +1,7 @@
 package app.pixle.ui.composable.camera
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -109,6 +110,8 @@ fun PhotoAnalysisSheet(
             return@map chosen.find { it.name == item.name }
         }
 
+        Log.d("pixle:analyse", "exacts: ${exacts.map { it?.icon }.joinToString(", ")}")
+
         val similars = items.map { item ->
             val index = givens.indexOfFirst { given ->
                 given.any { each -> each.category == item.category }
@@ -118,6 +121,8 @@ fun PhotoAnalysisSheet(
             givens.removeAt(index)
             return@map chosen.find { it.category == item.category }
         }
+
+        Log.d("pixle:analyse", "similar: ${similars.map { it?.icon }.joinToString(", ")}")
 
         val result = items.mapIndexed { idx, _ ->
             val exact = exacts[idx]
@@ -142,6 +147,17 @@ fun PhotoAnalysisSheet(
                 )
             }
 
+            val unmatched = givens.removeFirstOrNull()?.firstOrNull()
+
+            if (unmatched != null) {
+                return@mapIndexed AttemptItem(
+                    emoji = unmatched.icon,
+                    attemptUuid = currentAttempt.uuid,
+                    positionInAttempt = idx.toLong(),
+                    kind = AttemptItem.KIND_NONE
+                )
+            }
+
             return@mapIndexed AttemptItem(
                 emoji = "",
                 attemptUuid = currentAttempt.uuid,
@@ -149,6 +165,8 @@ fun PhotoAnalysisSheet(
                 kind = AttemptItem.KIND_NONE
             )
         }
+
+        Log.d("pixle:analyse", "result: ${result.map { it.emoji }.joinToString(", ")}")
 
         setAttempt(AttemptWithItems(currentAttempt, result))
     }
@@ -209,7 +227,7 @@ fun PhotoAnalysisSheet(
                     ),
                 ) {
                     items(
-                        items = attempt?.attemptItems?.filter { it.kind != AttemptItem.KIND_NONE }
+                        items = attempt?.attemptItems
                             ?: listOf(),
                         key = { it.positionInAttempt }
                     ) {
