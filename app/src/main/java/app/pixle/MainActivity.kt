@@ -161,13 +161,13 @@ fun App() {
                         animationSpec = tween(500)
                     )
                 }) {
-                    ProfileScreen()
+                    ProfileScreen(navBuilder)
                 }
             }
         }
 
         if (navBackStackEntry?.destination?.route != CAMERA_ROUTE) {
-            BottomNavigation(navBuilder)
+            BottomNavigation(navBuilder, navBackStackEntry)
         }
     }
 }

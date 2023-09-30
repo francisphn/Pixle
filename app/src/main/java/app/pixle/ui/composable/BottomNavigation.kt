@@ -31,17 +31,24 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import androidx.navigation.NavBackStackEntry
+import app.pixle.asset.CAMERA_ROUTE
+import app.pixle.asset.MAIN_ROUTE
+import app.pixle.asset.PROFILE_ROUTE
 
 @Composable
 fun BottomNavigation(
-    navBuilder: NavigationBuilder
+    navBuilder: NavigationBuilder, backStackEntry: NavBackStackEntry?
 ) {
 
     val context = LocalContext.current
-    var cameraPermissionState by remember { mutableStateOf(ActivityCompat.checkSelfPermission(
-        context,
-        Manifest.permission.CAMERA
-    ) == PackageManager.PERMISSION_GRANTED) }
+    var cameraPermissionState by remember {
+        mutableStateOf(
+            ActivityCompat.checkSelfPermission(
+                context, Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
 
     val permissionsLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -51,7 +58,11 @@ fun BottomNavigation(
             navBuilder.navigateToCamera()
         } else {
             cameraPermissionState = false
-            Toast.makeText(context, "Pixle does not have permissions to access camera", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context,
+                "Pixle does not have permissions to access camera",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -59,17 +70,17 @@ fun BottomNavigation(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(bottom = 12.dp, top = 8.dp)
-        ,
+            .padding(bottom = 12.dp, top = 8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Main screen
-        IconButton(onClick = navBuilder.navigateToMain) {
+        IconButton(
+            onClick = navBuilder.navigateToMain,
+            enabled = backStackEntry?.destination?.route != MAIN_ROUTE
+        ) {
             Icon(
-                Icons.Filled.Home, contentDescription = "Main",
-                modifier = Modifier
-                    .size(32.dp)
+                Icons.Filled.Home, contentDescription = "Main", modifier = Modifier.size(32.dp)
             )
         }
 
@@ -85,21 +96,23 @@ fun BottomNavigation(
                 } else {
                     permissionsLauncher.launch(Manifest.permission.CAMERA)
                 }
-            }
+            },
+            enabled = backStackEntry?.destination?.route != CAMERA_ROUTE
         ) {
             Icon(
-                Icons.Filled.Camera, contentDescription = "Camera",
-                modifier = Modifier
-                    .size(32.dp),
+                Icons.Filled.Camera,
+                contentDescription = "Camera",
+                modifier = Modifier.size(32.dp),
                 tint = MaterialTheme.colorScheme.background
             )
         }
 
-        IconButton(onClick = navBuilder.navigateToProfile ) {
+        IconButton(
+            onClick = navBuilder.navigateToProfile,
+            enabled = backStackEntry?.destination?.route != PROFILE_ROUTE
+        ) {
             Icon(
-                Icons.Filled.Face, contentDescription = "Profile",
-                modifier = Modifier
-                    .size(32.dp)
+                Icons.Filled.Face, contentDescription = "Profile", modifier = Modifier.size(32.dp)
             )
         }
     }
