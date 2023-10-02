@@ -29,9 +29,7 @@ object ConfirmAttempt: Mutable<List<String>, Pair<Attempt, Bitmap?>, Unit> {
     override suspend fun mutationFn(
         keys: List<String>, args: Pair<Attempt, Bitmap?>, context: Context) {
 
-        args.takeIf {
-            it.first.attemptItems.all { item -> item.kind == AtomicAttemptItem.KIND_EXACT }
-        }?.let {
+        args.takeIf { it.first.isWinningAttempt }?.let {
             saveWinningPhoto(it.first, it.second!!, context).collect { uri ->
                 it.first.winningPhoto = uri
                 saveAttempt(it.first, context)
