@@ -35,12 +35,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import app.pixle.database.PixleDatabase
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.model.api.Library
 import app.pixle.model.entity.attempt.AtomicAttemptItem
@@ -53,7 +51,6 @@ import app.pixle.ui.state.rememberObjectDetector
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import coil.compose.AsyncImage
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.tensorflow.lite.support.image.TensorImage
 import java.util.UUID
@@ -67,8 +64,6 @@ fun PhotoAnalysisSheet(
 ) {
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
-
-
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val rotation = remember(bitmap) { if (Math.random() < 0.5f) 1.5f else -1.5f }
@@ -103,8 +98,9 @@ fun PhotoAnalysisSheet(
             .toMutableList()
 
         val currentAttempt = AtomicAttempt(
-            uuid = UUID.randomUUID().toString(),
+            uuid = UUID.randomUUID(),
             solutionDate = goal.solution.date,
+            winningPhoto = null
         )
 
         val exacts = items.map { item ->

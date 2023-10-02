@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import app.pixle.model.entity.attempt.AtomicAttempt
 import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.model.entity.attempt.Attempt
+import java.time.LocalDate
 
 @Dao
 interface AttemptDao {
@@ -23,7 +24,7 @@ interface AttemptDao {
             " JOIN atomicAttemptItem on atomicAttemptItem.attemptUuid = atomicAttempt.uuid" +
             " WHERE atomicAttempt.solutionDate = :utcIsoDate")
     @RewriteQueriesToDropUnusedColumns
-    suspend fun getAttemptsWithItems(utcIsoDate: String) : List<Attempt>
+    suspend fun getAttemptsWithItems(utcIsoDate: LocalDate) : List<Attempt>
 
     @Transaction
     @Query("SELECT * FROM atomicAttempt" +

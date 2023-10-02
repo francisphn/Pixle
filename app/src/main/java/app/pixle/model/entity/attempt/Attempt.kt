@@ -1,8 +1,11 @@
 package app.pixle.model.entity.attempt
 
+import android.net.Uri
 import androidx.room.Embedded
 import androidx.room.Ignore
 import androidx.room.Relation
+import java.time.LocalDate
+import java.util.UUID
 
 data class Attempt(
     @Embedded
@@ -14,11 +17,18 @@ data class Attempt(
     )
     val attemptItems: List<AtomicAttemptItem>,
 ) {
-    @Ignore
-    val uuid = attempt.uuid
+    val uuid: UUID
+        get() = attempt.uuid
 
-    @Ignore
-    val solutionDate = attempt.solutionDate
+    val solutionDate: LocalDate
+        get() = attempt.solutionDate
+
+    var winningPhoto: Uri?
+        get() = attempt.winningPhoto
+        set(value) { attempt.winningPhoto = value }
+
+    val isWinningAttempt: Boolean
+        get() = attemptItems.all { it.kind == AtomicAttemptItem.KIND_EXACT }
 
     override fun toString(): String {
         return attemptItems

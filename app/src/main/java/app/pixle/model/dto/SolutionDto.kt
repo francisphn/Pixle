@@ -1,6 +1,8 @@
 package app.pixle.model.dto
 
+import android.util.Log
 import app.pixle.asset.SERVER_ENDPOINT
+import app.pixle.lib.Utils
 import app.pixle.model.entity.solution.AtomicSolution
 import app.pixle.model.entity.solution.AtomicSolutionItem
 import app.pixle.model.entity.solution.Solution
@@ -10,6 +12,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 @Serializable
 data class SolutionDto(
@@ -18,38 +21,27 @@ data class SolutionDto(
     val day: String,
 ) {
     companion object {
-        suspend fun ofTheDay(): SolutionDto {
-            val client = HttpClient {
-                install(ContentNegotiation) {
-                    json()
-                }
-            }
+        suspend fun ofTheDay() = Utils
+            .getHttpClient()
+            .get("$SERVER_ENDPOINT/oftheday")
+            .body<SolutionDto>()
+            .also { Log.d("solution", "Getting solution for today, ${Utils.utcDate()}, from remote") }
 
-            val response = client.get("$SERVER_ENDPOINT/oftheday")
-            return response.body()
-        }
     }
 
     fun asEntity(): Solution {
-        val solutionItems = arrayListOf<AtomicSolutionItem>()
-
-        for (item in this.items) {
-            solutionItems.add(
-                AtomicSolutionItem(
-                    icon = item.icon,
-                    solutionDate = this.day,
-                    positionInSolution = solutionItems.size.plus(1L),
-                    category = item.category,
-                    name = item.name
-                )
+        val solutionItems = this.items.mapIndexed { index, item ->
+            AtomicSolutionItem(
+                icon = "📚", // item.icon
+                solutionDate = LocalDate.parse(this.day),
+                positionInSolution = index.plus(1L),
+                category = item.category,
+                name = "book" // item.name
             )
         }
 
-        val solution = AtomicSolution(day, difficulty)
-
-        return Solution(solution, solutionItems)
+        return Solution(AtomicSolution(LocalDate.parse(this.day), difficulty), solutionItems)
+            .also { Log.d("solution", it.toString()) }
     }
-
-    fun countItems() = this.items.count()
 }
 

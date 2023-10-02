@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import app.pixle.model.entity.solution.AtomicSolution
 import app.pixle.model.entity.solution.AtomicSolutionItem
 import app.pixle.model.entity.solution.Solution
+import java.time.LocalDate
 
 @Dao
 interface SolutionDao {
@@ -24,5 +25,5 @@ interface SolutionDao {
             " WHERE atomicSolution.date = :utcDate" +
             " LIMIT 1")
     @RewriteQueriesToDropUnusedColumns
-    suspend fun getSolutionForDate(utcDate: String): Solution?
+    suspend fun getSolutionForDate(utcDate: LocalDate): Solution?
 }

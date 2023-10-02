@@ -31,12 +31,11 @@ import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FlashAuto
-import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,15 +52,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
-import app.pixle.database.PixleDatabase
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.ConfirmAttempt
-import app.pixle.model.entity.attempt.Attempt
+import app.pixle.model.api.SolutionOfToday
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberInvalidate
 import app.pixle.ui.state.rememberMutable
+import app.pixle.ui.state.rememberQuery
+import app.pixle.ui.state.rememberQueryable
 import kotlinx.coroutines.launch
 
 
@@ -285,14 +285,14 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             bitmap = bitmap,
             onDismiss = {
                 bitmap = null
-            },
-            onConfirm = {
-                val attempt = it ?: return@PhotoAnalysisSheet
-                scope.launch {
-                    mutate(attempt)
-                }
             }
-        )
+        ) {
+            val attempt = it ?: return@PhotoAnalysisSheet
+
+            scope.launch {
+                mutate(Pair(attempt, bitmap))
+            }
+        }
     }
 
 }

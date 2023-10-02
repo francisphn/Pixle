@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import app.pixle.asset.PIXLE_DATABASE_NAME
 import app.pixle.database.dao.AttemptDao
 import app.pixle.database.dao.ItemDao
@@ -24,6 +26,7 @@ import app.pixle.model.entity.solution.AtomicSolutionItem
     Item::class,
                      ],
     version = 1)
+@TypeConverters(Converters::class)
 abstract class PixleDatabase : RoomDatabase() {
     protected abstract fun solutionDao(): SolutionDao
 
