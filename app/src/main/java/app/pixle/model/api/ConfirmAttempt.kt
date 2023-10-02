@@ -8,6 +8,7 @@ import androidx.core.net.toUri
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.model.entity.solution.Solution
 import app.pixle.database.PixleDatabase
+import app.pixle.model.entity.attempt.AtomicAttemptItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.flowOn
 import java.io.File
 import java.io.FileOutputStream
 
-object ConfirmAttempt: Mutable<List<String>, Triple<Attempt, Bitmap?, Solution?>, Unit> {
+object ConfirmAttempt: Mutable<List<String>, Pair<Attempt, Bitmap?>, Unit> {
 
     private val saveAttempt: suspend (Attempt, Context) -> Unit = { it, ctx ->
         Log.d("database", "Saving attempt to database...")
@@ -26,9 +27,11 @@ object ConfirmAttempt: Mutable<List<String>, Triple<Attempt, Bitmap?, Solution?>
         get() = listOf("attempt", "new")
 
     override suspend fun mutationFn(
-        keys: List<String>, args: Triple<Attempt, Bitmap?, Solution?>, context: Context) {
+        keys: List<String>, args: Pair<Attempt, Bitmap?>, context: Context) {
 
-        args.takeIf { it.first.toString() == it.third.toString() && it.second != null }?.let {
+        args.takeIf {
+            it.first.attemptItems.all { item -> item.kind == AtomicAttemptItem.KIND_EXACT }
+        }?.let {
             saveWinningPhoto(it.first, it.second!!, context).collect { uri ->
                 it.first.winningPhoto = uri
                 saveAttempt(it.first, context)

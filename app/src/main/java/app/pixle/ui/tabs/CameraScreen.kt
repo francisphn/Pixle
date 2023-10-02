@@ -292,7 +292,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             val attempt = it ?: return@PhotoAnalysisSheet
 
             scope.launch {
-                mutate(Triple(attempt, bitmap, goal))
+                mutate(Pair(attempt, bitmap))
             }
         }
     }
