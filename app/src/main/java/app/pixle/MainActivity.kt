@@ -8,7 +8,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.safeGesturesPadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -18,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -39,6 +46,9 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             PixleTheme {
                 Surface(
@@ -83,18 +93,18 @@ fun App() {
     LaunchedEffect(navBackStackEntry?.destination?.route) {
         if (navBackStackEntry?.destination?.route == CAMERA_ROUTE) {
             systemUiController.setStatusBarColor(
-                color = Color.Black,
+                color = Color.Transparent,
                 darkIcons = false,
             )
 
             systemUiController.setNavigationBarColor(
-                color = Color.Black, darkIcons = false
+                color = Color.Transparent, darkIcons = false
             )
             return@LaunchedEffect
         }
 
         systemUiController.setStatusBarColor(
-            color = defaultStatusBarColour,
+            color = Color.Transparent,
             darkIcons = !useDarkTheme,
         )
 
