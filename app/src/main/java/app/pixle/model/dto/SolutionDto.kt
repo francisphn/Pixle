@@ -36,7 +36,7 @@ data class SolutionDto(
                 solutionDate = LocalDate.parse(this.day),
                 positionInSolution = index.plus(1L),
                 category = item.category,
-                name = item.name
+                name = item.name,
             )
         }
 

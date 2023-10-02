@@ -57,6 +57,8 @@ import app.pixle.model.api.ConfirmAttempt
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
+import app.pixle.ui.composition.GameAnimation
+import app.pixle.ui.composition.LocalGameAnimation
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberInvalidate
 import app.pixle.ui.state.rememberMutable
@@ -276,7 +278,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             },
             onConfirm = {
                 bitmap = null
-                navBuilder.navigateAfterSnap()
+                navBuilder.navigateToMain()
             }
         )
     }

@@ -1,5 +1,6 @@
 package app.pixle.ui.tabs
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,7 +23,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -36,6 +39,8 @@ import app.pixle.lib.Utils
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.ui.composable.LoadingScreen
+import app.pixle.ui.composition.GameAnimation
+import app.pixle.ui.composition.LocalGameAnimation
 import app.pixle.ui.composable.main.MissingRowAttempt
 import app.pixle.ui.composable.main.NoWinningPhoto
 import app.pixle.ui.composable.main.RowAttempt
@@ -44,17 +49,30 @@ import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import app.pixle.ui.theme.rarityColour
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.format.TextStyle
 import java.util.Locale
 
 
 @Composable
-fun MainScreen(snapped: Boolean = false) {
+fun MainScreen() {
+    val (animationState, setAnimationState) = LocalGameAnimation.current
+    val scope = rememberCoroutineScope()
+
     val (goal, _) = rememberQueryable(SolutionOfToday)
     val (attempts, _) = rememberQueryable(AttemptsOfToday)
 
     val today = remember(goal) { Utils.utcDate() }
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
+
+    LaunchedEffect(animationState) {
+        if (animationState == GameAnimation.State.IDLE) return@LaunchedEffect
+        scope.launch {
+            delay(100)
+            setAnimationState(GameAnimation.State.IDLE)
+        }
+    }
 
 
     if (goal == null || attempts == null || difficultyColour == null) {
@@ -221,9 +239,12 @@ fun MainScreen(snapped: Boolean = false) {
                     ) {
                         attempts
                             .takeLast(attempts.size.coerceAtMost(6))
-                            .forEach {
+                            .forEachIndexed { idx, it ->
                                 RowAttempt(
-                                    items = it
+                                    items = it,
+                                    shouldAnimate =
+                                        idx == attempts.size - 1 &&
+                                        animationState != GameAnimation.State.IDLE
                                 )
                             }
 

@@ -35,6 +35,7 @@ import androidx.navigation.NavBackStackEntry
 import app.pixle.asset.CAMERA_ROUTE
 import app.pixle.asset.MAIN_ROUTE
 import app.pixle.asset.PROFILE_ROUTE
+import app.pixle.ui.composition.LocalGameAnimation
 
 @Composable
 fun BottomNavigation(
@@ -42,6 +43,8 @@ fun BottomNavigation(
 ) {
 
     val context = LocalContext.current
+    val (animationState, _) = LocalGameAnimation.current
+
     var cameraPermissionState by remember {
         mutableStateOf(
             ActivityCompat.checkSelfPermission(

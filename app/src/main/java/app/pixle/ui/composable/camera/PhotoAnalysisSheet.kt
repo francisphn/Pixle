@@ -48,6 +48,8 @@ import app.pixle.model.entity.attempt.AtomicAttempt
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.PhotoItem
 import app.pixle.ui.composable.PolaroidFrame
+import app.pixle.ui.composition.GameAnimation
+import app.pixle.ui.composition.LocalGameAnimation
 import app.pixle.ui.state.ObjectDetectionModel
 import app.pixle.ui.state.rememberInvalidate
 import app.pixle.ui.state.rememberMutable
@@ -66,6 +68,8 @@ fun PhotoAnalysisSheet(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
+    val (_, setAnimationState) = LocalGameAnimation.current
+
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
 
@@ -294,6 +298,9 @@ fun PhotoAnalysisSheet(
                             val confirmedAttempt = attempt ?: return@Button
                             scope.launch {
                                 mutate.invoke(Pair(confirmedAttempt, bitmap))
+                            }.invokeOnCompletion {
+                                val win = confirmedAttempt.attemptItems.all { it.kind == AtomicAttemptItem.KIND_EXACT }
+                                setAnimationState(if (win) GameAnimation.State.WIN else GameAnimation.State.ATTEMPT)
                             }
                         }
                     ) {

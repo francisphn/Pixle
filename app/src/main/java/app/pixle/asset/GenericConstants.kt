@@ -8,8 +8,6 @@ const val MAIN_ROUTE = "main"
 const val PROFILE_ROUTE = "profile"
 const val CAMERA_ROUTE = "camera"
 
-const val SNAPPED_ARG = "snapped"
-
 const val PIXLE_DATABASE_NAME = "pixle"
 
 const val IMAGE_QUALITY_PERCENTAGE = 100
