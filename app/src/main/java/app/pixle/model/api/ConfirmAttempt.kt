@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
+import app.pixle.asset.IMAGE_COMPRESS_FORMAT
+import app.pixle.asset.IMAGE_QUALITY_PERCENTAGE
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.model.entity.solution.Solution
 import app.pixle.database.PixleDatabase
@@ -48,7 +50,7 @@ object ConfirmAttempt: Mutable<List<String>, Pair<Attempt, Bitmap?>, Unit> {
         emit(file.toUri())
 
         FileOutputStream(file).use {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+            bitmap.compress(IMAGE_COMPRESS_FORMAT, IMAGE_QUALITY_PERCENTAGE, it)
             it.flush()
         }
 
