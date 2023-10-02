@@ -39,6 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import app.pixle.model.api.AttemptsOfToday
+import app.pixle.model.api.ConfirmAttempt
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.model.api.Library
 import app.pixle.model.entity.attempt.AtomicAttemptItem
@@ -47,6 +49,8 @@ import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.PhotoItem
 import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.state.ObjectDetectionModel
+import app.pixle.ui.state.rememberInvalidate
+import app.pixle.ui.state.rememberMutable
 import app.pixle.ui.state.rememberObjectDetector
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
@@ -60,7 +64,7 @@ import java.util.UUID
 fun PhotoAnalysisSheet(
     bitmap: Bitmap?,
     onDismiss: () -> Unit,
-    onConfirm: (Attempt?) -> Unit
+    onConfirm: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
@@ -76,6 +80,17 @@ fun PhotoAnalysisSheet(
 
     val (goal, _) = rememberQueryable(SolutionOfToday)
     val (lib, _) = rememberQueryable(Library)
+    val invalidate = rememberInvalidate(AttemptsOfToday)
+    val (_, _, mutate) = rememberMutable(ConfirmAttempt) {
+        onSuccess = { _, _, _ ->
+            scope.launch {
+                invalidate()
+            }.invokeOnCompletion {
+                onConfirm()
+            }
+        }
+    }
+
     val objectDetector = rememberObjectDetector(model = ObjectDetectionModel.EDL1)
 
     val (attempt, setAttempt) = remember { mutableStateOf<Attempt?>(null) }
@@ -102,6 +117,8 @@ fun PhotoAnalysisSheet(
             solutionDate = goal.solution.date,
             winningPhoto = null
         )
+
+        Log.d("pixle:analyse", "goal items: ${items.map { it.name }.joinToString(", ")}")
 
         val exacts = items.map { item ->
             val index = givens.indexOfFirst { given ->
@@ -273,7 +290,12 @@ fun PhotoAnalysisSheet(
 
                     Button(
                         shape = RoundedCornerShape(8.dp),
-                        onClick = { onConfirm.invoke(attempt) }
+                        onClick = {
+                            val confirmedAttempt = attempt ?: return@Button
+                            scope.launch {
+                                mutate.invoke(Pair(confirmedAttempt, bitmap))
+                            }
+                        }
                     ) {
                         Text(
                             text = "Confirm",

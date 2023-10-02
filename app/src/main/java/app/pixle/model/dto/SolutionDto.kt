@@ -32,11 +32,11 @@ data class SolutionDto(
     fun asEntity(): Solution {
         val solutionItems = this.items.mapIndexed { index, item ->
             AtomicSolutionItem(
-                icon = "📚", // item.icon
+                icon = item.icon,
                 solutionDate = LocalDate.parse(this.day),
                 positionInSolution = index.plus(1L),
                 category = item.category,
-                name = "book" // item.name
+                name = item.name
             )
         }
 

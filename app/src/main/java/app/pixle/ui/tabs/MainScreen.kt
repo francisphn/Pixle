@@ -49,7 +49,7 @@ import java.util.Locale
 
 
 @Composable
-fun MainScreen() {
+fun MainScreen(snapped: Boolean = false) {
     val (goal, _) = rememberQueryable(SolutionOfToday)
     val (attempts, _) = rememberQueryable(AttemptsOfToday)
 

@@ -69,18 +69,6 @@ import kotlinx.coroutines.launch
 fun CameraScreen(navBuilder: NavigationBuilder) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val scope = rememberCoroutineScope()
-
-    val invalidate = rememberInvalidate(AttemptsOfToday)
-    val (_, _, mutate) = rememberMutable(ConfirmAttempt) {
-        onSuccess = { _, _, _ ->
-            scope.launch {
-                invalidate()
-            }.invokeOnCompletion {
-                navBuilder.navigateToMain()
-            }
-        }
-    }
 
     val cameraController = remember { LifecycleCameraController(context) }
     var isCapturing by remember { mutableStateOf(false) }
@@ -285,14 +273,12 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             bitmap = bitmap,
             onDismiss = {
                 bitmap = null
+            },
+            onConfirm = {
+                bitmap = null
+                navBuilder.navigateAfterSnap()
             }
-        ) {
-            val attempt = it ?: return@PhotoAnalysisSheet
-
-            scope.launch {
-                mutate(Pair(attempt, bitmap))
-            }
-        }
+        )
     }
 
 }

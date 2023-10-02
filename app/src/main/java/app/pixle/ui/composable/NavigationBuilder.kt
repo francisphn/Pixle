@@ -9,6 +9,8 @@ class NavigationBuilder {
 
     lateinit var navigateBack: () -> Unit
 
+    lateinit var navigateAfterSnap: () -> Unit
+
     fun toMain(action: () -> Unit): NavigationBuilder {
         this.navigateToMain = action
         return this
@@ -26,6 +28,11 @@ class NavigationBuilder {
 
     fun back(action: () -> Unit): NavigationBuilder {
         this.navigateBack = action
+        return this
+    }
+
+    fun afterSnap(action: () -> Unit): NavigationBuilder {
+        this.navigateAfterSnap = action
         return this
     }
 
