@@ -67,8 +67,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CameraScreen(navBuilder: NavigationBuilder) {
-    val (goal, _) = rememberQueryable(SolutionOfToday)
-
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
