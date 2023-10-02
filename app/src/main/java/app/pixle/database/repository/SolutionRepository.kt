@@ -15,7 +15,7 @@ class SolutionRepository(private val solutionDao: SolutionDao) {
     }
 
     suspend fun getToday(): Solution? {
-        val today = Utils.utcDate()
+        val today = Utils.utcDate().toString()
         Log.d("solution", "Getting solution for today, $today, from Room")
         return solutionDao.getSolutionForDate(today).also { Log.d("Solution", "$it") }
     }

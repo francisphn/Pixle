@@ -1,5 +1,6 @@
 package app.pixle.ui.tabs
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -50,7 +51,9 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val (goal, _) = rememberQueryable(SolutionOfToday)
+    val (goal, _) = rememberQueryable(SolutionOfToday) {
+        onError = { _, _, _ -> Log.e("Hello World", "Yo there is an error") }
+    }
     val (attempts, _) = rememberQueryable(AttemptsOfToday)
 
     val today = remember(goal) { Utils.utcDate() }

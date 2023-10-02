@@ -6,6 +6,9 @@ import android.graphics.Matrix
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCapture.FLASH_MODE_AUTO
+import androidx.camera.core.ImageCapture.FLASH_MODE_OFF
+import androidx.camera.core.ImageCapture.FLASH_MODE_ON
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.LifecycleCameraController
@@ -31,12 +34,15 @@ import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FlashAuto
+import androidx.compose.material.icons.filled.FlashOff
+import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -67,6 +74,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CameraScreen(navBuilder: NavigationBuilder) {
+
+    val flashModes = mapOf(
+        Pair(FLASH_MODE_AUTO, Icons.Filled.FlashAuto),
+        Pair(FLASH_MODE_ON, Icons.Filled.FlashOn),
+        Pair(FLASH_MODE_OFF, Icons.Filled.FlashOff)
+    )
+
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
@@ -90,6 +104,32 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         label = "scale",
         animationSpec = tween(125)
     )
+
+    val imageCaptureCallback = object : ImageCapture.OnImageCapturedCallback() {
+        override fun onCaptureSuccess(image: ImageProxy) {
+            val buffer = image.planes[0].buffer
+            val bytes = ByteArray(buffer.capacity())
+            buffer.get(bytes)
+            val tempBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
+
+            val matrix = Matrix();
+            matrix.postRotate(90f);
+            bitmap = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.getWidth(), tempBitmap.getHeight(), matrix, true)
+
+            image.close()
+            isCapturing = false
+        }
+
+        override fun onError(exception: ImageCaptureException) {
+            isCapturing = false
+        }
+    }
+
+    var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_AUTO) }
+
+    cameraController.imageCaptureFlashMode = currentFlashMode
+
+
 
     Box(
         modifier = Modifier
@@ -124,26 +164,6 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 onClick = {
                     if (!isCapturing) {
                         isCapturing = true
-                        val imageCaptureCallback = object : ImageCapture.OnImageCapturedCallback() {
-                            override fun onCaptureSuccess(image: ImageProxy) {
-                                val buffer = image.planes[0].buffer
-                                val bytes = ByteArray(buffer.capacity())
-                                buffer.get(bytes)
-                                val tempBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
-
-                                val matrix = Matrix();
-                                matrix.postRotate(90f);
-                                bitmap = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.getWidth(), tempBitmap.getHeight(), matrix, true)
-
-                                image.close()
-                                isCapturing = false
-                            }
-
-                            override fun onError(exception: ImageCaptureException) {
-                                isCapturing = false
-                            }
-                        }
-
                         cameraController.takePicture(
                             ContextCompat.getMainExecutor(context),
                             imageCaptureCallback
@@ -203,11 +223,11 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
                 IconButton(
                     onClick = {
-                        /* TODO: Toggle flash */
+                        currentFlashMode = (currentFlashMode + 1).mod(3)
                     }
                 ) {
                     Icon(
-                        Icons.Filled.FlashAuto,
+                        flashModes.get(currentFlashMode) ?: Icons.Filled.FlashAuto ,
                         contentDescription = "switch flash",
                         tint = Color.White,
                         modifier = Modifier

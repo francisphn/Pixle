@@ -24,7 +24,7 @@ interface AttemptDao {
             " JOIN atomicAttemptItem on atomicAttemptItem.attemptUuid = atomicAttempt.uuid" +
             " WHERE atomicAttempt.solutionDate = :utcIsoDate")
     @RewriteQueriesToDropUnusedColumns
-    suspend fun getAttemptsWithItems(utcIsoDate: LocalDate) : List<Attempt>
+    suspend fun getAttemptsWithItems(utcIsoDate: String) : List<Attempt>
 
     @Transaction
     @Query("SELECT * FROM atomicAttempt" +

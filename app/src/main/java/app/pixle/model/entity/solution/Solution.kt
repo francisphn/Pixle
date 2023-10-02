@@ -3,6 +3,7 @@ package app.pixle.model.entity.solution
 import androidx.room.Embedded
 import androidx.room.Ignore
 import androidx.room.Relation
+import java.time.LocalDate
 
 data class Solution(
     @Embedded val solution: AtomicSolution,
@@ -13,8 +14,10 @@ data class Solution(
     )
     val solutionItems: List<AtomicSolutionItem>
 ) {
-    @Ignore
-    val date = solution.date
+
+    val date: LocalDate
+        get() = LocalDate.parse(solution.date)
+
 
     @Ignore
     val difficulty = solution.difficulty
