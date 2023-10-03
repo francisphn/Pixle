@@ -68,6 +68,11 @@ import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
+import app.pixle.ui.state.rememberInvalidate
+import app.pixle.ui.state.rememberMutable
+import app.pixle.ui.state.rememberQuery
+import app.pixle.ui.state.rememberQueryable
+import app.pixle.ui.theme.Translucent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
@@ -173,7 +178,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 androidx.compose.animation.AnimatedVisibility(visible = !isLoaded, enter = fadeIn(), exit = fadeOut()) {
                     Box(modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.Black)
+                        .background(Color.Translucent())
                         .aspectRatio(1F)
                         .clip(RoundedCornerShape(2.dp))) {
                         LoadingScreen()
