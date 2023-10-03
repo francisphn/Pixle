@@ -12,14 +12,14 @@ data class AtomicAttempt(
      * The ID of this attempt
      */
     @PrimaryKey(autoGenerate = false)
-    val uuid: UUID,
+    val uuid: String,
 
     /**
      * The date of the solution that this attempt should be checked against,
      * this is the foreign key to link this attempt to a solution
      */
-    var solutionDate: LocalDate,
+    var solutionDate: String,
 
 
-    var winningPhoto: Uri?
+    var winningPhoto: String?
 )

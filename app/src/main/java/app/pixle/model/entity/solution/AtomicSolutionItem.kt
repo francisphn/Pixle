@@ -16,7 +16,7 @@ data class AtomicSolutionItem(
      * The solution that this solution item is associated with,
      * identified by a foreign key as solution date.
      */
-    var solutionDate: LocalDate,
+    var solutionDate: String,
 
     /**
      * The position of this emoji in the solution

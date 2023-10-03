@@ -64,11 +64,11 @@ class DatabaseTest {
     @Throws(Exception::class)
     fun attemptRepositoryTest(): Unit = runBlocking {
         // Yesterday's attempt
-        val yesterdayAttemptUuid = UUID.randomUUID()
+        val yesterdayAttemptUuid = UUID.randomUUID().toString()
 
         val yesterdayAttempt = AtomicAttempt(
             uuid = yesterdayAttemptUuid,
-            solutionDate = Utils.utcDate().minusDays(1),
+            solutionDate = Utils.utcDate().minusDays(1).toString(),
             winningPhoto = null
         )
 
@@ -79,16 +79,16 @@ class DatabaseTest {
         val yesterday = Attempt(yesterdayAttempt, yesterdayAttemptItems)
 
         // Today's attempt
-        val todayAttemptUuid = UUID.randomUUID()
+        val todayAttemptUuid = UUID.randomUUID().toString()
 
         val todayAttempt = AtomicAttempt(
-            uuid = todayAttemptUuid,
-            solutionDate = Utils.utcDate(),
+            uuid = todayAttemptUuid.toString(),
+            solutionDate = Utils.utcDate().toString(),
             winningPhoto = null
         )
 
         val todayAttemptItems = listOf("😁", "🇬🇧").mapIndexed { index, emoji ->
-            AtomicAttemptItem(emoji, todayAttemptUuid, index + 1L, AtomicAttemptItem.KIND_NONE)
+            AtomicAttemptItem(emoji, todayAttemptUuid, index.plus(1L), AtomicAttemptItem.KIND_NONE)
         }
 
         val today = Attempt(todayAttempt, todayAttemptItems)
