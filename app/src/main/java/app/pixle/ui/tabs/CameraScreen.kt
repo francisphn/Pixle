@@ -134,6 +134,8 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
     var currentCameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
 
+    val isBackCamera = currentCameraSelector == CameraSelector.DEFAULT_BACK_CAMERA
+
     cameraController.imageCaptureFlashMode = currentFlashMode
     cameraController.cameraSelector = currentCameraSelector
 
@@ -242,14 +244,18 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 IconButton(
                     onClick = {
                         currentFlashMode = currentFlashMode.inc().mod(3)
-                    }
+                    },
+                    enabled = isBackCamera
                 ) {
                     Icon(
-                        flashModes.get(currentFlashMode) ?: Icons.Filled.FlashAuto ,
+                        if (isBackCamera)
+                            flashModes[currentFlashMode] ?: Icons.Filled.FlashAuto
+                        else
+                            Icons.Filled.FlashOff,
+
                         contentDescription = "switch flash",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(28.dp)
+                        tint = if (isBackCamera) Color.White else Color.DarkGray,
+                        modifier = Modifier.size(28.dp)
                     )
                 }
 
