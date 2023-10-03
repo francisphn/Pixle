@@ -4,7 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
@@ -34,6 +40,7 @@ import app.pixle.ui.tabs.MainScreen
 import app.pixle.ui.tabs.ProfileScreen
 import app.pixle.ui.theme.PixleTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -133,6 +140,10 @@ fun App() {
                     composable(
                         route = CAMERA_ROUTE,
                         enterTransition = {
+                            scope.launch {
+                                delay(5000)
+                            }
+
                             slideIntoContainer(
                                 towards = AnimatedContentTransitionScope.SlideDirection.Up,
                                 animationSpec = tween(500)
@@ -180,7 +191,11 @@ fun App() {
             }
         }
 
-        if (navBackStackEntry?.destination?.route != CAMERA_ROUTE) {
+        AnimatedVisibility(
+            visible = navBackStackEntry?.destination?.route != CAMERA_ROUTE,
+            enter = slideInVertically(initialOffsetY = { 100 }),
+            exit = slideOutVertically(targetOffsetY = { 100 })
+        ) {
             BottomNavigation(navBuilder, navBackStackEntry)
         }
     }
