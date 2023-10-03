@@ -22,6 +22,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +58,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -88,12 +91,24 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         Pair(FLASH_MODE_OFF, Icons.Filled.FlashOff)
     )
 
+    var rotationState by remember { mutableFloatStateOf(0f) }
+
+    val rotation by animateFloatAsState(
+        targetValue = rotationState,
+        animationSpec = tween(700),
+        label = "rotation"
+    )
+
+
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val cameraController = remember { LifecycleCameraController(context) }
     var isCapturing by remember { mutableStateOf(false) }
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    val scope = rememberCoroutineScope()
+
     val scale by animateFloatAsState(
         targetValue = if (isCapturing) 40f else 60f,
         label = "scale",
@@ -309,12 +324,21 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
                 IconButton(
                     onClick = {
-                        if (currentCameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
-                            currentCameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-                            return@IconButton
-                        }
+                        isLoaded = false
 
-                        currentCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+                        rotationState = rotationState.plus(360f)
+
+                        scope.launch {
+                            delay(500)
+
+                            currentCameraSelector = if (isBackCamera) {
+                                CameraSelector.DEFAULT_FRONT_CAMERA
+                            } else {
+                                CameraSelector.DEFAULT_BACK_CAMERA
+                            }
+                        }.invokeOnCompletion {
+                            isLoaded = true
+                        }
                     }
                 ) {
                     Icon(
@@ -323,6 +347,9 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                         tint = Color.White,
                         modifier = Modifier
                             .size(28.dp)
+                            .graphicsLayer {
+                                this.rotationZ = rotation
+                            }
                     )
                 }
             }
