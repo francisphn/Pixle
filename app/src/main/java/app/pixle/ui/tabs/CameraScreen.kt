@@ -13,7 +13,6 @@ import androidx.camera.core.ImageCapture.FLASH_MODE_OFF
 import androidx.camera.core.ImageCapture.FLASH_MODE_ON
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
-import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.animateFloatAsState
@@ -23,7 +22,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,23 +63,14 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import app.pixle.model.api.AttemptsOfToday
-import app.pixle.model.api.ConfirmAttempt
-import app.pixle.model.api.SolutionOfToday
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
-import app.pixle.ui.composition.GameAnimation
-import app.pixle.ui.composition.LocalGameAnimation
 import app.pixle.ui.modifier.opacity
-import app.pixle.ui.state.rememberInvalidate
-import app.pixle.ui.state.rememberMutable
-import app.pixle.ui.state.rememberQuery
-import app.pixle.ui.state.rememberQueryable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
 
 
 @Composable
@@ -138,9 +127,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             buffer.get(bytes)
             val tempBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
 
-            val matrix = Matrix();
-
-            matrix.postRotate(if (isBackCamera) 90f else -90f)
+            val matrix = Matrix().also { it.postRotate(if (isBackCamera) 90f else -90f) }
 
             bitmap = Bitmap.createBitmap(
                 tempBitmap,
@@ -203,7 +190,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                         isLoaded = false
 
                         cameraController.takePicture(
-                            ContextCompat.getMainExecutor(context),
+                            Executors.newSingleThreadExecutor(),
                             imageCaptureCallback
                         ) // todo: make this async
 
