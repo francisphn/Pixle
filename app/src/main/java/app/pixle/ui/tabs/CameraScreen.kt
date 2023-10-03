@@ -7,12 +7,12 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCapture.CAPTURE_MODE_ZERO_SHUTTER_LAG
 import androidx.camera.core.ImageCapture.FLASH_MODE_AUTO
 import androidx.camera.core.ImageCapture.FLASH_MODE_OFF
 import androidx.camera.core.ImageCapture.FLASH_MODE_ON
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
-import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.animateFloatAsState
@@ -22,7 +22,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -64,16 +63,10 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import app.pixle.model.api.AttemptsOfToday
-import app.pixle.model.api.ConfirmAttempt
-import app.pixle.model.api.SolutionOfToday
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
-import app.pixle.ui.composition.GameAnimation
-import app.pixle.ui.composition.LocalGameAnimation
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberInvalidate
 import app.pixle.ui.state.rememberMutable
@@ -82,9 +75,11 @@ import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Translucent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
 
 
 @Composable
+@androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
 fun CameraScreen(navBuilder: NavigationBuilder) {
     val flashModes = mapOf(
         Pair(FLASH_MODE_AUTO, Icons.Filled.FlashAuto),
@@ -105,6 +100,9 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val cameraController = remember { LifecycleCameraController(context) }
+
+    cameraController.imageCaptureMode = CAPTURE_MODE_ZERO_SHUTTER_LAG
+
     var isCapturing by remember { mutableStateOf(false) }
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
 
@@ -116,8 +114,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         animationSpec = tween(125)
     )
 
-
-    var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_AUTO) }
+    var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_OFF) }
 
     var currentCameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
 
@@ -135,9 +132,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             buffer.get(bytes)
             val tempBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
 
-            val matrix = Matrix();
-
-            matrix.postRotate(if (isBackCamera) 90f else -90f)
+            val matrix = Matrix().also { it.postRotate(if (isBackCamera) 90f else -90f) }
 
             bitmap = Bitmap.createBitmap(
                 tempBitmap,
@@ -200,7 +195,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                         isLoaded = false
 
                         cameraController.takePicture(
-                            ContextCompat.getMainExecutor(context),
+                            Executors.newSingleThreadExecutor(),
                             imageCaptureCallback
                         ) // todo: make this async
 
