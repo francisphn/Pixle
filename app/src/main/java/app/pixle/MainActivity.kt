@@ -140,10 +140,6 @@ fun App() {
                     composable(
                         route = CAMERA_ROUTE,
                         enterTransition = {
-                            scope.launch {
-                                delay(5000)
-                            }
-
                             slideIntoContainer(
                                 towards = AnimatedContentTransitionScope.SlideDirection.Up,
                                 animationSpec = tween(500)
