@@ -43,7 +43,6 @@ fun BottomNavigation(
 ) {
 
     val context = LocalContext.current
-    val (animationState, _) = LocalGameAnimation.current
 
     var cameraPermissionState by remember {
         mutableStateOf(
