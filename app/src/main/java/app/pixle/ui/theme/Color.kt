@@ -65,3 +65,5 @@ val md_theme_dark_scrim = Color(0xFF000000)
 
 
 val seed = Color(0xFF0093EB)
+
+fun Color.Companion.Translucent() = Color(0x3F000000)
