@@ -13,6 +13,8 @@ import androidx.camera.core.ImageCapture.FLASH_MODE_OFF
 import androidx.camera.core.ImageCapture.FLASH_MODE_ON
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
+import androidx.camera.core.UseCase
+import androidx.camera.view.CameraController.IMAGE_CAPTURE
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.animateFloatAsState
@@ -44,6 +46,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -68,6 +71,8 @@ import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
@@ -95,6 +100,10 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val cameraController = remember { LifecycleCameraController(context) }
+
+    val executor = Executors.newSingleThreadExecutor()
+
+    cameraController.setEnabledUseCases(IMAGE_CAPTURE)
 
     cameraController.imageCaptureMode = CAPTURE_MODE_ZERO_SHUTTER_LAG
 
@@ -141,16 +150,28 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
             image.close()
             isCapturing = false
+            isLoaded = true
         }
 
         override fun onError(exception: ImageCaptureException) {
             isCapturing = false
+            isLoaded = true
         }
     }
 
     LaunchedEffect(Unit) {
         delay(1000)
         isLoaded = true
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            executor.shutdown()
+        }
+
+        onDispose {
+            cameraController.unbind()
+        }
     }
 
     Box(
@@ -187,13 +208,13 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 onClick = {
                     if (!isCapturing) {
                         isCapturing = true
+
                         isLoaded = false
 
                         cameraController.takePicture(
-                            Executors.newSingleThreadExecutor(),
+                            executor,
                             imageCaptureCallback
-                        ) // todo: make this async
-
+                        )
                     }
                 },
                 modifier = Modifier
@@ -377,6 +398,7 @@ fun CameraView(cameraController: LifecycleCameraController, lifecycleOwner: Life
             }.also { view ->
                 view.controller = cameraController
                 cameraController.bindToLifecycle(lifecycleOwner)
+
             }
         }
     )
