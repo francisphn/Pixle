@@ -1,6 +1,9 @@
 package app.pixle.ui.tabs
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -74,9 +77,16 @@ fun MainScreen() {
         }
     }
 
+    AnimatedVisibility(
+        visible = goal == null || attempts == null || difficultyColour == null,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        LoadingScreen()
+    }
+
 
     if (goal == null || attempts == null || difficultyColour == null) {
-        LoadingScreen()
         return
     }
 
