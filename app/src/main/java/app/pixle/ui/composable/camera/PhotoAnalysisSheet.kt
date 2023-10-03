@@ -89,6 +89,7 @@ fun PhotoAnalysisSheet(
         onSuccess = { _, _, _ ->
             scope.launch {
                 invalidate()
+                sheetState.hide()
             }.invokeOnCompletion {
                 onConfirm()
             }
