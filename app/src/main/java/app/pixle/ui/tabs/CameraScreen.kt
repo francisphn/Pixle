@@ -7,6 +7,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCapture.CAPTURE_MODE_ZERO_SHUTTER_LAG
 import androidx.camera.core.ImageCapture.FLASH_MODE_AUTO
 import androidx.camera.core.ImageCapture.FLASH_MODE_OFF
 import androidx.camera.core.ImageCapture.FLASH_MODE_ON
@@ -84,6 +85,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
+@androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
 fun CameraScreen(navBuilder: NavigationBuilder) {
     val flashModes = mapOf(
         Pair(FLASH_MODE_AUTO, Icons.Filled.FlashAuto),
@@ -104,6 +106,9 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val cameraController = remember { LifecycleCameraController(context) }
+
+    cameraController.imageCaptureMode = CAPTURE_MODE_ZERO_SHUTTER_LAG
+
     var isCapturing by remember { mutableStateOf(false) }
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
 
@@ -115,8 +120,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         animationSpec = tween(125)
     )
 
-
-    var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_AUTO) }
+    var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_OFF) }
 
     var currentCameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
 
