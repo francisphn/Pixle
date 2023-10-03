@@ -25,5 +25,5 @@ interface SolutionDao {
             " WHERE atomicSolution.date = :utcDate" +
             " LIMIT 1")
     @RewriteQueriesToDropUnusedColumns
-    suspend fun getSolutionForDate(utcDate: LocalDate): Solution?
+    suspend fun getSolutionForDate(utcDate: String): Solution?
 }

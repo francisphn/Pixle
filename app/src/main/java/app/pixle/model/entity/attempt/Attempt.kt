@@ -18,14 +18,14 @@ data class Attempt(
     val attemptItems: List<AtomicAttemptItem>,
 ) {
     val uuid: UUID
-        get() = attempt.uuid
+        get() = UUID.fromString(attempt.uuid)
 
     val solutionDate: LocalDate
-        get() = attempt.solutionDate
+        get() = LocalDate.parse(attempt.solutionDate)
 
     var winningPhoto: Uri?
-        get() = attempt.winningPhoto
-        set(value) { attempt.winningPhoto = value }
+        get() = Uri.parse(attempt.winningPhoto)
+        set(value) { attempt.winningPhoto = value.toString() }
 
     val isWinningAttempt: Boolean
         get() = attemptItems.all { it.kind == AtomicAttemptItem.KIND_EXACT }

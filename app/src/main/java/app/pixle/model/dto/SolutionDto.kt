@@ -33,14 +33,14 @@ data class SolutionDto(
         val solutionItems = this.items.mapIndexed { index, item ->
             AtomicSolutionItem(
                 icon = item.icon,
-                solutionDate = LocalDate.parse(this.day),
+                solutionDate = this.day,
                 positionInSolution = index.plus(1L),
                 category = item.category,
                 name = item.name,
             )
         }
 
-        return Solution(AtomicSolution(LocalDate.parse(this.day), difficulty), solutionItems)
+        return Solution(AtomicSolution(this.day, difficulty), solutionItems)
             .also { Log.d("solution", it.toString()) }
     }
 }

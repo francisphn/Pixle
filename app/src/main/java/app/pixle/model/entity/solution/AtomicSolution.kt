@@ -13,7 +13,7 @@ data class AtomicSolution (
      * key.
      */
     @PrimaryKey(autoGenerate = false)
-    var date: LocalDate,
+    var date: String,
 
     /**
      * Difficulty level

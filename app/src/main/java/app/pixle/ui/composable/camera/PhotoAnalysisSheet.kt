@@ -117,7 +117,7 @@ fun PhotoAnalysisSheet(
             .toMutableList()
 
         val currentAttempt = AtomicAttempt(
-            uuid = UUID.randomUUID(),
+            uuid = UUID.randomUUID().toString(),
             solutionDate = goal.solution.date,
             winningPhoto = null
         )

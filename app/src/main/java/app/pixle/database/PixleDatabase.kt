@@ -26,7 +26,6 @@ import app.pixle.model.entity.solution.AtomicSolutionItem
     Item::class,
                      ],
     version = 1)
-@TypeConverters(Converters::class)
 abstract class PixleDatabase : RoomDatabase() {
     protected abstract fun solutionDao(): SolutionDao
 

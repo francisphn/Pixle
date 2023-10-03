@@ -14,7 +14,7 @@ data class AtomicAttemptItem(
     /**
      * The attempt that this attempt item is associated with.
      */
-    var attemptUuid: UUID,
+    var attemptUuid: String,
 
     /**
      * The position of this emoji in the attempt
