@@ -1,6 +1,9 @@
 package app.pixle.ui.tabs
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -74,190 +77,203 @@ fun MainScreen() {
         }
     }
 
-
-    if (goal == null || attempts == null || difficultyColour == null) {
+    AnimatedVisibility(
+        visible = goal == null || attempts == null || difficultyColour == null,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
         LoadingScreen()
-        return
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp),
+    AnimatedVisibility(
+        visible = goal != null && attempts != null && difficultyColour != null,
+        enter = fadeIn(),
+        exit = fadeOut()
     ) {
 
-
-        // Welcome message
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp, bottom = 28.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                // TODO: Show user's name
-                Text(
-                    text = "Hi, player",
-                    fontFamily = Manrope,
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    modifier = Modifier.alpha(0.5f)
-                )
-                Text(
-                    text = "Welcome Back!",
-                    fontFamily = Manrope,
-                    fontSize = 18.sp,
-                    lineHeight = 28.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+        if (goal == null || attempts == null || difficultyColour == null) {
+            return@AnimatedVisibility
         }
 
-        // Main content
-        item {
-            Column(
-                modifier = Modifier
-                    .padding(bottom = 20.dp)
-                    .fillMaxWidth()
-                    .border(
-                        width = 1.dp, color = difficultyColour, shape = RoundedCornerShape(12.dp)
-                    )
-                    .padding(horizontal = 12.dp, vertical = 20.dp),
-            ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+        ) {
 
-                // Header
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                MaterialTheme.colorScheme.surfaceVariant,
-                                shape = CircleShape
-                            )
-                            .padding(8.dp)
-                    ) {
-                        Image(
-                            modifier = Modifier.size(18.dp),
-                            painter = painterResource(R.drawable.bling),
-                            contentDescription = "bling",
-                            colorFilter = ColorFilter.tint(difficultyColour)
-                        )
-                    }
 
-                    Text(
-                        text = "Today's goal",
-                        fontFamily = Manrope,
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Column {
-                        Text(
-                            text = "${if (today.dayOfMonth < 10) "0" else ""}${today.dayOfMonth}",
-                            fontFamily = Manrope,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        Text(
-                            text = "${
-                                today.month.getDisplayName(
-                                    TextStyle.SHORT, Locale.UK
-                                )
-                            } ${today.year}",
-                            fontFamily = Manrope,
-                            fontSize = 10.sp,
-                            lineHeight = 10.sp,
-                            modifier = Modifier.alpha(0.75f)
-                        )
-                    }
-                }
-
-                // Info
-                Row(
+            // Welcome message
+            item {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp)
-                        .padding(horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                        .padding(top = 32.dp, bottom = 28.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
+                    // TODO: Show user's name
                     Text(
-                        text = "${goal.solutionItems.size} items • ${goal.difficulty} difficulty",
+                        text = "Hi, player",
                         fontFamily = Manrope,
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
-                        fontWeight = FontWeight.Medium,
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp,
+                        modifier = Modifier.alpha(0.5f)
                     )
+                    Text(
+                        text = "Welcome Back!",
+                        fontFamily = Manrope,
+                        fontSize = 18.sp,
+                        lineHeight = 28.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
 
-                    // Hint
-                    // TODO: atm only shows if there are more than 3 attempts, should be smarter
-                    if (attempts.size > 3) {
+            // Main content
+            item {
+                Column(
+                    modifier = Modifier
+                        .padding(bottom = 20.dp)
+                        .fillMaxWidth()
+                        .border(
+                            width = 1.dp, color = difficultyColour, shape = RoundedCornerShape(12.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 20.dp),
+                ) {
+
+                    // Header
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    MaterialTheme.colorScheme.surfaceVariant,
+                                    shape = CircleShape
+                                )
+                                .padding(8.dp)
+                        ) {
+                            Image(
+                                modifier = Modifier.size(18.dp),
+                                painter = painterResource(R.drawable.bling),
+                                contentDescription = "bling",
+                                colorFilter = ColorFilter.tint(difficultyColour)
+                            )
+                        }
+
                         Text(
-                            text = " •",
+                            text = "Today's goal",
+                            fontFamily = Manrope,
+                            fontSize = 16.sp,
+                            lineHeight = 24.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Column {
+                            Text(
+                                text = "${if (today.dayOfMonth < 10) "0" else ""}${today.dayOfMonth}",
+                                fontFamily = Manrope,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Text(
+                                text = "${
+                                    today.month.getDisplayName(
+                                        TextStyle.SHORT, Locale.UK
+                                    )
+                                } ${today.year}",
+                                fontFamily = Manrope,
+                                fontSize = 10.sp,
+                                lineHeight = 10.sp,
+                                modifier = Modifier.alpha(0.75f)
+                            )
+                        }
+                    }
+
+                    // Info
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                            .padding(horizontal = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "${goal.solutionItems.size} items • ${goal.difficulty} difficulty",
                             fontFamily = Manrope,
                             fontSize = 16.sp,
                             lineHeight = 24.sp,
                             fontWeight = FontWeight.Medium,
                         )
 
-                        IconButton(
-                            modifier = Modifier
-                                .size(21.dp),
-                            onClick = {
-                            },
-                        ) {
-                            Icon(
-                                Icons.Filled.Lightbulb,
-                                contentDescription = "hint",
-                                tint = difficultyColour,
-                                modifier = Modifier
-                                    .size(14.dp)
+                        // Hint
+                        // TODO: atm only shows if there are more than 3 attempts, should be smarter
+                        if (attempts.size > 3) {
+                            Text(
+                                text = " •",
+                                fontFamily = Manrope,
+                                fontSize = 16.sp,
+                                lineHeight = 24.sp,
+                                fontWeight = FontWeight.Medium,
                             )
-                        }
-                    }
-                }
 
-
-                // Attempts
-                Column(
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                        .fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth()
-                            .leftBorder(
-                                1.dp,
-                                MaterialTheme.colorScheme.onBackground.opacity(0.3f)
-                            ),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        attempts
-                            .takeLast(attempts.size.coerceAtMost(6))
-                            .forEachIndexed { idx, it ->
-                                RowAttempt(
-                                    items = it,
-                                    shouldAnimate =
-                                        idx == attempts.size - 1 &&
-                                        animationState != GameAnimation.State.IDLE
+                            IconButton(
+                                modifier = Modifier
+                                    .size(21.dp),
+                                onClick = {
+                                },
+                            ) {
+                                Icon(
+                                    Icons.Filled.Lightbulb,
+                                    contentDescription = "hint",
+                                    tint = difficultyColour,
+                                    modifier = Modifier
+                                        .size(14.dp)
                                 )
                             }
-
-                        (0 until (6 - attempts.size).coerceAtLeast(0))
-                            .forEach { _ ->
-                                MissingRowAttempt(size = goal.solutionItems.size)
-                            }
+                        }
                     }
-                }
 
-                // No winning photo
-                // TODO: Show winning photo
-                NoWinningPhoto()
+
+                    // Attempts
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 24.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .fillMaxWidth()
+                                .leftBorder(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.onBackground.opacity(0.3f)
+                                ),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            attempts
+                                .takeLast(attempts.size.coerceAtMost(6))
+                                .forEachIndexed { idx, it ->
+                                    RowAttempt(
+                                        items = it,
+                                        shouldAnimate =
+                                        idx == attempts.size - 1 &&
+                                                animationState != GameAnimation.State.IDLE
+                                    )
+                                }
+
+                            (0 until (6 - attempts.size).coerceAtLeast(0))
+                                .forEach { _ ->
+                                    MissingRowAttempt(size = goal.solutionItems.size)
+                                }
+                        }
+                    }
+
+                    // No winning photo
+                    // TODO: Show winning photo
+                    NoWinningPhoto()
+                }
             }
         }
     }
