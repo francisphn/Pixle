@@ -115,6 +115,18 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         animationSpec = tween(125)
     )
 
+
+    var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_AUTO) }
+
+    var currentCameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
+
+    val isBackCamera = currentCameraSelector == CameraSelector.DEFAULT_BACK_CAMERA
+
+    cameraController.imageCaptureFlashMode = currentFlashMode
+    cameraController.cameraSelector = currentCameraSelector
+
+    var isLoaded by remember { mutableStateOf(false) }
+
     val imageCaptureCallback = object : ImageCapture.OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
             val buffer = image.planes[0].buffer
@@ -123,7 +135,8 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             val tempBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
 
             val matrix = Matrix();
-            matrix.postRotate(90f);
+
+            matrix.postRotate(if (isBackCamera) 90f else -90f)
 
             bitmap = Bitmap.createBitmap(
                 tempBitmap,
@@ -144,23 +157,10 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         }
     }
 
-
-    var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_AUTO) }
-
-    var currentCameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
-
-    val isBackCamera = currentCameraSelector == CameraSelector.DEFAULT_BACK_CAMERA
-
-    cameraController.imageCaptureFlashMode = currentFlashMode
-    cameraController.cameraSelector = currentCameraSelector
-
-    var isLoaded by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
         delay(1000)
         isLoaded = true
     }
-
 
     Box(
         modifier = Modifier
