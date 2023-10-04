@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -50,6 +51,8 @@ import app.pixle.ui.composable.PhotoItem
 import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.composition.GameAnimation
 import app.pixle.ui.composition.LocalGameAnimation
+import app.pixle.ui.composition.LocalObjectDetection
+import app.pixle.ui.composition.rememberObjectDetection
 import app.pixle.ui.state.ObjectDetectionModel
 import app.pixle.ui.state.rememberInvalidate
 import app.pixle.ui.state.rememberMutable
@@ -82,6 +85,8 @@ fun PhotoAnalysisSheet(
         animationSpec = tween(300, 100)
     )
 
+    val objectDetector by rememberObjectDetection()
+
     val (goal, _) = rememberQueryable(SolutionOfToday)
     val (lib, _) = rememberQueryable(Library)
     val invalidate = rememberInvalidate(AttemptsOfToday)
@@ -95,8 +100,6 @@ fun PhotoAnalysisSheet(
             }
         }
     }
-
-    val objectDetector = rememberObjectDetector(model = ObjectDetectionModel.EDL1)
 
     val (attempt, setAttempt) = remember { mutableStateOf<Attempt?>(null) }
 
