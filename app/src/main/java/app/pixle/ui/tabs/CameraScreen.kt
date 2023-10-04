@@ -66,6 +66,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.NavigationBuilder
@@ -139,6 +140,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             val buffer = image.planes[0].buffer
             val bytes = ByteArray(buffer.capacity())
             buffer.get(bytes)
+
             val tempBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
 
             val matrix = Matrix().also { it.postRotate(if (isBackCamera) 90f else -90f) }
@@ -154,8 +156,12 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             )
 
             image.close()
+
             isCapturing = false
             isLoaded = true
+
+            tempBitmap.recycle()
+            buffer.clear()
         }
 
         override fun onError(exception: ImageCaptureException) {
@@ -165,9 +171,17 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
     }
 
     LaunchedEffect(Unit) {
-        delay(1000)
-        isLoaded = true
+        cameraController.initializationFuture.addListener(
+
+            kotlinx.coroutines.Runnable {
+                isLoaded = true
+            },
+
+            ContextCompat.getMainExecutor(context)
+        )
     }
+
+
 
     DisposableEffect(Unit) {
         onDispose {
@@ -343,7 +357,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                     onClick = {
                         isLoaded = false
 
-                        rotationState = rotationState.plus(360f)
+                        rotationState = rotationState.plus(-360f)
 
                         scope.launch {
                             delay(500)
@@ -377,10 +391,14 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         PhotoAnalysisSheet(
             bitmap = bitmap,
             onDismiss = {
+                bitmap?.recycle()
+
                 bitmap = null
                 isLoaded = true
             },
             onConfirm = {
+                bitmap?.recycle()
+
                 bitmap = null
                 navBuilder.navigateToMain()
             }
