@@ -8,9 +8,8 @@ import androidx.core.net.toUri
 import app.pixle.asset.IMAGE_COMPRESS_FORMAT
 import app.pixle.asset.IMAGE_QUALITY_PERCENTAGE
 import app.pixle.model.entity.attempt.Attempt
-import app.pixle.model.entity.solution.Solution
 import app.pixle.database.PixleDatabase
-import app.pixle.model.entity.attempt.AtomicAttemptItem
+import app.pixle.model.api.contracts.Mutable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

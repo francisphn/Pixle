@@ -2,7 +2,7 @@ package app.pixle.ui.state
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import app.pixle.model.api.Queryable
+import app.pixle.model.api.contracts.Queryable
 import com.kazakago.swr.compose.config.SWRConfig
 import com.kazakago.swr.compose.preload.SWRPreload
 import com.kazakago.swr.compose.state.SWRState
