@@ -34,6 +34,7 @@ import app.pixle.model.api.Library
 import app.pixle.ui.composable.BottomNavigation
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composition.GameAnimationProvider
+import app.pixle.ui.composition.ObjectDetectionProvider
 import app.pixle.ui.state.rememberQueryablePreload
 import app.pixle.ui.tabs.CameraScreen
 import app.pixle.ui.tabs.MainScreen
@@ -47,11 +48,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            // React Context API :)
             PixleTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
-                ) {
-                    App()
+                GameAnimationProvider {
+                    ObjectDetectionProvider {
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            App()
+                        }
+                    }
                 }
             }
         }
@@ -116,73 +123,70 @@ fun App() {
         Box(
             modifier = Modifier.weight(1f)
         ) {
+            NavHost(navController = navController, startDestination = MAIN_ROUTE) {
+                composable(
+                    route = MAIN_ROUTE,
+                    enterTransition = {
+                        slideIntoContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                            animationSpec = tween(500)
+                        )
+                    },
+                    exitTransition = {
+                        slideOutOfContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                            animationSpec = tween(500)
+                        )
+                    }
+                ) {
+                    MainScreen()
+                }
 
-            GameAnimationProvider {
-                NavHost(navController = navController, startDestination = MAIN_ROUTE) {
-                    composable(
-                        route = MAIN_ROUTE,
-                        enterTransition = {
-                            slideIntoContainer(
+                composable(
+                    route = CAMERA_ROUTE,
+                    enterTransition = {
+                        slideIntoContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                            animationSpec = tween(500)
+                        )
+                    },
+                    exitTransition = {
+                        when (navBackStackEntry?.destination?.route) {
+                            MAIN_ROUTE -> slideOutOfContainer(
                                 towards = AnimatedContentTransitionScope.SlideDirection.Right,
                                 animationSpec = tween(500)
                             )
-                        },
-                        exitTransition = {
-                            slideOutOfContainer(
+
+                            PROFILE_ROUTE -> slideOutOfContainer(
                                 towards = AnimatedContentTransitionScope.SlideDirection.Left,
                                 animationSpec = tween(500)
                             )
-                        }
-                    ) {
-                        MainScreen()
-                    }
-
-                    composable(
-                        route = CAMERA_ROUTE,
-                        enterTransition = {
-                            slideIntoContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Up,
-                                animationSpec = tween(500)
-                            )
-                        },
-                        exitTransition = {
-                            when (navBackStackEntry?.destination?.route) {
-                                MAIN_ROUTE -> slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                                    animationSpec = tween(500)
-                                )
-
-                                PROFILE_ROUTE -> slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                                    animationSpec = tween(500)
-                                )
-                                else -> slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Down,
-                                    animationSpec = tween(500)
-                                )
-                            }
-                        }
-                    ) {
-                        CameraScreen(navBuilder)
-                    }
-
-                    composable(
-                        route = PROFILE_ROUTE,
-                        enterTransition = {
-                            slideIntoContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                                animationSpec = tween(500)
-                            )
-                        },
-                        exitTransition = {
-                            slideOutOfContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                            else -> slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Down,
                                 animationSpec = tween(500)
                             )
                         }
-                    ) {
-                        ProfileScreen(navBuilder)
                     }
+                ) {
+                    CameraScreen(navBuilder)
+                }
+
+                composable(
+                    route = PROFILE_ROUTE,
+                    enterTransition = {
+                        slideIntoContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                            animationSpec = tween(500)
+                        )
+                    },
+                    exitTransition = {
+                        slideOutOfContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                            animationSpec = tween(500)
+                        )
+                    }
+                ) {
+                    ProfileScreen(navBuilder)
                 }
             }
         }
