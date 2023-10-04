@@ -386,10 +386,14 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         PhotoAnalysisSheet(
             bitmap = bitmap,
             onDismiss = {
+                bitmap?.recycle()
+
                 bitmap = null
                 isLoaded = true
             },
             onConfirm = {
+                bitmap?.recycle()
+
                 bitmap = null
                 navBuilder.navigateToMain()
             }
