@@ -13,7 +13,6 @@ import androidx.camera.core.ImageCapture.FLASH_MODE_OFF
 import androidx.camera.core.ImageCapture.FLASH_MODE_ON
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
-import androidx.camera.core.UseCase
 import androidx.camera.view.CameraController.IMAGE_CAPTURE
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
@@ -72,27 +71,20 @@ import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asCoroutineDispatcher
-import app.pixle.ui.state.rememberInvalidate
-import app.pixle.ui.state.rememberMutable
-import app.pixle.ui.state.rememberQuery
-import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Translucent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
+private val flashModes = mapOf(
+    Pair(FLASH_MODE_AUTO, Icons.Filled.FlashAuto),
+    Pair(FLASH_MODE_ON, Icons.Filled.FlashOn),
+    Pair(FLASH_MODE_OFF, Icons.Filled.FlashOff)
+)
 
 @Composable
 @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
 fun CameraScreen(navBuilder: NavigationBuilder) {
-    val flashModes = mapOf(
-        Pair(FLASH_MODE_AUTO, Icons.Filled.FlashAuto),
-        Pair(FLASH_MODE_ON, Icons.Filled.FlashOn),
-        Pair(FLASH_MODE_OFF, Icons.Filled.FlashOff)
-    )
-
     var rotationState by remember { mutableFloatStateOf(0f) }
 
     val rotation by animateFloatAsState(
@@ -101,16 +93,12 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         label = "rotation"
     )
 
-
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-
     val cameraController = remember { LifecycleCameraController(context) }
-
     val executor = Executors.newSingleThreadExecutor()
 
     cameraController.setEnabledUseCases(IMAGE_CAPTURE)
-
     cameraController.imageCaptureMode = CAPTURE_MODE_ZERO_SHUTTER_LAG
 
     var isCapturing by remember { mutableStateOf(false) }
@@ -125,9 +113,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
     )
 
     var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_OFF) }
-
     var currentCameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
-
     val isBackCamera = currentCameraSelector == CameraSelector.DEFAULT_BACK_CAMERA
 
     cameraController.imageCaptureFlashMode = currentFlashMode
@@ -172,16 +158,12 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
     LaunchedEffect(Unit) {
         cameraController.initializationFuture.addListener(
-
             kotlinx.coroutines.Runnable {
                 isLoaded = true
             },
-
             ContextCompat.getMainExecutor(context)
         )
     }
-
-
 
     DisposableEffect(Unit) {
         onDispose {
@@ -418,10 +400,10 @@ fun CameraView(cameraController: LifecycleCameraController, lifecycleOwner: Life
             PreviewView(ctx).apply {
                 this.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
                 this.scaleType = PreviewView.ScaleType.FILL_START
+                this.implementationMode = PreviewView.ImplementationMode.PERFORMANCE
             }.also { view ->
                 view.controller = cameraController
                 cameraController.bindToLifecycle(lifecycleOwner)
-
             }
         }
     )
