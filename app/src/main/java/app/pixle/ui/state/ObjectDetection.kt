@@ -2,10 +2,12 @@ package app.pixle.ui.state
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import app.pixle.model.entity.AppPreferences
 import kotlinx.coroutines.launch
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.task.core.BaseOptions
@@ -21,12 +23,15 @@ fun rememberObjectDetector(model: ObjectDetectionModel?): ObjectDetector? {
     val scope = rememberCoroutineScope()
     val (detector, setDetector) = remember { mutableStateOf<ObjectDetector?>(null) }
 
+    val dataStore = AppPreferences(context)
+    val sensitivityPreference = dataStore.getSensitivityPreference.collectAsState(initial = "")
+    val sensitivityThreshold = sensitivityPreference.value?.toFloat() ?: 0.2f
 
     LaunchedEffect(Unit) {
         val filename = model?.filename ?: ObjectDetectionModel.EDL1.filename
         scope.launch {
             val options = ObjectDetector.ObjectDetectorOptions.builder().setMaxResults(8)
-                .setScoreThreshold(0.2f)
+                .setScoreThreshold(sensitivityThreshold)
             val baseOptions = BaseOptions.builder().setNumThreads(2).let {
                     if (CompatibilityList().isDelegateSupportedOnThisDevice) {
                         it.useGpu()
