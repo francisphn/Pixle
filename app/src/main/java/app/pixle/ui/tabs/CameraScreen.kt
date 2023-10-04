@@ -140,6 +140,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             val buffer = image.planes[0].buffer
             val bytes = ByteArray(buffer.capacity())
             buffer.get(bytes)
+
             val tempBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
 
             val matrix = Matrix().also { it.postRotate(if (isBackCamera) 90f else -90f) }
@@ -155,8 +156,12 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             )
 
             image.close()
+
             isCapturing = false
             isLoaded = true
+
+            tempBitmap.recycle()
+            buffer.clear()
         }
 
         override fun onError(exception: ImageCaptureException) {
