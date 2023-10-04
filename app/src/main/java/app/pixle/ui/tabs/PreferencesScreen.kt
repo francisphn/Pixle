@@ -21,9 +21,11 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -35,27 +37,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.model.entity.AppPreferences
+import app.pixle.model.entity.AppPreferences.Companion.DEFAULT_GAME_MODE
+import app.pixle.model.entity.AppPreferences.Companion.DEFAULT_SENSITIVITY
+import app.pixle.model.entity.GameMode
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.modifier.opacity
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Preferences(navBuilder: NavigationBuilder) {
-
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val dataStore = AppPreferences(context)
-    val gameModePreference = dataStore.getGameModePreference.collectAsState(initial = "")
-    val sensitivityPreference = dataStore.getSensitivityPreference.collectAsState(initial = "")
 
-    var sensitivitySelection by remember { mutableFloatStateOf(0.2f) }
-    if (sensitivityPreference.value?.equals("") != true) {
-        sensitivitySelection= sensitivityPreference.value?.toFloat() ?: 0.2f
+    val dataStore = AppPreferences.getInstance(context)
+    val gameModePreference by dataStore.getGameModePreference.collectAsState(initial = DEFAULT_GAME_MODE)
+
+    var sensitivitySelection by remember { mutableStateOf<Float?>(null) }
+
+    LaunchedEffect(Unit) {
+        dataStore.getSensitivityPreference.collect {
+            sensitivitySelection = it
+        }
     }
 
-    var gameModeHard = (gameModePreference.value?.equals("Hard") ?: true || gameModePreference.value?.equals("") ?: true)
-    println(gameModeHard)
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -84,6 +90,7 @@ fun Preferences(navBuilder: NavigationBuilder) {
                 }
             }
         )
+
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)) {
@@ -93,93 +100,84 @@ fun Preferences(navBuilder: NavigationBuilder) {
                 lineHeight = 52.sp,
                 text = "Pixle Preferences")
         }
+
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Game mode")
+
                 Row(modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround) {
-                    Column(modifier = Modifier
-                        .padding(8.dp)
-                        .background(
-                            if (!gameModeHard) Color(0xFFD3D3D3) else Color(
-                                0xFFE9E9E9
+
+                    GameMode.values().forEach { option ->
+
+                        Row(modifier = Modifier
+                            .padding(8.dp)
+                            .background(
+                                if (gameModePreference == option) Color(0xFFD3D3D3) else Color(
+                                    0xFFE9E9E9
+                                )
+
                             )
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Color.Gray
-                        )
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .clickable {
-                            gameModeHard = false
-                            scope.launch {
-                                dataStore.saveGameModePreference("Easy")
-                            }
-                        }
-                    ) {
-                        Text(text = "Easy mode",
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    Column(modifier = Modifier
-                        .padding(8.dp)
-                        .background(
-                            if (!gameModeHard) Color(0xFFE9E9E9) else Color(
-                                0xFFD3D3D3
+                            .border(
+                                width = 1.dp,
+                                color = Color.Gray
                             )
-                        )
-                        .fillMaxWidth()
-                        .border(
-                            width = 1.dp,
-                            color = Color.Gray
-                        )
-                        .weight(1f)
-                        .clickable {
-                            gameModeHard = true
-                            scope.launch {
-                                dataStore.saveGameModePreference("Hard")
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .clickable {
+                                scope.launch {
+                                    dataStore.saveGameModePreference(option)
+                                }
                             }
+
+                        ) {
+                            Text(text = option.toString(),
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
                         }
-                    ) {
-                        Text(text = "Hard mode",
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
+
+
                     }
+
                 }
+
+
             }
         }
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(text = "Sensitivity")
-                Slider(
-                    modifier = Modifier.padding(16.dp),
-                    value = sensitivitySelection,
-                    onValueChange = {
+
+        if (sensitivitySelection != null) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(text = "Sensitivity")
+                    Slider(
+                        modifier = Modifier.padding(16.dp),
+                        value = sensitivitySelection!!,
+                        onValueChange = {
                             sensitivitySelection = it
+
                             scope.launch {
-                                dataStore.saveSensitivityPreference(sensitivitySelection.toString())
+                                dataStore.saveSensitivityPreference(sensitivitySelection!!)
                             }
                         },
-                    valueRange = 0.1f..0.9f,
-                    steps = 7
-                )
-                Text(text = "Current Sensitivity:",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth())
-                Text(text = String.format("%.1f", sensitivitySelection),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth().padding(16.dp))
+                        valueRange = 0.1f..0.9f,
+                        steps = 7
+                    )
+                    Text(text = "Current Sensitivity:",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth())
+                    Text(text = String.format("%.1f", sensitivitySelection!!),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp))
+                }
             }
         }
     }

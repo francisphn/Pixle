@@ -4,39 +4,56 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class AppPreferences(private val context: Context) {
+enum class GameMode {
+    Easy,
+    Hard
+}
 
-    // to make sure there is only one instance
+class AppPreferences private constructor(private val dataStore: DataStore<Preferences>) {
+    private val gameModeKey = stringPreferencesKey("game_mode")
+    private val sensitivityKey = floatPreferencesKey("detection_sensitivity")
+
+    val getGameModePreference: Flow<GameMode> = dataStore.data
+        .map { preferences ->
+            preferences[gameModeKey]?.let { GameMode.valueOf(it) } ?: DEFAULT_GAME_MODE
+        }
+
+    suspend fun saveGameModePreference(mode: GameMode) {
+        dataStore.edit { preferences ->
+            preferences[gameModeKey] = mode.toString()
+        }
+    }
+
+    val getSensitivityPreference: Flow<Float> = dataStore.data
+        .map { preferences ->
+            preferences[sensitivityKey] ?: DEFAULT_SENSITIVITY
+        }
+
+    suspend fun saveSensitivityPreference(sensitivity: Float) {
+        dataStore.edit { preferences ->
+            preferences[sensitivityKey] = sensitivity
+        }
+    }
+
     companion object {
-        private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("app_preferences")
-        val GAME_MODE_KEY = stringPreferencesKey("game_mode")
-        val SENSITIVITY_KEY = stringPreferencesKey("detection_sensitivity")
-    }
+        val DEFAULT_GAME_MODE = GameMode.Easy
 
-    val getGameModePreference: Flow<String?> = context.dataStore.data
-        .map { preferences ->
-            preferences[GAME_MODE_KEY] ?: ""
-        }
+        const val DEFAULT_SENSITIVITY = 0.2f
 
-    suspend fun saveGameModePreference(mode: String) {
-        context.dataStore.edit { preferences ->
-            preferences[GAME_MODE_KEY] = mode
-        }
-    }
+        private val Context.dataStore: DataStore<Preferences> by
+            preferencesDataStore("app_preferences")
 
-    val getSensitivityPreference: Flow<String?> = context.dataStore.data
-        .map { preferences ->
-            preferences[SENSITIVITY_KEY] ?: ""
-        }
+        @Volatile
+        private var instance: AppPreferences? = null
 
-    suspend fun saveSensitivityPreference(sensitivity: String) {
-        context.dataStore.edit { preferences ->
-            preferences[SENSITIVITY_KEY] = sensitivity
+        fun getInstance(context: Context): AppPreferences = instance ?: synchronized(this) {
+            AppPreferences(context.dataStore).also { instance = it }
         }
     }
 }

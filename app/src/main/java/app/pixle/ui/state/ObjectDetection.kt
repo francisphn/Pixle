@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import app.pixle.model.entity.AppPreferences
+import app.pixle.model.entity.AppPreferences.Companion.DEFAULT_SENSITIVITY
 import kotlinx.coroutines.launch
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.task.core.BaseOptions
@@ -32,24 +33,22 @@ fun rememberObjectDetector(model: ObjectDetectionModel = ObjectDetectionModel.ED
     val scope = rememberCoroutineScope()
     val (detector, setDetector) = remember { mutableStateOf<ObjectDetector?>(null) }
 
-    val dataStore = AppPreferences(context)
-    val sensitivityPreference = dataStore.getSensitivityPreference.collectAsState(initial = "")
-    var sensitivityThreshold by remember { mutableFloatStateOf(0.2f) }
-    if (sensitivityPreference.value?.equals("") != true) {
-        sensitivityThreshold= sensitivityPreference.value?.toFloat() ?: 0.2f
-    }
+    val dataStore = AppPreferences.getInstance(context)
 
-    DisposableEffect(model.filename) {
+    val sensitivityPreference by dataStore.getSensitivityPreference.collectAsState(initial = DEFAULT_SENSITIVITY)
+
+    DisposableEffect(model.filename, sensitivityPreference) {
         val filename = model.filename
         val coroutine = scope.launch {
+
             if (detector != null) {
                 return@launch
             }
 
             Log.d("pixle:tensorflow", "Loading object detector: $filename")
 
-            val options = ObjectDetector.ObjectDetectorOptions.builder().setMaxResults(8)
-                .setScoreThreshold(sensitivityThreshold)
+            val options = ObjectDetector.ObjectDetectorOptions.builder().setMaxResults(8).setScoreThreshold(sensitivityPreference)
+
             val baseOptions = BaseOptions.builder().setNumThreads(2).let {
                     if (CompatibilityList().isDelegateSupportedOnThisDevice) {
                         it.useGpu()

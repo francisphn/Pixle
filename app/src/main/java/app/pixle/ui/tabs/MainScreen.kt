@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -44,6 +45,7 @@ import app.pixle.lib.Utils
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.model.entity.AppPreferences
+import app.pixle.model.entity.GameMode
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.main.MissingRowAttempt
 import app.pixle.ui.composable.main.NoWinningPhoto
@@ -73,8 +75,9 @@ fun MainScreen() {
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
 
     val context = LocalContext.current
-    val dataStore = AppPreferences(context)
-    val gameModePreference = dataStore.getGameModePreference.collectAsState(initial = "")
+    val dataStore = AppPreferences.getInstance(context)
+
+    val gameModePreference by dataStore.getGameModePreference.collectAsState(initial = GameMode.Easy)
 
     LaunchedEffect(animationState) {
         if (animationState == GameAnimation.State.IDLE) return@LaunchedEffect
@@ -269,7 +272,7 @@ fun MainScreen() {
                                                 animationState != GameAnimation.State.IDLE
                                     )
                                 }
-                            if (gameModePreference.value == "" || gameModePreference.value == "Hard") {
+                            if (gameModePreference == GameMode.Hard) {
 
                                 (0 until (6 - attempts.size).coerceAtLeast(0))
                                     .forEach { _ ->
