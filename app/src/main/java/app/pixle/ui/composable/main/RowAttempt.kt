@@ -1,5 +1,7 @@
 package app.pixle.ui.composable.main
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,7 +21,8 @@ import app.pixle.ui.composable.PhotoItem
 
 @Composable
 fun RowAttempt(
-    items: Attempt
+    items: Attempt,
+    shouldAnimate: Boolean = false,
 ) {
     Row(
         modifier = Modifier.offset(x = (-4).dp),
@@ -33,8 +37,12 @@ fun RowAttempt(
                 .size(8.dp)
         )
 
-        items.attemptItems.forEach {
-            PhotoItem(item = it.icon, kind = it.kind)
+        items.attemptItems.forEachIndexed { idx, it ->
+            PhotoItem(
+                item = it.icon,
+                kind = it.kind,
+                animate = Pair(shouldAnimate, idx * 500)
+            )
         }
     }
 }

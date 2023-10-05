@@ -14,10 +14,8 @@ data class Solution(
     )
     val solutionItems: List<AtomicSolutionItem>
 ) {
-
     val date: LocalDate
         get() = LocalDate.parse(solution.date)
-
 
     @Ignore
     val difficulty = solution.difficulty

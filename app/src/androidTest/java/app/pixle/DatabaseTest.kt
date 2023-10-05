@@ -82,13 +82,13 @@ class DatabaseTest {
         val todayAttemptUuid = UUID.randomUUID().toString()
 
         val todayAttempt = AtomicAttempt(
-            uuid = todayAttemptUuid,
+            uuid = todayAttemptUuid.toString(),
             solutionDate = Utils.utcDate().toString(),
             winningPhoto = null
         )
 
         val todayAttemptItems = listOf("😁", "🇬🇧").mapIndexed { index, emoji ->
-            AtomicAttemptItem(emoji, todayAttemptUuid, index + 1L, AtomicAttemptItem.KIND_NONE)
+            AtomicAttemptItem(emoji, todayAttemptUuid, index.plus(1L), AtomicAttemptItem.KIND_NONE)
         }
 
         val today = Attempt(todayAttempt, todayAttemptItems)

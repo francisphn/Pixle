@@ -7,11 +7,13 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCapture.CAPTURE_MODE_ZERO_SHUTTER_LAG
 import androidx.camera.core.ImageCapture.FLASH_MODE_AUTO
 import androidx.camera.core.ImageCapture.FLASH_MODE_OFF
 import androidx.camera.core.ImageCapture.FLASH_MODE_ON
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
+import androidx.camera.view.CameraController.IMAGE_CAPTURE
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.animateFloatAsState
@@ -25,17 +27,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
-import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -49,8 +45,10 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,94 +59,121 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import app.pixle.model.api.AttemptsOfToday
-import app.pixle.model.api.ConfirmAttempt
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
-import app.pixle.ui.state.rememberInvalidate
-import app.pixle.ui.state.rememberMutable
-import kotlinx.coroutines.Dispatchers
+import app.pixle.ui.theme.Translucent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
+private val flashModes = mapOf(
+    Pair(FLASH_MODE_AUTO, Icons.Filled.FlashAuto),
+    Pair(FLASH_MODE_ON, Icons.Filled.FlashOn),
+    Pair(FLASH_MODE_OFF, Icons.Filled.FlashOff)
+)
 
 @Composable
+@androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
 fun CameraScreen(navBuilder: NavigationBuilder) {
+    var rotationState by remember { mutableFloatStateOf(0f) }
 
-    val flashModes = mapOf(
-        Pair(FLASH_MODE_AUTO, Icons.Filled.FlashAuto),
-        Pair(FLASH_MODE_ON, Icons.Filled.FlashOn),
-        Pair(FLASH_MODE_OFF, Icons.Filled.FlashOff)
+    val rotation by animateFloatAsState(
+        targetValue = rotationState,
+        animationSpec = tween(700),
+        label = "rotation"
     )
-    
+
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val scope = rememberCoroutineScope()
-
-    val invalidate = rememberInvalidate(AttemptsOfToday)
-    val (_, _, mutate) = rememberMutable(ConfirmAttempt) {
-        onSuccess = { _, _, _ ->
-            scope.launch {
-                invalidate()
-            }.invokeOnCompletion {
-                navBuilder.navigateToMain()
-            }
-        }
-    }
-
     val cameraController = remember { LifecycleCameraController(context) }
+    val executor = Executors.newSingleThreadExecutor()
+
+    cameraController.setEnabledUseCases(IMAGE_CAPTURE)
+    cameraController.imageCaptureMode = CAPTURE_MODE_ZERO_SHUTTER_LAG
 
     var isCapturing by remember { mutableStateOf(false) }
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    val scope = rememberCoroutineScope()
+
     val scale by animateFloatAsState(
         targetValue = if (isCapturing) 40f else 60f,
         label = "scale",
         animationSpec = tween(125)
     )
 
+    var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_OFF) }
+    var currentCameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
+    val isBackCamera = currentCameraSelector == CameraSelector.DEFAULT_BACK_CAMERA
+
+    cameraController.imageCaptureFlashMode = currentFlashMode
+    cameraController.cameraSelector = currentCameraSelector
+
+    var isLoaded by remember { mutableStateOf(false) }
+
     val imageCaptureCallback = object : ImageCapture.OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
             val buffer = image.planes[0].buffer
             val bytes = ByteArray(buffer.capacity())
             buffer.get(bytes)
+
             val tempBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
 
-            val matrix = Matrix();
-            matrix.postRotate(90f);
-            bitmap = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.getWidth(), tempBitmap.getHeight(), matrix, true)
+            val matrix = Matrix().also { it.postRotate(if (isBackCamera) 90f else -90f) }
+
+            bitmap = Bitmap.createBitmap(
+                tempBitmap,
+                0,
+                0,
+                tempBitmap.getWidth(),
+                tempBitmap.getHeight(),
+                matrix,
+                true
+            )
 
             image.close()
+
             isCapturing = false
+            isLoaded = true
+
+            tempBitmap.recycle()
+            buffer.clear()
         }
 
         override fun onError(exception: ImageCaptureException) {
             isCapturing = false
+            isLoaded = true
         }
     }
 
-    var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_AUTO) }
-
-    var currentCameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
-
-    cameraController.imageCaptureFlashMode = currentFlashMode
-    cameraController.cameraSelector = currentCameraSelector
-    
-    var isLoaded by remember { mutableStateOf(false) }
-    
     LaunchedEffect(Unit) {
-        delay(1000)
-        isLoaded = true
+        cameraController.initializationFuture.addListener(
+            kotlinx.coroutines.Runnable {
+                isLoaded = true
+            },
+            ContextCompat.getMainExecutor(context)
+        )
     }
 
+    DisposableEffect(Unit) {
+        onDispose {
+            executor.shutdown()
+        }
+
+        onDispose {
+            cameraController.unbind()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -163,13 +188,14 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(70.dp, Alignment.CenterVertically)
         ) {
+
             Box {
                 CameraView(cameraController = cameraController, lifecycleOwner = lifecycleOwner)
 
                 androidx.compose.animation.AnimatedVisibility(visible = !isLoaded, enter = fadeIn(), exit = fadeOut()) {
                     Box(modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.Black)
+                        .background(Color.Translucent())
                         .aspectRatio(1F)
                         .clip(RoundedCornerShape(2.dp))) {
                         LoadingScreen()
@@ -178,18 +204,18 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 }
             }
 
+
             IconButton(
                 onClick = {
                     if (!isCapturing) {
                         isCapturing = true
+
                         isLoaded = false
 
-                        scope.launch(Dispatchers.Main) {
-                            cameraController.takePicture(
-                                Executors.newSingleThreadExecutor(),
-                                imageCaptureCallback
-                            )
-                        }
+                        cameraController.takePicture(
+                            executor,
+                            imageCaptureCallback
+                        )
                     }
                 },
                 modifier = Modifier
@@ -221,117 +247,124 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
-                Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
 
-                // Top bar
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp, horizontal = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
+            // Top bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp, horizontal = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(
+                    onClick = {
+                        navBuilder.navigateBack()
+                    }
                 ) {
-                    IconButton(
-                        onClick = {
-                            navBuilder.navigateBack()
-                        }
-                    ) {
-                        Icon(
-                            Icons.Filled.Close,
-                            contentDescription = "close",
-                            tint = Color.White,
-                            modifier = Modifier
-                                .size(28.dp)
-                        )
-                    }
+                    Icon(
+                        Icons.Filled.Close,
+                        contentDescription = "close",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(28.dp)
+                    )
+                }
 
-                    IconButton(
-                        onClick = {
-                            currentFlashMode = currentFlashMode.inc().mod(3)
-                        }
-                    ) {
-                        Icon(
-                            flashModes.get(currentFlashMode) ?: Icons.Filled.FlashAuto ,
-                            contentDescription = "switch flash",
-                            tint = Color.White,
-                            modifier = Modifier
-                                .size(28.dp)
-                        )
-                    }
+                IconButton(
+                    onClick = {
+                        currentFlashMode = currentFlashMode.inc().mod(3)
+                    },
+                    enabled = isBackCamera
+                ) {
+                    Icon(
+                        if (isBackCamera)
+                            flashModes[currentFlashMode] ?: Icons.Filled.FlashAuto
+                        else
+                            Icons.Filled.FlashOff,
 
-                    IconButton(
-                        onClick = {
-                            /* TODO: More settings stuff if needed */
-                        }
-                    ) {
-                        Icon(
-                            Icons.Filled.Settings,
-                            contentDescription = "settings",
-                            tint = Color.White,
-                            modifier = Modifier
-                                .size(28.dp)
-                        )
+                        contentDescription = "switch flash",
+                        tint = if (isBackCamera) Color.White else Color.DarkGray,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+
+                IconButton(
+                    onClick = {
+                        /* TODO: More settings stuff if needed */
                     }
+                ) {
+                    Icon(
+                        Icons.Filled.Settings,
+                        contentDescription = "settings",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(28.dp)
+                    )
                 }
             }
 
-
-            Column {
-                // Bottom bar
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp, horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    bitmap?.let {
-                        Image(
-                            bitmap = it.asImageBitmap(),
-                            contentDescription = "captured image",
-                            modifier = Modifier
-                                .size(35.dp)
-                                .clip(RoundedCornerShape(9.dp))
-                                .border(
-                                    width = 2.dp,
-                                    color = Color.White,
-                                    shape = RoundedCornerShape(9.dp)
-                                )
-                        )
-                    } ?:
-                    Box(
+            // Bottom bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp, horizontal = 20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                bitmap?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = "captured image",
                         modifier = Modifier
                             .size(35.dp)
-                            .background(Color.DarkGray.opacity(.5f), RoundedCornerShape(9.dp))
+                            .clip(RoundedCornerShape(9.dp))
                             .border(
                                 width = 2.dp,
                                 color = Color.White,
                                 shape = RoundedCornerShape(9.dp)
                             )
                     )
-
-
-                    IconButton(
-                        onClick = {
-                            if (currentCameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
-                                currentCameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-                                return@IconButton
-                            }
-
-                            currentCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-                        }
-                    ) {
-                        Icon(
-                            Icons.Filled.Cameraswitch,
-                            contentDescription = "switch camera",
-                            tint = Color.White,
-                            modifier = Modifier
-                                .size(28.dp)
+                } ?:
+                Box(
+                    modifier = Modifier
+                        .size(35.dp)
+                        .background(Color.DarkGray.opacity(.5f), RoundedCornerShape(9.dp))
+                        .border(
+                            width = 2.dp,
+                            color = Color.White,
+                            shape = RoundedCornerShape(9.dp)
                         )
-                    }
-                }
+                )
 
-                Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
+
+                IconButton(
+                    onClick = {
+                        isLoaded = false
+
+                        rotationState = rotationState.plus(-360f)
+
+                        scope.launch {
+                            delay(500)
+
+                            currentCameraSelector = if (isBackCamera) {
+                                CameraSelector.DEFAULT_FRONT_CAMERA
+                            } else {
+                                CameraSelector.DEFAULT_BACK_CAMERA
+                            }
+                        }.invokeOnCompletion {
+                            isLoaded = true
+                        }
+                    }
+                ) {
+                    Icon(
+                        Icons.Filled.Cameraswitch,
+                        contentDescription = "switch camera",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(28.dp)
+                            .graphicsLayer {
+                                this.rotationZ = rotation
+                            }
+                    )
+                }
             }
         }
 
@@ -340,16 +373,18 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         PhotoAnalysisSheet(
             bitmap = bitmap,
             onDismiss = {
+                bitmap?.recycle()
+
                 bitmap = null
                 isLoaded = true
-            }
-        ) {
-            val attempt = it ?: return@PhotoAnalysisSheet
+            },
+            onConfirm = {
+                bitmap?.recycle()
 
-            scope.launch {
-                mutate(Pair(attempt, bitmap))
+                bitmap = null
+                navBuilder.navigateToMain()
             }
-        }
+        )
     }
 
 }
@@ -365,6 +400,7 @@ fun CameraView(cameraController: LifecycleCameraController, lifecycleOwner: Life
             PreviewView(ctx).apply {
                 this.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
                 this.scaleType = PreviewView.ScaleType.FILL_START
+                this.implementationMode = PreviewView.ImplementationMode.PERFORMANCE
             }.also { view ->
                 view.controller = cameraController
                 cameraController.bindToLifecycle(lifecycleOwner)

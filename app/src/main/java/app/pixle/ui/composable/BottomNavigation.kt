@@ -7,18 +7,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Camera
@@ -42,6 +35,7 @@ import androidx.navigation.NavBackStackEntry
 import app.pixle.asset.CAMERA_ROUTE
 import app.pixle.asset.MAIN_ROUTE
 import app.pixle.asset.PROFILE_ROUTE
+import app.pixle.ui.composition.LocalGameAnimation
 
 @Composable
 fun BottomNavigation(
@@ -49,6 +43,7 @@ fun BottomNavigation(
 ) {
 
     val context = LocalContext.current
+
     var cameraPermissionState by remember {
         mutableStateOf(
             ActivityCompat.checkSelfPermission(
@@ -73,64 +68,54 @@ fun BottomNavigation(
         }
     }
 
-    Column(modifier = Modifier) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .padding(bottom = 12.dp, top = 8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(bottom = 12.dp, top = 8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Main screen
+        IconButton(
+            onClick = navBuilder.navigateToMain,
+            enabled = backStackEntry?.destination?.route != MAIN_ROUTE
         ) {
-            // Main screen
-            IconButton(
-                onClick = navBuilder.navigateToMain,
-                enabled = backStackEntry?.destination?.route != MAIN_ROUTE
-            ) {
-                Icon(
-                    Icons.Filled.Home, contentDescription = "Main", modifier = Modifier.size(32.dp)
-                )
-            }
-
-            IconButton(
-                modifier = Modifier
-                    .offset(y = (-8).dp)
-                    .scale(1.2f)
-                    .background(MaterialTheme.colorScheme.onBackground, CircleShape)
-                    .padding(2.dp),
-                onClick = {
-                    if (cameraPermissionState) {
-                        navBuilder.navigateToCamera()
-                    } else {
-                        permissionsLauncher.launch(Manifest.permission.CAMERA)
-                    }
-                },
-                enabled = backStackEntry?.destination?.route != CAMERA_ROUTE
-            ) {
-                Icon(
-                    Icons.Filled.Camera,
-                    contentDescription = "Camera",
-                    modifier = Modifier.size(32.dp),
-                    tint = MaterialTheme.colorScheme.background
-                )
-            }
-
-            IconButton(
-                onClick = navBuilder.navigateToProfile,
-                enabled = backStackEntry?.destination?.route != PROFILE_ROUTE
-            ) {
-                Icon(
-                    Icons.Filled.Face, contentDescription = "Profile", modifier = Modifier.size(32.dp)
-                )
-            }
+            Icon(
+                Icons.Filled.Home, contentDescription = "Main", modifier = Modifier.size(32.dp)
+            )
         }
 
-        Spacer(
-            Modifier.windowInsetsBottomHeight(
-                WindowInsets.systemBars
+        IconButton(
+            modifier = Modifier
+                .offset(y = (-8).dp)
+                .scale(1.2f)
+                .background(MaterialTheme.colorScheme.onBackground, CircleShape)
+                .padding(2.dp),
+            onClick = {
+                if (cameraPermissionState) {
+                    navBuilder.navigateToCamera()
+                } else {
+                    permissionsLauncher.launch(Manifest.permission.CAMERA)
+                }
+            },
+            enabled = backStackEntry?.destination?.route != CAMERA_ROUTE
+        ) {
+            Icon(
+                Icons.Filled.Camera,
+                contentDescription = "Camera",
+                modifier = Modifier.size(32.dp),
+                tint = MaterialTheme.colorScheme.background
             )
-        )
+        }
+
+        IconButton(
+            onClick = navBuilder.navigateToProfile,
+            enabled = backStackEntry?.destination?.route != PROFILE_ROUTE
+        ) {
+            Icon(
+                Icons.Filled.Face, contentDescription = "Profile", modifier = Modifier.size(32.dp)
+            )
+        }
     }
-
-
 }
