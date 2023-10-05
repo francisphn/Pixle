@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId = "app.pixle"
         minSdk = 33
-        targetSdk = 33 // Do not upgrade to API 34 until mid October
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -63,8 +63,8 @@ android {
 
 dependencies {
     // Kotlin
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
     // Ktor HTTP client
@@ -75,22 +75,25 @@ dependencies {
 
 
     // Jetpack Compose, Material Design and Android Core
-    // Avoid upgrading as things are breaking as Google is releasing Android 14 soon
-    implementation("androidx.core:core-ktx:1.10.1") // Do not upgrade
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.2.0-alpha08")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha09")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.3")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Do not upgrade
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
+
+    // Jetpack DataStore
+    val dataStoreVersion = "1.0.0"
+    implementation("androidx.datastore:datastore-core:$dataStoreVersion")
+    implementation("androidx.datastore:datastore-preferences:$dataStoreVersion")
 
 
     // Accompanist
