@@ -3,6 +3,7 @@ package app.pixle.database
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.map
 class AppPreferences private constructor(private val dataStore: DataStore<Preferences>) {
     private val gameModeKey = stringPreferencesKey("game_mode")
     private val sensitivityKey = floatPreferencesKey("detection_sensitivity")
+    private val allowedNotifications = booleanPreferencesKey("allowed_notifications")
 
     val getGameModePreference: Flow<GameMode> = dataStore.data
         .map { preferences ->
@@ -34,6 +36,24 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
     suspend fun saveSensitivityPreference(sensitivity: Float) {
         dataStore.edit { preferences ->
             preferences[sensitivityKey] = sensitivity
+        }
+    }
+
+    val isFirstTimeLaunchingApp: Flow<Boolean> =
+        dataStore.data.map { settings ->
+            settings[allowedNotifications] != null
+        }
+
+    val hasPreviouslyAskedForNotificationPermission = isFirstTimeLaunchingApp
+
+    fun hasNotificationPermission(): Flow<Boolean> =
+        dataStore.data.map { settings ->
+            settings[allowedNotifications] ?: false
+        }
+
+    suspend fun userRespondsToNotificationPermission(allowedPermissions: Boolean) {
+        dataStore.edit { settings ->
+            settings[allowedNotifications] = allowedPermissions
         }
     }
 
