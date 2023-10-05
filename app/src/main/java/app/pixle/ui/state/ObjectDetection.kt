@@ -4,12 +4,18 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
+import app.pixle.model.entity.AppPreferences
+import app.pixle.model.entity.AppPreferences.Companion.DEFAULT_SENSITIVITY
 import kotlinx.coroutines.launch
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.task.core.BaseOptions
@@ -27,17 +33,22 @@ fun rememberObjectDetector(model: ObjectDetectionModel = ObjectDetectionModel.ED
     val scope = rememberCoroutineScope()
     val (detector, setDetector) = remember { mutableStateOf<ObjectDetector?>(null) }
 
-    DisposableEffect(model.filename) {
+    val dataStore = AppPreferences.getInstance(context)
+
+    val sensitivityPreference by dataStore.getSensitivityPreference.collectAsState(initial = DEFAULT_SENSITIVITY)
+
+    DisposableEffect(model.filename, sensitivityPreference) {
         val filename = model.filename
         val coroutine = scope.launch {
+
             if (detector != null) {
                 return@launch
             }
 
             Log.d("pixle:tensorflow", "Loading object detector: $filename")
 
-            val options = ObjectDetector.ObjectDetectorOptions.builder().setMaxResults(8)
-                .setScoreThreshold(0.2f)
+            val options = ObjectDetector.ObjectDetectorOptions.builder().setMaxResults(8).setScoreThreshold(sensitivityPreference)
+
             val baseOptions = BaseOptions.builder().setNumThreads(2).let {
                     if (CompatibilityList().isDelegateSupportedOnThisDevice) {
                         it.useGpu()

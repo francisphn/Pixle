@@ -7,6 +7,8 @@ class NavigationBuilder {
 
     lateinit var navigateToProfile: () -> Unit
 
+    lateinit var navigateToPreferences: () -> Unit
+
     lateinit var navigateBack: () -> Unit
 
     fun toMain(action: () -> Unit): NavigationBuilder {
@@ -21,6 +23,11 @@ class NavigationBuilder {
 
     fun toProfile(action: () -> Unit): NavigationBuilder {
         this.navigateToProfile = action
+        return this
+    }
+
+    fun toPreferences(action: () -> Unit): NavigationBuilder {
+        this.navigateToPreferences = action
         return this
     }
 
