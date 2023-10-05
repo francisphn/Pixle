@@ -41,16 +41,17 @@ enum class TextmojiSize(val emoji: TextUnit, val message: TextUnit) {
 @Composable
 fun RandomTextmojiMessage(
     message: String,
+    modifier: Modifier = Modifier,
     size: TextmojiSize = TextmojiSize.MEDIUM
 ) {
-    val (emoji, setEmoji) = remember { mutableStateOf(TEXTMOJIS.random()) }
+    val (emoji, setEmoji) = remember { mutableStateOf(TEXTMOJIS.first()) }
 
     LaunchedEffect(message) {
         setEmoji(TEXTMOJIS.random())
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

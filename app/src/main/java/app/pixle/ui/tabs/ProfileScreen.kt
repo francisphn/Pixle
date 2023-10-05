@@ -111,7 +111,8 @@ fun ProfileScreen(navBuilder: NavigationBuilder) {
                 .fillMaxWidth(),
         ) {
             RandomTextmojiMessage(
-                message = "We haven't implemented this yet."
+                message = "We haven't implemented this yet.",
+                modifier = Modifier.fillMaxSize(),
             )
         }
     }
