@@ -1,4 +1,4 @@
-package app.pixle.model.entity
+package app.pixle.database
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -7,13 +7,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import app.pixle.lib.GameMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-
-enum class GameMode {
-    Easy,
-    Hard
-}
 
 class AppPreferences private constructor(private val dataStore: DataStore<Preferences>) {
     private val gameModeKey = stringPreferencesKey("game_mode")
