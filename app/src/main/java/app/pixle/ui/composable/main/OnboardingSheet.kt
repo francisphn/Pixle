@@ -45,12 +45,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.datastore.dataStore
 import app.pixle.R
 import app.pixle.database.AppPreferences
+import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.ui.composable.PhotoItem
 import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.composable.RandomTextmojiMessage
@@ -143,7 +145,8 @@ fun OnboardingSheet() {
                     fontSize = 18.sp,
                     lineHeight = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 20.dp)
+                    modifier = Modifier.padding(bottom = 30.dp).fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
                 
                 Row(
@@ -162,7 +165,7 @@ fun OnboardingSheet() {
 
                     Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "")
 
-                    PhotoItem(item = "🐦‍⬛")
+                    PhotoItem(item = "🕊️", AtomicAttemptItem.KIND_NONE)
                 }
 
 
@@ -196,7 +199,7 @@ fun OnboardingSheet() {
                 Text(
                     text = "Pixle uses notifications to remind you to touch grass daily.",
 
-                    modifier = Modifier.padding(bottom = 20.dp),
+                    modifier = Modifier.padding(bottom = 30.dp),
 
                     fontFamily = Manrope,
                     fontWeight = FontWeight.Normal
@@ -219,7 +222,9 @@ fun OnboardingSheet() {
                         color = MaterialTheme.colorScheme.onBackground.opacity(0.25f),
                         shape = CircleShape
                     )
-                    .padding(horizontal = 20.dp, vertical = 10.dp)) {
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
+                    .fillMaxWidth(),
+                    contentAlignment = Alignment.Center) {
                     Text(
                         text = "Continue",
                         fontFamily = Manrope,
