@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.RandomTextmojiMessage
 import app.pixle.ui.composable.profile.About
+import app.pixle.ui.composable.profile.History
 import app.pixle.ui.modifier.opacity
 
 
@@ -106,9 +107,7 @@ fun ProfileScreen(navBuilder: NavigationBuilder) {
                 .weight(1f)
                 .fillMaxWidth(),
         ) {
-            RandomTextmojiMessage(
-                message = "We haven't implemented this yet."
-            )
+            History()
         }
     }
 }

@@ -21,8 +21,10 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.pixle.model.api.AttemptsHistory
 import app.pixle.ui.modifier.bottomBorder
 import app.pixle.ui.modifier.opacity
+import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -30,6 +32,8 @@ import coil.transform.CircleCropTransformation
 
 @Composable
 fun About() {
+    val (history, _) = rememberQueryable(AttemptsHistory)
+
     // Profile picture and edit button
     Row(
         modifier = Modifier
@@ -93,7 +97,7 @@ fun About() {
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
-                    text = "34",
+                    text = "${history?.size ?: 0}",
                     fontFamily = Manrope,
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
@@ -112,7 +116,7 @@ fun About() {
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
-                    text = "16",
+                    text = "${history?.filter{ each -> each.second.any { it.isWinningAttempt } }?.size ?: 0}",
                     fontFamily = Manrope,
                     fontSize = 14.sp,
                     lineHeight = 20.sp,

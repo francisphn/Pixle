@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
@@ -32,6 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import app.pixle.asset.CAMERA_ROUTE
 import app.pixle.asset.MAIN_ROUTE
 import app.pixle.asset.PROFILE_ROUTE
+import app.pixle.database.PixleDatabase
 import app.pixle.model.api.Library
 import app.pixle.ui.composable.BottomNavigation
 import app.pixle.ui.composable.NavigationBuilder
@@ -78,7 +80,6 @@ fun App() {
 
     val systemUiController = rememberSystemUiController()
     val defaultNavBarColour = MaterialTheme.colorScheme.surfaceVariant
-    val defaultStatusBarColour = MaterialTheme.colorScheme.background
     val useDarkTheme = isSystemInDarkTheme()
 
     val preloadLib = rememberQueryablePreload(Library)

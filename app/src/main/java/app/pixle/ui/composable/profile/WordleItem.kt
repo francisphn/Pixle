@@ -1,4 +1,4 @@
-package app.pixle.ui.composable
+package app.pixle.ui.composable.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,36 +21,25 @@ import app.pixle.ui.modifier.opacity
 import app.pixle.ui.theme.Manrope
 
 @Composable
-fun PhotoItem(item: String? = null, kind: String? = null) {
+fun WordleItem(kind: String? = null) {
     val gray = MaterialTheme.colorScheme.onBackground
     val color = remember(kind) {
         when (kind) {
-            AtomicAttemptItem.KIND_EXACT -> Color(52, 211, 153).opacity(0.25f)
-            AtomicAttemptItem.KIND_SIMILAR -> Color(251, 191, 36).opacity(0.25f)
-            AtomicAttemptItem.KIND_NONE -> gray.opacity(0.1f)
-            else -> gray.opacity(0.15f)
+            AtomicAttemptItem.KIND_EXACT -> Color(52, 211, 153).opacity(0.5f)
+            AtomicAttemptItem.KIND_SIMILAR -> Color(251, 191, 36).opacity(0.5f)
+            AtomicAttemptItem.KIND_NONE -> gray.opacity(0.2f)
+            else -> gray.opacity(0.4f)
         }
     }
 
     Box(
         modifier = Modifier
+            .padding(1.dp)
             .background(
-                color, RoundedCornerShape(10.dp)
+                color, RectangleShape
             )
-            .padding(12.dp)
-            .size(24.dp), contentAlignment = Alignment.Center
-    ) {
-        item?.let {
-            Text(
-                text = it,
-                fontFamily = Manrope,
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-
+            .size(20.dp)
+    )
 }
 
 
