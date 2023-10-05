@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.map
 class AppPreferences private constructor(private val dataStore: DataStore<Preferences>) {
     private val gameModeKey = stringPreferencesKey("game_mode")
     private val sensitivityKey = floatPreferencesKey("detection_sensitivity")
-    private val allowedNotifications = booleanPreferencesKey("allowed_notifications")
+    private val onboarded = booleanPreferencesKey("onboarded")
 
     val getGameModePreference: Flow<GameMode> = dataStore.data
         .map { preferences ->
@@ -39,21 +39,14 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    val isFirstTimeLaunchingApp: Flow<Boolean> =
+    val shouldLaunchOnboardingPane: Flow<Boolean> =
         dataStore.data.map { settings ->
-            settings[allowedNotifications] != null
+            settings[onboarded] != null
         }
 
-    val hasPreviouslyAskedForNotificationPermission = isFirstTimeLaunchingApp
-
-    fun hasNotificationPermission(): Flow<Boolean> =
-        dataStore.data.map { settings ->
-            settings[allowedNotifications] ?: false
-        }
-
-    suspend fun userRespondsToNotificationPermission(allowedPermissions: Boolean) {
+    suspend fun dismissOnboardingPane() {
         dataStore.edit { settings ->
-            settings[allowedNotifications] = allowedPermissions
+            settings[onboarded] = true
         }
     }
 

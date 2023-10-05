@@ -31,6 +31,7 @@ import app.pixle.asset.PROFILE_ROUTE
 import app.pixle.model.api.Library
 import app.pixle.ui.composable.BottomNavigation
 import app.pixle.ui.composable.NavigationBuilder
+import app.pixle.ui.composable.main.OnboardingSheet
 import app.pixle.ui.composition.GameAnimationProvider
 import app.pixle.ui.composition.ObjectDetectionProvider
 import app.pixle.ui.state.rememberQueryablePreload
@@ -92,6 +93,8 @@ fun App() {
         }
     }
 
+
+
     // Change system bars color when the screen state changes
     LaunchedEffect(navBackStackEntry?.destination?.route) {
         if (navBackStackEntry?.destination?.route == CAMERA_ROUTE) {
@@ -115,6 +118,8 @@ fun App() {
             color = defaultNavBarColour, darkIcons = false
         )
     }
+
+    OnboardingSheet()
 
     Column(
         modifier = Modifier.fillMaxSize(),
