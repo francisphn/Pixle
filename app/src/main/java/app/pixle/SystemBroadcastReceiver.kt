@@ -9,7 +9,9 @@ import app.pixle.notification.alarm.AlarmBroadcaster
 class SystemBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == "android.intent.action.BOOT_COMPLETED") {
-            AlarmBroadcaster.getInstance(context).setRepeatingAlarm()
+            AlarmBroadcaster
+                .getInstance(context)
+                .setRepeatingAlarm()
         }
     }
 }

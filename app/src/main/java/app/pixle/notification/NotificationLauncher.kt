@@ -17,6 +17,7 @@ import androidx.core.app.NotificationManagerCompat
 import app.pixle.MainActivity
 import app.pixle.R
 import app.pixle.database.AppPreferences
+import kotlinx.coroutines.flow.collect
 
 private const val CHANNEL_ID = "Pixle_Daily_Reminder"
 private const val CHANNEL_NAME = "Pixle Daily Reminder"
@@ -51,9 +52,11 @@ class NotificationLauncher(private val context: Context) {
         .from(context)
         .also { it.createNotificationChannel(channel) }
 
-    fun launchNotification() {
-        if (ActivityCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PERMISSION_GRANTED) {
-            notificationManager.notify(0, notificationBuilder.build()) // todo: replace with real ID
+    suspend fun launchNotification() {
+        dataStore.getNotificationId().collect {
+            if (ActivityCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PERMISSION_GRANTED) {
+                notificationManager.notify(it, notificationBuilder.build())
+            }
         }
     }
 }
