@@ -76,7 +76,7 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
     }
 
     companion object {
-        val DEFAULT_GAME_MODE = GameMode.Easy
+        val DEFAULT_GAME_MODE = GameMode.Hard
 
         const val DEFAULT_SENSITIVITY = 0.2f
 
