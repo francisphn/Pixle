@@ -18,18 +18,21 @@ import androidx.compose.ui.unit.sp
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.theme.Manrope
 
-val TEXTMOJIS = listOf(
+private val positiveReactions = listOf(
     "( ͡° ͜ʖ ͡°)",
     "(⌐■_■)",
-    "¯\\_(ツ)_/¯",
-    "ಠ_ಠ",
     "ʢ◉ᴥ◉ʡ",
-    "⤜(ʘ_ʘ)⤏",
-    "ᗒ ͟ʖᗕ",
+    "¯\\_(ツ)_/¯",
     "ლ(◕෴◕ლ)",
+    "(づʘДʘ)づ"
+)
+
+private val negativeReactions = listOf(
+    "ᗒ ͟ʖᗕ",
+    "ಠ_ಠ",
+    "⤜(ʘ_ʘ)⤏",
     "(╯⩿.⪀）╯",
-    "(づʘДʘ)づ",
-    "(งòᗜó)ง",
+    "(งòᗜó)ง"
 )
 
 enum class TextmojiSize(val emoji: TextUnit, val message: TextUnit) {
@@ -38,19 +41,33 @@ enum class TextmojiSize(val emoji: TextUnit, val message: TextUnit) {
     LARGE(80.sp, 20.sp),
 }
 
+enum class TextmojiTone {
+    Positive,
+    Negative,
+    Any,
+}
+
 @Composable
 fun RandomTextmojiMessage(
-    message: String,
-    size: TextmojiSize = TextmojiSize.MEDIUM
+    modifier: Modifier = Modifier,
+    message: String? = null,
+    size: TextmojiSize = TextmojiSize.MEDIUM,
+    textmojiTone: TextmojiTone = TextmojiTone.Any
 ) {
-    val (emoji, setEmoji) = remember { mutableStateOf(TEXTMOJIS.random()) }
+    val textmojis = when (textmojiTone) {
+        TextmojiTone.Negative -> negativeReactions
+        TextmojiTone.Positive -> positiveReactions
+        else -> positiveReactions + negativeReactions
+    }
+
+    val (emoji, setEmoji) = remember { mutableStateOf(textmojis.first()) }
 
     LaunchedEffect(message) {
-        setEmoji(TEXTMOJIS.random())
+        setEmoji(textmojis.random())
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -61,11 +78,15 @@ fun RandomTextmojiMessage(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground.opacity(0.35f)
         )
-        Text(
-            text = message,
-            fontFamily = Manrope,
-            fontSize = size.message,
-            fontWeight = FontWeight.Medium,
-        )
+
+        message?.let {
+            Text(
+                text = it,
+                fontFamily = Manrope,
+                fontSize = size.message,
+                fontWeight = FontWeight.Medium,
+            )
+        }
     }
 }
+

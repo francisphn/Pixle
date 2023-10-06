@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -36,14 +35,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import app.pixle.model.entity.AppPreferences
-import app.pixle.model.entity.AppPreferences.Companion.DEFAULT_GAME_MODE
-import app.pixle.model.entity.AppPreferences.Companion.DEFAULT_SENSITIVITY
-import app.pixle.model.entity.GameMode
+import app.pixle.database.AppPreferences
+import app.pixle.database.AppPreferences.Companion.DEFAULT_GAME_MODE
+import app.pixle.lib.GameMode
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.modifier.opacity
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

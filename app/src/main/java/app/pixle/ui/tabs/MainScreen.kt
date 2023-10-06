@@ -44,8 +44,8 @@ import app.pixle.R
 import app.pixle.lib.Utils
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.SolutionOfToday
-import app.pixle.model.entity.AppPreferences
-import app.pixle.model.entity.GameMode
+import app.pixle.database.AppPreferences
+import app.pixle.lib.GameMode
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.main.MissingRowAttempt
 import app.pixle.ui.composable.main.NoWinningPhoto

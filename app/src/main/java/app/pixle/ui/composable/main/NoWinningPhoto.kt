@@ -2,6 +2,7 @@ package app.pixle.ui.composable.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,7 +33,8 @@ fun NoWinningPhoto() {
     ) {
         RandomTextmojiMessage(
             message = "No winning photo, time to go outside!",
-            size = TextmojiSize.SMALL
+            size = TextmojiSize.SMALL,
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

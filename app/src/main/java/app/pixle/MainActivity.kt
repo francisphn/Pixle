@@ -1,6 +1,8 @@
 package app.pixle
 
+import app.pixle.notification.alarm.AlarmBroadcaster
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -31,6 +33,7 @@ import app.pixle.asset.PROFILE_ROUTE
 import app.pixle.model.api.Library
 import app.pixle.ui.composable.BottomNavigation
 import app.pixle.ui.composable.NavigationBuilder
+import app.pixle.ui.composable.main.OnboardingSheet
 import app.pixle.ui.composition.GameAnimationProvider
 import app.pixle.ui.composition.ObjectDetectionProvider
 import app.pixle.ui.state.rememberQueryablePreload
@@ -40,13 +43,20 @@ import app.pixle.ui.tabs.Preferences
 import app.pixle.ui.tabs.ProfileScreen
 import app.pixle.ui.theme.PixleTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.d("pixle:debug", "Main activity created")
+
+        AlarmBroadcaster
+            .getInstance(this)
+            .setRepeatingAlarm()
+
         setContent {
-            // React Context API :)
             PixleTheme {
                 GameAnimationProvider {
                     ObjectDetectionProvider {
@@ -92,6 +102,8 @@ fun App() {
         }
     }
 
+
+
     // Change system bars color when the screen state changes
     LaunchedEffect(navBackStackEntry?.destination?.route) {
         if (navBackStackEntry?.destination?.route == CAMERA_ROUTE) {
@@ -115,6 +127,8 @@ fun App() {
             color = defaultNavBarColour, darkIcons = false
         )
     }
+
+    OnboardingSheet()
 
     Column(
         modifier = Modifier.fillMaxSize(),
