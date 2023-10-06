@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -52,6 +53,8 @@ class NotificationLauncher(private val context: Context) {
         .also { it.createNotificationChannel(channel) }
 
     suspend fun launchNotification() {
+        Log.d("pixle:debug", "Sending daily notifications...")
+
         dataStore.getNotificationId().collect {
             if (ActivityCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PERMISSION_GRANTED) {
                 notificationManager.notify(it, notificationBuilder.build())

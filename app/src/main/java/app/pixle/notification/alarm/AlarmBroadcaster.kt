@@ -23,8 +23,7 @@ class AlarmBroadcaster private constructor(
 
             Calendar.getInstance().also {
                 it.timeInMillis = System.currentTimeMillis()
-                it.set(Calendar.HOUR_OF_DAY, 3)
-                it.set(Calendar.MINUTE, 47)
+                it.set(Calendar.HOUR_OF_DAY, NOTIFICATION_HOUR_OF_DAY)
             }.timeInMillis,
 
             AlarmManager.INTERVAL_DAY,
