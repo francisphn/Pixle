@@ -38,8 +38,7 @@ class NotificationLauncher(private val context: Context) {
     private val notificationBuilder: NotificationCompat.Builder =
         NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.bling)
-            .setContentTitle("Pixle's daily puzzle is here")
-            .setContentText("Test test")
+            .setContentTitle("Pixle's daily puzzle is here!")
             .setPriority(CHANNEL_PRIORITY)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)

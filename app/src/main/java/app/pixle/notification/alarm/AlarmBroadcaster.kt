@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.getSystemService
+import app.pixle.asset.NOTIFICATION_HOUR_OF_DAY
 import java.time.LocalDateTime
 import java.util.*
 
@@ -17,12 +18,13 @@ class AlarmBroadcaster private constructor(
 ) {
     fun setRepeatingAlarm() {
 
-        alarmManager?.setInexactRepeating(
+        alarmManager?.setRepeating( // Use exact repeating for SENG440 demo purpose
             AlarmManager.RTC_WAKEUP,
 
             Calendar.getInstance().also {
                 it.timeInMillis = System.currentTimeMillis()
-                it.set(Calendar.HOUR_OF_DAY, 10)
+                it.set(Calendar.HOUR_OF_DAY, 3)
+                it.set(Calendar.MINUTE, 47)
             }.timeInMillis,
 
             AlarmManager.INTERVAL_DAY,

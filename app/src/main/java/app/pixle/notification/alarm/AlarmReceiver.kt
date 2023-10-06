@@ -12,13 +12,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
-class AlarmReceiver : BroadcastReceiver(), CoroutineScope {
-    private var job: Job = Job()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
-    override fun onReceive(context: Context?, intent: Intent?) {
+class AlarmReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?): Unit = runBlocking {
         context?.let {
             val notificationLauncher = NotificationLauncher(context)
             launch(Dispatchers.IO) { notificationLauncher.launchNotification() }

@@ -14,3 +14,5 @@ const val PIXLE_DATABASE_NAME = "pixle"
 const val IMAGE_QUALITY_PERCENTAGE = 100
 
 val IMAGE_COMPRESS_FORMAT = Bitmap.CompressFormat.WEBP_LOSSLESS
+
+const val NOTIFICATION_HOUR_OF_DAY = 10
