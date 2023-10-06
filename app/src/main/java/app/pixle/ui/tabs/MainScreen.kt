@@ -1,6 +1,5 @@
 package app.pixle.ui.tabs
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -27,26 +26,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.R
 import app.pixle.lib.Utils
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.SolutionOfToday
+import app.pixle.database.AppPreferences
+import app.pixle.lib.GameMode
 import app.pixle.ui.composable.LoadingScreen
-import app.pixle.ui.composition.GameAnimation
-import app.pixle.ui.composition.LocalGameAnimation
 import app.pixle.ui.composable.main.MissingRowAttempt
 import app.pixle.ui.composable.main.NoWinningPhoto
 import app.pixle.ui.composable.main.RowAttempt
+import app.pixle.ui.composition.GameAnimation
+import app.pixle.ui.composition.LocalGameAnimation
 import app.pixle.ui.modifier.leftBorder
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberQueryable
@@ -68,6 +73,11 @@ fun MainScreen() {
 
     val today = remember(goal) { Utils.utcDate() }
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
+
+    val context = LocalContext.current
+    val dataStore = AppPreferences.getInstance(context)
+
+    val gameModePreference by dataStore.getGameModePreference.collectAsState(initial = GameMode.Easy)
 
     LaunchedEffect(animationState) {
         if (animationState == GameAnimation.State.IDLE) return@LaunchedEffect
@@ -262,11 +272,23 @@ fun MainScreen() {
                                                 animationState != GameAnimation.State.IDLE
                                     )
                                 }
+                            if (gameModePreference == GameMode.Hard) {
 
-                            (0 until (6 - attempts.size).coerceAtLeast(0))
-                                .forEach { _ ->
+                                (0 until (6 - attempts.size).coerceAtLeast(0))
+                                    .forEach { _ ->
+                                        MissingRowAttempt(size = goal.solutionItems.size)
+                                    }
+                            } else {
+                                (0 until 2).forEach { _ ->
                                     MissingRowAttempt(size = goal.solutionItems.size)
                                 }
+                                Row(modifier = Modifier.padding(start = 10.dp)) {
+                                    Text(text = "...",
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 36.sp,
+                                        fontWeight = FontWeight.ExtraBold)
+                                }
+                            }
                         }
                     }
 

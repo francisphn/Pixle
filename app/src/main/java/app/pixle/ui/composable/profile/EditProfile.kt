@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -62,7 +63,7 @@ fun EditProfile() {
             sheetState = sheetState,
             onDismissRequest = { setIsEditing(false) },
         ) {
-            RandomTextmojiMessage(message = "We haven't implemented editing yet")
+            RandomTextmojiMessage(message = "We haven't implemented editing yet", modifier = Modifier.fillMaxSize(),)
         }
     }
 }

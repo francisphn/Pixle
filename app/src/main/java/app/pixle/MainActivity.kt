@@ -1,13 +1,13 @@
 package app.pixle
 
+import app.pixle.notification.alarm.AlarmBroadcaster
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
@@ -29,26 +28,35 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import app.pixle.asset.CAMERA_ROUTE
 import app.pixle.asset.MAIN_ROUTE
+import app.pixle.asset.PREFERENCES_ROUTE
 import app.pixle.asset.PROFILE_ROUTE
 import app.pixle.model.api.Library
 import app.pixle.ui.composable.BottomNavigation
 import app.pixle.ui.composable.NavigationBuilder
+import app.pixle.ui.composable.main.OnboardingSheet
 import app.pixle.ui.composition.GameAnimationProvider
 import app.pixle.ui.composition.ObjectDetectionProvider
 import app.pixle.ui.state.rememberQueryablePreload
 import app.pixle.ui.tabs.CameraScreen
 import app.pixle.ui.tabs.MainScreen
+import app.pixle.ui.tabs.Preferences
 import app.pixle.ui.tabs.ProfileScreen
 import app.pixle.ui.theme.PixleTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.d("pixle:debug", "Main activity created")
+
+        AlarmBroadcaster
+            .getInstance(this)
+            .setRepeatingAlarm()
+
         setContent {
-            // React Context API :)
             PixleTheme {
                 GameAnimationProvider {
                     ObjectDetectionProvider {
@@ -75,6 +83,7 @@ fun App() {
         .toMain { navController.navigate(MAIN_ROUTE) }
         .toCamera { navController.navigate(CAMERA_ROUTE) }
         .toProfile { navController.navigate(PROFILE_ROUTE) }
+        .toPreferences { navController.navigate(PREFERENCES_ROUTE) }
         .back { navController.popBackStack() }
 
 
@@ -92,6 +101,8 @@ fun App() {
             preloadLib()
         }
     }
+
+
 
     // Change system bars color when the screen state changes
     LaunchedEffect(navBackStackEntry?.destination?.route) {
@@ -116,6 +127,8 @@ fun App() {
             color = defaultNavBarColour, darkIcons = false
         )
     }
+
+    OnboardingSheet()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -174,6 +187,38 @@ fun App() {
                 composable(
                     route = PROFILE_ROUTE,
                     enterTransition = {
+                        if (initialState.destination.route == PREFERENCES_ROUTE) {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(500)
+                            )
+                        } else {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(500)
+                            )
+                        }
+
+                    },
+                    exitTransition = {
+                        if (targetState.destination.route == PREFERENCES_ROUTE) {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(500)
+                            )
+                        } else {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(500)
+                            )
+                        }
+                    }
+                ) {
+                    ProfileScreen(navBuilder)
+                }
+                composable(
+                    route = PREFERENCES_ROUTE,
+                    enterTransition = {
                         slideIntoContainer(
                             towards = AnimatedContentTransitionScope.SlideDirection.Left,
                             animationSpec = tween(500)
@@ -186,7 +231,7 @@ fun App() {
                         )
                     }
                 ) {
-                    ProfileScreen(navBuilder)
+                    Preferences(navBuilder)
                 }
             }
         }
