@@ -1,19 +1,15 @@
 package app.pixle
 
-import AlarmUtils
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import java.util.*
+import app.pixle.notification.alarm.AlarmBroadcaster
 
-class AlarmBootReceiver : BroadcastReceiver() {
-
+// Sets notification to be sent again after device reboots
+class SystemBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == "android.intent.action.BOOT_COMPLETED") {
-            val calendar = Calendar.getInstance()
-            val alarmUtils = AlarmUtils(context)
-            alarmUtils.initRepeatingAlarm(calendar)
+            AlarmBroadcaster.getInstance(context).setRepeatingAlarm()
         }
     }
-
 }

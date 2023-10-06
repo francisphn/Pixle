@@ -5,12 +5,15 @@
     <!-- Add features here -->
     <uses-feature android:name="android.hardware.camera.any" android:required="true" />
 
+
     <!-- Add permissions here -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -26,9 +29,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pixle">
 
-        <receiver android:name=".AlarmReceiver" />
+        <receiver android:name=".notification.alarm.AlarmReceiver"/>
 
-        <receiver android:name=".AlarmBootReceiver"
+        <receiver android:name=".SystemBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

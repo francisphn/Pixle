@@ -1,7 +1,8 @@
 package app.pixle
 
-import AlarmUtils
+import app.pixle.notification.alarm.AlarmBroadcaster
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -43,16 +44,17 @@ import app.pixle.ui.tabs.ProfileScreen
 import app.pixle.ui.theme.PixleTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val calendar = Calendar.getInstance()
-
-        val alarmUtils = AlarmUtils(this)
-        alarmUtils.initRepeatingAlarm(calendar)
-
         super.onCreate(savedInstanceState)
+
+        Log.d("pixle:debug", "Main activity created")
+
+        AlarmBroadcaster
+            .getInstance(this)
+            .setRepeatingAlarm()
+
         setContent {
             PixleTheme {
                 GameAnimationProvider {
