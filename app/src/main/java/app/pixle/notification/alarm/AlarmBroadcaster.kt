@@ -17,7 +17,7 @@ class AlarmBroadcaster private constructor(
 ) {
     fun setRepeatingAlarm() {
 
-        alarmManager?.setRepeating(
+        alarmManager?.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
 
             Calendar.getInstance().also {
