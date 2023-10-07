@@ -1,6 +1,7 @@
 package app.pixle.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -18,6 +19,11 @@ interface AttemptDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(attemptItems: List<AtomicAttemptItem>)
+
+    @Transaction
+    @Query("DELETE FROM atomicAttempt" +
+            " WHERE atomicAttempt.solutionDate = :utcIsoDate")
+    suspend fun deleteAttempts(utcIsoDate: String)
 
     @Transaction
     @Query("SELECT * FROM atomicAttempt" +

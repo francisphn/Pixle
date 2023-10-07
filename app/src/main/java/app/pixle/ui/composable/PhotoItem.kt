@@ -11,9 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +36,8 @@ fun PhotoItem(
         when (kind) {
             AtomicAttemptItem.KIND_EXACT -> Color(52, 211, 153).opacity(0.25f)
             AtomicAttemptItem.KIND_SIMILAR -> Color(251, 191, 36).opacity(0.25f)
-            else -> gray.opacity(0.1f)
+            AtomicAttemptItem.KIND_NONE -> gray.opacity(0.1f)
+            else -> gray.opacity(0.15f)
         }
     }
 
