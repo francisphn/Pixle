@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import app.pixle.ui.composable.RandomTextmojiMessage
+import app.pixle.ui.composable.SmallButton
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.theme.Manrope
 
@@ -32,27 +33,12 @@ fun EditProfile() {
     val (isEditing, setIsEditing) = remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    Box(modifier = Modifier
-        .clip(CircleShape)
-        .clickable {
+    SmallButton(
+        label = "Edit profile",
+        onClick = {
             setIsEditing(true)
         }
-        .border(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.onBackground.opacity(0.25f),
-            shape = CircleShape
-        )
-        .padding(horizontal = 14.dp, vertical = 6.dp)) {
-        Text(
-            text = "Edit profile",
-            fontFamily = Manrope,
-            fontSize = 12.sp,
-            lineHeight = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-    }
-
+    )
 
     if (isEditing) {
         ModalBottomSheet(

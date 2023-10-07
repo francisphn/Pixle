@@ -45,7 +45,7 @@ fun About() {
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data("https://avatars.githubusercontent.com/u/70748917?v=4")
+                .data("https://night.saturday.fitness/matthew.png")
                 .transformations(CircleCropTransformation()).build(),
             contentDescription = "profile",
             modifier = Modifier.size(56.dp)

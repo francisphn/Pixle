@@ -26,32 +26,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.R
 import app.pixle.lib.Utils
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.SolutionOfToday
-import app.pixle.database.AppPreferences
-import app.pixle.lib.GameMode
 import app.pixle.ui.composable.LoadingScreen
+import app.pixle.ui.composable.main.Game
 import app.pixle.ui.composable.main.MissingRowAttempt
-import app.pixle.ui.composable.main.NoWinningPhoto
+import app.pixle.ui.composable.main.WinningPhoto
 import app.pixle.ui.composable.main.RowAttempt
 import app.pixle.ui.composition.GameAnimation
 import app.pixle.ui.composition.LocalGameAnimation
+import app.pixle.ui.composition.rememberGameAnimation
 import app.pixle.ui.modifier.leftBorder
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberQueryable
@@ -65,27 +61,11 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val (animationState, setAnimationState) = LocalGameAnimation.current
-    val scope = rememberCoroutineScope()
-
     val (goal, _) = rememberQueryable(SolutionOfToday)
     val (attempts, _) = rememberQueryable(AttemptsOfToday)
 
     val today = remember(goal) { Utils.utcDate() }
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
-
-    val context = LocalContext.current
-    val dataStore = AppPreferences.getInstance(context)
-
-    val gameModePreference by dataStore.getGameModePreference.collectAsState(initial = GameMode.Easy)
-
-    LaunchedEffect(animationState) {
-        if (animationState == GameAnimation.State.IDLE) return@LaunchedEffect
-        scope.launch {
-            delay(100)
-            setAnimationState(GameAnimation.State.IDLE)
-        }
-    }
 
     AnimatedVisibility(
         visible = goal == null || attempts == null || difficultyColour == null,
@@ -145,7 +125,9 @@ fun MainScreen() {
                         .padding(bottom = 20.dp)
                         .fillMaxWidth()
                         .border(
-                            width = 1.dp, color = difficultyColour, shape = RoundedCornerShape(12.dp)
+                            width = 1.dp,
+                            color = difficultyColour,
+                            shape = RoundedCornerShape(12.dp)
                         )
                         .padding(horizontal = 12.dp, vertical = 20.dp),
                 ) {
@@ -262,39 +244,14 @@ fun MainScreen() {
                                 ),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            attempts
-                                .takeLast(attempts.size.coerceAtMost(6))
-                                .forEachIndexed { idx, it ->
-                                    RowAttempt(
-                                        items = it,
-                                        shouldAnimate =
-                                        idx == attempts.size - 1 &&
-                                                animationState != GameAnimation.State.IDLE
-                                    )
-                                }
-                            if (gameModePreference == GameMode.Hard) {
-
-                                (0 until (6 - attempts.size).coerceAtLeast(0))
-                                    .forEach { _ ->
-                                        MissingRowAttempt(size = goal.solutionItems.size)
-                                    }
-                            } else {
-                                (0 until 2).forEach { _ ->
-                                    MissingRowAttempt(size = goal.solutionItems.size)
-                                }
-                                Row(modifier = Modifier.padding(start = 10.dp)) {
-                                    Text(text = "...",
-                                        textAlign = TextAlign.Center,
-                                        fontSize = 36.sp,
-                                        fontWeight = FontWeight.ExtraBold)
-                                }
-                            }
+                            Game(attempts = attempts, goal = goal)
                         }
                     }
 
                     // No winning photo
-                    // TODO: Show winning photo
-                    NoWinningPhoto()
+                    WinningPhoto(
+                        attempts = attempts
+                    )
                 }
             }
         }
