@@ -42,6 +42,7 @@ import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.main.Game
+import app.pixle.ui.composable.main.Hint
 import app.pixle.ui.composable.main.MissingRowAttempt
 import app.pixle.ui.composable.main.WinningPhoto
 import app.pixle.ui.composable.main.RowAttempt
@@ -200,31 +201,10 @@ fun MainScreen() {
                         )
 
                         // Hint
-                        // TODO: atm only shows if there are more than 3 attempts, should be smarter
-                        if (attempts.size > 3) {
-                            Text(
-                                text = " •",
-                                fontFamily = Manrope,
-                                fontSize = 16.sp,
-                                lineHeight = 24.sp,
-                                fontWeight = FontWeight.Medium,
-                            )
-
-                            IconButton(
-                                modifier = Modifier
-                                    .size(21.dp),
-                                onClick = {
-                                },
-                            ) {
-                                Icon(
-                                    Icons.Filled.Lightbulb,
-                                    contentDescription = "hint",
-                                    tint = difficultyColour,
-                                    modifier = Modifier
-                                        .size(14.dp)
-                                )
-                            }
-                        }
+                        Hint(
+                            attempts = attempts,
+                            color = difficultyColour
+                        )
                     }
 
 
