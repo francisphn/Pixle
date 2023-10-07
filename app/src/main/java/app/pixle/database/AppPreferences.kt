@@ -7,10 +7,10 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.pixle.lib.GameMode
+import app.pixle.ui.state.ObjectDetectionModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.map
 class AppPreferences private constructor(private val dataStore: DataStore<Preferences>) {
     private val gameModeKey = stringPreferencesKey("game_mode")
     private val sensitivityKey = floatPreferencesKey("detection_sensitivity")
+    private val modelKey = stringPreferencesKey("ml_model")
     private val onboardedKey = booleanPreferencesKey("onboarded")
     private val nextNotificationIdKey = intPreferencesKey("next_notification_id")
 
@@ -42,6 +43,20 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
     suspend fun saveSensitivityPreference(sensitivity: Float) {
         dataStore.edit { preferences ->
             preferences[sensitivityKey] = sensitivity
+        }
+    }
+
+    val getModelPreference: Flow<ObjectDetectionModel> = dataStore.data
+        .map { preferences ->
+            preferences[modelKey] ?: ObjectDetectionModel.EDL1.filename
+        }
+        .map { filename ->
+            ObjectDetectionModel.of(filename)
+        }
+
+    suspend fun saveModelPreference(model: ObjectDetectionModel) {
+        dataStore.edit { preferences ->
+            preferences[modelKey] = model.filename
         }
     }
 

@@ -19,7 +19,17 @@ import org.tensorflow.lite.task.vision.detector.ObjectDetector
 enum class ObjectDetectionModel(val filename: String) {
     EDL0("efficientdet-lite0.tflite"),
     EDL1("efficientdet-lite1.tflite"),
-    EDL2("efficientdet-lite2.tflite")
+    EDL2("efficientdet-lite2.tflite");
+    companion object {
+        fun of(filename: String): ObjectDetectionModel {
+            return when (filename) {
+                EDL0.filename -> EDL0
+                EDL1.filename -> EDL1
+                EDL2.filename -> EDL2
+                else -> throw IllegalArgumentException("Unknown model: $filename")
+            }
+        }
+    }
 }
 
 @Composable
@@ -35,11 +45,6 @@ fun rememberObjectDetector(model: ObjectDetectionModel = ObjectDetectionModel.ED
     DisposableEffect(model.filename, sensitivityPreference) {
         val filename = model.filename
         val coroutine = scope.launch {
-
-            if (detector != null) {
-                return@launch
-            }
-
             Log.d("pixle:tensorflow", "Loading object detector: $filename")
 
             val options = ObjectDetector.ObjectDetectorOptions.builder().setMaxResults(8).setScoreThreshold(sensitivityPreference)
