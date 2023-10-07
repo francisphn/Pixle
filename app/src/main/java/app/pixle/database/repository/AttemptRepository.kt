@@ -23,6 +23,10 @@ class AttemptRepository(private val attemptDao: AttemptDao) {
         return this.getAttemptsOfUtcDate(Utils.utcDate())
     }
 
+    suspend fun deleteAttemptsOfToday() {
+        return attemptDao.deleteAttempts(Utils.utcDate().toString())
+    }
+
     // TODO: I created this so I can start working on the profile screen, need to be replaced with the winning photo
     suspend fun getAttemptsOfEachDay(): List<Pair<LocalDate, List<Attempt>>> {
         return attemptDao.getAttemptsWithItems()

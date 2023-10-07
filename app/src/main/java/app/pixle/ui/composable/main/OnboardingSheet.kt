@@ -232,9 +232,7 @@ fun OnboardingSheet() {
                         color = MaterialTheme.colorScheme.surface,
                     )
                 }
-
             }
-
         }
     }
 }

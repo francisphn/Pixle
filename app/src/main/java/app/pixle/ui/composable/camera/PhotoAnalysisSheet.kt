@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import app.pixle.model.api.AttemptsHistory
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.ConfirmAttempt
 import app.pixle.model.api.SolutionOfToday
@@ -52,6 +53,7 @@ import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.composition.GameAnimation
 import app.pixle.ui.composition.LocalGameAnimation
 import app.pixle.ui.composition.LocalObjectDetection
+import app.pixle.ui.composition.rememberGameAnimation
 import app.pixle.ui.composition.rememberObjectDetection
 import app.pixle.ui.state.ObjectDetectionModel
 import app.pixle.ui.state.rememberInvalidate
@@ -71,11 +73,11 @@ fun PhotoAnalysisSheet(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
-    val (_, setAnimationState) = LocalGameAnimation.current
 
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
 
+    val (_, setAnimationState) = rememberGameAnimation()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val rotation = remember(bitmap) { if (Math.random() < 0.5f) 1.5f else -1.5f }
 
@@ -89,11 +91,13 @@ fun PhotoAnalysisSheet(
 
     val (goal, _) = rememberQueryable(SolutionOfToday)
     val (lib, _) = rememberQueryable(Library)
-    val invalidate = rememberInvalidate(AttemptsOfToday)
+    val invalidateToday = rememberInvalidate(AttemptsOfToday)
+    val invalidateHistory = rememberInvalidate(AttemptsHistory)
     val (_, _, mutate) = rememberMutable(ConfirmAttempt) {
         onSuccess = { _, _, _ ->
             scope.launch {
-                invalidate()
+                invalidateToday.invoke()
+                invalidateHistory.invoke()
                 sheetState.hide()
             }.invokeOnCompletion {
                 onConfirm()
