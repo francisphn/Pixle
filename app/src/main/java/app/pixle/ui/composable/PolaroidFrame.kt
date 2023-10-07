@@ -8,21 +8,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun PolaroidFrame(
     modifier: Modifier = Modifier,
+    padding: Pair<Dp, Dp> = Pair(20.dp, 48.dp),
     content: @Composable BoxScope.() -> Unit
 ) {
     Box(
         modifier = modifier
             .background(Color.White, RoundedCornerShape(0.dp))
             .padding(
-                top = 20.dp,
-                start = 20.dp,
-                end = 20.dp,
-                bottom = 48.dp
+                top = padding.first,
+                start = padding.first,
+                end = padding.first,
+                bottom = padding.second
             ),
         content = content
     )

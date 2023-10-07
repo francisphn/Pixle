@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import app.pixle.ui.composable.RandomTextmojiMessage
+import app.pixle.ui.composable.SmallButton
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.theme.Manrope
 
@@ -31,27 +33,12 @@ fun EditProfile() {
     val (isEditing, setIsEditing) = remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    Box(modifier = Modifier
-        .clip(CircleShape)
-        .clickable {
+    SmallButton(
+        label = "Edit profile",
+        onClick = {
             setIsEditing(true)
         }
-        .border(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.onBackground.opacity(0.25f),
-            shape = CircleShape
-        )
-        .padding(horizontal = 14.dp, vertical = 6.dp)) {
-        Text(
-            text = "Edit profile",
-            fontFamily = Manrope,
-            fontSize = 12.sp,
-            lineHeight = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-    }
-
+    )
 
     if (isEditing) {
         ModalBottomSheet(
@@ -62,7 +49,7 @@ fun EditProfile() {
             sheetState = sheetState,
             onDismissRequest = { setIsEditing(false) },
         ) {
-            RandomTextmojiMessage(message = "We haven't implemented editing yet")
+            RandomTextmojiMessage(message = "We haven't implemented editing yet", modifier = Modifier.fillMaxSize(),)
         }
     }
 }

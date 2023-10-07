@@ -1,6 +1,5 @@
 package app.pixle.ui.tabs
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -42,11 +41,14 @@ import app.pixle.lib.Utils
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.ui.composable.LoadingScreen
+import app.pixle.ui.composable.main.Game
+import app.pixle.ui.composable.main.Hint
+import app.pixle.ui.composable.main.MissingRowAttempt
+import app.pixle.ui.composable.main.WinningPhoto
+import app.pixle.ui.composable.main.RowAttempt
 import app.pixle.ui.composition.GameAnimation
 import app.pixle.ui.composition.LocalGameAnimation
-import app.pixle.ui.composable.main.MissingRowAttempt
-import app.pixle.ui.composable.main.NoWinningPhoto
-import app.pixle.ui.composable.main.RowAttempt
+import app.pixle.ui.composition.rememberGameAnimation
 import app.pixle.ui.modifier.leftBorder
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberQueryable
@@ -60,22 +62,11 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val (animationState, setAnimationState) = LocalGameAnimation.current
-    val scope = rememberCoroutineScope()
-
     val (goal, _) = rememberQueryable(SolutionOfToday)
     val (attempts, _) = rememberQueryable(AttemptsOfToday)
 
     val today = remember(goal) { Utils.utcDate() }
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
-
-    LaunchedEffect(animationState) {
-        if (animationState == GameAnimation.State.IDLE) return@LaunchedEffect
-        scope.launch {
-            delay(100)
-            setAnimationState(GameAnimation.State.IDLE)
-        }
-    }
 
     AnimatedVisibility(
         visible = goal == null || attempts == null || difficultyColour == null,
@@ -135,7 +126,9 @@ fun MainScreen() {
                         .padding(bottom = 20.dp)
                         .fillMaxWidth()
                         .border(
-                            width = 1.dp, color = difficultyColour, shape = RoundedCornerShape(12.dp)
+                            width = 1.dp,
+                            color = difficultyColour,
+                            shape = RoundedCornerShape(12.dp)
                         )
                         .padding(horizontal = 12.dp, vertical = 20.dp),
                 ) {
@@ -208,31 +201,10 @@ fun MainScreen() {
                         )
 
                         // Hint
-                        // TODO: atm only shows if there are more than 3 attempts, should be smarter
-                        if (attempts.size > 3) {
-                            Text(
-                                text = " •",
-                                fontFamily = Manrope,
-                                fontSize = 16.sp,
-                                lineHeight = 24.sp,
-                                fontWeight = FontWeight.Medium,
-                            )
-
-                            IconButton(
-                                modifier = Modifier
-                                    .size(21.dp),
-                                onClick = {
-                                },
-                            ) {
-                                Icon(
-                                    Icons.Filled.Lightbulb,
-                                    contentDescription = "hint",
-                                    tint = difficultyColour,
-                                    modifier = Modifier
-                                        .size(14.dp)
-                                )
-                            }
-                        }
+                        Hint(
+                            attempts = attempts,
+                            color = difficultyColour
+                        )
                     }
 
 
@@ -252,27 +224,14 @@ fun MainScreen() {
                                 ),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            attempts
-                                .takeLast(attempts.size.coerceAtMost(6))
-                                .forEachIndexed { idx, it ->
-                                    RowAttempt(
-                                        items = it,
-                                        shouldAnimate =
-                                        idx == attempts.size - 1 &&
-                                                animationState != GameAnimation.State.IDLE
-                                    )
-                                }
-
-                            (0 until (6 - attempts.size).coerceAtLeast(0))
-                                .forEach { _ ->
-                                    MissingRowAttempt(size = goal.solutionItems.size)
-                                }
+                            Game(attempts = attempts, goal = goal)
                         }
                     }
 
                     // No winning photo
-                    // TODO: Show winning photo
-                    NoWinningPhoto()
+                    WinningPhoto(
+                        attempts = attempts
+                    )
                 }
             }
         }

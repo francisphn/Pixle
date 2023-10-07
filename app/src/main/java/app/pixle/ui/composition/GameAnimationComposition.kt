@@ -11,7 +11,10 @@ import kotlinx.coroutines.delay
 data class GameAnimation(
     val state: State = State.IDLE,
     val setState: (State) -> Unit = {},
-) {
+): androidx.compose.runtime.State<GameAnimation.State> {
+    override val value: State
+        get() = state
+
     enum class State {
         IDLE,
         ATTEMPT,
@@ -20,6 +23,12 @@ data class GameAnimation(
 }
 
 val LocalGameAnimation = compositionLocalOf { GameAnimation() }
+
+
+@Composable
+fun rememberGameAnimation(): GameAnimation {
+    return LocalGameAnimation.current
+}
 
 @Composable
 fun GameAnimationProvider(
