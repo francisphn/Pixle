@@ -103,13 +103,15 @@ fun History() {
                                 .aspectRatio(1F)
                         )
                     } ?: run {
-                        attempts.forEach { attempt ->
-                            Row {
-                                attempt.attemptItems.forEach {
-                                    WordleItem(it.kind)
+                        attempts
+                            .takeLast(attempts.size.coerceAtMost(6))
+                            .forEach { attempt ->
+                                Row {
+                                    attempt.attemptItems.forEach {
+                                        WordleItem(it.kind)
+                                    }
                                 }
                             }
-                        }
                     }
                 }
 
