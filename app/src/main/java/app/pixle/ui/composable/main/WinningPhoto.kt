@@ -1,5 +1,6 @@
 package app.pixle.ui.composable.main
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -106,11 +107,7 @@ fun WinningPhoto(attempts: List<Attempt>) {
                     textAlign = TextAlign.Center,
                 )
 
-                SmallButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = "Share",
-                    onClick = { /* TODO */ }
-                )
+                ShareGame(attempts = attempts)
                 SmallButton(
                     modifier = Modifier.fillMaxWidth(),
                     label = "Save photo",
