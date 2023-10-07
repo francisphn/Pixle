@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Deblur
 import androidx.compose.material.icons.filled.Extension
+import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.WbTwilight
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -284,7 +285,7 @@ fun Preferences(navBuilder: NavigationBuilder) {
                     Selection(
                         label = "v2",
                         description = "Most accurate, but slowest",
-                        icon = Icons.Filled.Visibility,
+                        icon = Icons.Default.Psychology,
                         isSelected = modelPreferences.filename == ObjectDetectionModel.EDL2.filename,
                         onClick = {
                             scope.launch {

@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Spa
+import androidx.compose.material.icons.twotone.AutoDelete
+import androidx.compose.material.icons.twotone.SentimentVeryDissatisfied
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,7 +69,7 @@ fun ForfeitToday() {
         onClick = { setIsOpen(true) },
     ) {
         Icon(
-            Icons.Default.Spa,
+            Icons.Filled.DeleteSweep,
             contentDescription = "reset",
             tint = MaterialTheme.colorScheme.onError,
             modifier = Modifier
