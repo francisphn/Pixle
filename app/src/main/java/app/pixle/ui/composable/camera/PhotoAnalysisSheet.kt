@@ -44,6 +44,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import app.pixle.database.AppPreferences
+import app.pixle.lib.GameMode
 import app.pixle.model.api.AttemptsHistory
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.ConfirmAttempt
@@ -63,6 +65,7 @@ import app.pixle.ui.state.ObjectDetectionModel
 import app.pixle.ui.state.rememberInvalidate
 import app.pixle.ui.state.rememberMutable
 import app.pixle.ui.state.rememberObjectDetector
+import app.pixle.ui.state.rememberPreference
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import coil.compose.AsyncImage
@@ -81,6 +84,10 @@ fun PhotoAnalysisSheet(
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
 
+    val gameMode by rememberPreference(AppPreferences::getGameModePreference,
+        initialValue = AppPreferences.DEFAULT_GAME_MODE
+    )
+
     val (_, setAnimationState) = rememberGameAnimation()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val rotation = remember(uri) { if (Math.random() < 0.5f) 1.5f else -1.5f }
@@ -95,7 +102,7 @@ fun PhotoAnalysisSheet(
 
     val (goal, _) = rememberQueryable(SolutionOfToday)
     val (lib, _) = rememberQueryable(Library)
-    val invalidateToday = rememberInvalidate(AttemptsOfToday)
+    val (attempts, _, _, _, invalidateToday) = rememberQueryable(AttemptsOfToday)
     val invalidateHistory = rememberInvalidate(AttemptsHistory)
     val (_, _, mutate) = rememberMutable(ConfirmAttempt) {
         onSuccess = { _, _, _ ->
@@ -318,9 +325,18 @@ fun PhotoAnalysisSheet(
                     Button(
                         shape = RoundedCornerShape(8.dp),
                         onClick = {
+                            if (attempts != null && attempts.size >= 6 && gameMode == GameMode.Hard) {
+                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                    if (!sheetState.isVisible) {
+                                        setAttempt(null)
+                                        onDismiss()
+                                    }
+                                }
+                                return@Button
+                            }
                             val confirmedAttempt = attempt ?: return@Button
                             scope.launch {
-                                mutate.invoke(Pair(confirmedAttempt, uri))
+                                mutate.invoke(Triple(confirmedAttempt, uri, gameMode))
                             }.invokeOnCompletion {
                                 val win = confirmedAttempt.attemptItems.all { it.kind == AtomicAttemptItem.KIND_EXACT }
                                 setAnimationState(if (win) GameAnimation.State.WIN else GameAnimation.State.ATTEMPT)

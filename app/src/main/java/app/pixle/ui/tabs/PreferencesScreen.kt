@@ -117,7 +117,8 @@ fun Preferences(navBuilder: NavigationBuilder) {
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp),
+                .padding(horizontal = 10.dp)
+                .padding(bottom = 10.dp),
         ) {
             item {
                 Column(

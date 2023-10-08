@@ -53,7 +53,7 @@ fun WinningPhoto(attempts: List<Attempt>) {
         gameMode == GameMode.Hard && attempts.size >= 6
     }
 
-    val photo = remember(attempts) { attempts.lastOrNull { it.isWinningAttempt }?.winningPhoto }
+    val photo = remember(attempts) { attempts.firstOrNull { it.isWinningAttempt }?.winningPhoto }
     val rotation = remember(photo) { if (Math.random() < 0.5f) 1.5f else -1.5f }
 
     val animatedRotation = animateFloatAsState(

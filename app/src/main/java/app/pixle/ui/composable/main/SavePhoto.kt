@@ -1,5 +1,7 @@
 package app.pixle.ui.composable.main
 
+import android.content.Intent
+import android.media.MediaScannerConnection
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,6 +43,7 @@ import app.pixle.ui.theme.Manrope
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.File
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -53,6 +56,7 @@ fun SavePhoto(image: Uri) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val today = remember(image) { Utils.utcDate() }
+    val filename = remember(today) { "pixle-photo-${today}.jpeg" }
 
     val (isConfirming, setIsConfirming) = remember { mutableStateOf(false) }
     val (isSaving, setIsSaving) = remember { mutableStateOf(false) }
@@ -119,7 +123,7 @@ fun SavePhoto(image: Uri) {
                             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
                         ) {
                             Text(
-                                text = "pixle-photo-${today}.jpeg",
+                                text = filename,
                                 fontFamily = Manrope,
                                 fontSize = 16.sp,
                                 lineHeight = 24.sp,
@@ -144,16 +148,13 @@ fun SavePhoto(image: Uri) {
                         .clickable {
                             if (isSaving) return@clickable
                             scope.launch {
-                                val success =
-                                    context.saveImageToGallery(image, "pixle-photo-${today}.jpeg")
+                                context.saveImageToGallery(image, filename)
                                 setIsSaving(true)
                                 delay(500)
                                 setIsSaving(false)
-                                if (success) {
-                                    sheetState.hide()
-                                    delay(100)
-                                    setIsConfirming(false)
-                                }
+                                sheetState.hide()
+                                delay(100)
+                                setIsConfirming(false)
                             }
                         }
                         .background(

@@ -128,7 +128,10 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
     val imageSavedCallback = object : ImageCapture.OnImageSavedCallback {
         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-            uri = outputFileResults.savedUri
+            uri = outputFileResults.savedUri?.also {
+                isCapturing = false
+                isLoaded = true
+            }
         }
 
         override fun onError(exception: ImageCaptureException) {
