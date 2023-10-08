@@ -133,6 +133,13 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
 
 
+    // Nearby Connections
+    implementation("com.google.android.gms:play-services-nearby:19.0.0")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.multidex:multidex:2.0.1")
+
+
     // Testing and debugging
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -23,6 +23,18 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
     private val modelKey = stringPreferencesKey("ml_model")
     private val onboardedKey = booleanPreferencesKey("onboarded")
     private val nextNotificationIdKey = intPreferencesKey("next_notification_id")
+    private val usernameKey = stringPreferencesKey("username")
+
+    val getUserName: Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[usernameKey] ?: "Siri"
+        }
+
+    suspend fun saveUserName(username: String) {
+        dataStore.edit { preferences ->
+            preferences[usernameKey] = username
+        }
+    }
 
     val getGameModePreference: Flow<GameMode> = dataStore.data
         .map { preferences ->
