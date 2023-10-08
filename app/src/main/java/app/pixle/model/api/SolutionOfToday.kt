@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import app.pixle.database.PixleDatabase
 import app.pixle.lib.Utils
+import app.pixle.model.api.contracts.Queryable
 import app.pixle.model.dto.SolutionDto
 import app.pixle.model.entity.solution.Solution
 

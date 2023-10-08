@@ -1,11 +1,10 @@
 package app.pixle.ui.state
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import app.pixle.model.api.Mutable
-import app.pixle.model.api.Queryable
+import app.pixle.model.api.contracts.Mutable
+import app.pixle.model.api.contracts.Queryable
 import com.kazakago.swr.compose.config.SWRMutateConfig
 import com.kazakago.swr.compose.config.SWRTriggerConfig
 import com.kazakago.swr.compose.state.SWRMutationState

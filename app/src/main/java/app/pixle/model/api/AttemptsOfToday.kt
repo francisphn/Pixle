@@ -3,6 +3,7 @@ package app.pixle.model.api
 import android.content.Context
 import app.pixle.database.PixleDatabase
 import app.pixle.lib.Utils
+import app.pixle.model.api.contracts.Queryable
 import app.pixle.model.entity.attempt.Attempt
 
 object AttemptsOfToday: Queryable<List<String>, List<Attempt>> {

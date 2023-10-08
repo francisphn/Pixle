@@ -2,6 +2,7 @@ package app.pixle.model.api
 
 import android.content.Context
 import app.pixle.database.PixleDatabase
+import app.pixle.model.api.contracts.Queryable
 import app.pixle.model.entity.attempt.Attempt
 import java.time.LocalDate
 

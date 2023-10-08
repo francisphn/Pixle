@@ -1,4 +1,4 @@
-package app.pixle.model.api
+package app.pixle.model.api.contracts
 
 import android.content.Context
 
