@@ -119,7 +119,7 @@ fun SavePhoto(image: Uri) {
                             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
                         ) {
                             Text(
-                                text = "pixle-photo-${today}.webp",
+                                text = "pixle-photo-${today}.jpeg",
                                 fontFamily = Manrope,
                                 fontSize = 16.sp,
                                 lineHeight = 24.sp,
@@ -145,7 +145,7 @@ fun SavePhoto(image: Uri) {
                             if (isSaving) return@clickable
                             scope.launch {
                                 val success =
-                                    context.saveImageToGallery(image, "pixle-photo-${today}.webp")
+                                    context.saveImageToGallery(image, "pixle-photo-${today}.jpeg")
                                 setIsSaving(true)
                                 delay(500)
                                 setIsSaving(false)

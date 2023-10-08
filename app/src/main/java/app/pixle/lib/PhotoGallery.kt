@@ -37,7 +37,7 @@ suspend fun Context.saveImageToGallery(uri: Uri, filename: String): Boolean = su
         .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
     imageUri?.let {
         contentResolver.openOutputStream(it)?.use { outputStream ->
-            bitmap.compress(Bitmap.CompressFormat.WEBP, 100, outputStream)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
             outputStream.flush()
             outputStream.close()
             bitmap.recycle()
