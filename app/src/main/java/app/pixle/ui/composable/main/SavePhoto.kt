@@ -1,8 +1,7 @@
 package app.pixle.ui.composable.main
 
-import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,9 +22,9 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,15 +33,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import app.pixle.database.AppPreferences
-import app.pixle.lib.GameMode
 import app.pixle.lib.Utils
 import app.pixle.lib.saveImageToGallery
-import app.pixle.model.entity.attempt.AtomicAttemptItem
-import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.SmallButton
 import app.pixle.ui.modifier.opacity
-import app.pixle.ui.state.rememberPreference
 import app.pixle.ui.theme.Manrope
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
@@ -52,75 +46,33 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShareGame(attempts: List<Attempt>) {
+fun SavePhoto(image: Uri) {
     val context = LocalContext.current
 
+    val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val (isSharing, setIsSharing) = remember { mutableStateOf(false) }
 
-    val gameMode by rememberPreference(AppPreferences::getGameModePreference,
-        initialValue = AppPreferences.DEFAULT_GAME_MODE
+    val today = remember(image) { Utils.utcDate() }
 
+    val (isConfirming, setIsConfirming) = remember { mutableStateOf(false) }
+    val (isSaving, setIsSaving) = remember { mutableStateOf(false) }
+
+
+    SmallButton(
+        modifier = Modifier.fillMaxWidth(),
+        label = "Save photo",
+        onClick = {
+            setIsConfirming(true)
+        }
     )
-    val sharedContent = remember(attempts, gameMode) {
-        val today = Utils.utcDate()
-        val date = "${today.dayOfMonth} ${today.month.getDisplayName(TextStyle.SHORT, Locale.UK)} ${today.year}"
-        val count = attempts.size.coerceAtMost(6)
-        val ratio = if (gameMode == GameMode.Hard) "$count/6" else "${attempts.size}/∞"
 
-        val header =  "#Pixle • \uD83D\uDCF8${ratio} • (on $date)"
-
-        val body = attempts
-            .takeLast(count)
-            .joinToString("\n") { attempt ->
-                attempt
-                    .attemptItems
-                    .joinToString("") { item ->
-                        when (item.kind) {
-                            AtomicAttemptItem.KIND_EXACT -> "\uD83D\uDFE9"
-                            AtomicAttemptItem.KIND_SIMILAR -> "\uD83D\uDFE8"
-                            else -> "⬛"
-                        }
-                    }
-
-            }
-
-        return@remember listOf(header, "", body)
-            .joinToString("\n")
-    }
-
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(CircleShape)
-            .clickable {
-                setIsSharing(true)
-            }
-            .background(
-                color = MaterialTheme.colorScheme.primary,
-                shape = CircleShape
-            )
-            .padding(horizontal = 14.dp, vertical = 6.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Share",
-            fontFamily = Manrope,
-            fontSize = 12.sp,
-            lineHeight = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary,
-        )
-    }
-
-    if (isSharing) {
+    if (isConfirming) {
         ModalBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
-                .height((210 + 24 * sharedContent.split("\n").size).dp),
+                .height(280.dp),
             sheetState = sheetState,
-            onDismissRequest = { setIsSharing(false) }
+            onDismissRequest = { setIsConfirming(false) }
         ) {
             Column(
                 modifier = Modifier
@@ -129,7 +81,7 @@ fun ShareGame(attempts: List<Attempt>) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Share your spoiler-free game result",
+                    text = "Save to photo gallery",
                     fontFamily = Manrope,
                     fontSize = 18.sp,
                     lineHeight = 28.sp,
@@ -141,7 +93,7 @@ fun ShareGame(attempts: List<Attempt>) {
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(
+                    Row(
                         modifier = Modifier
                             .background(
                                 MaterialTheme.colorScheme.surfaceVariant,
@@ -149,15 +101,39 @@ fun ShareGame(attempts: List<Attempt>) {
                             )
                             .fillMaxWidth()
                             .padding(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        Text(
-                            text = sharedContent,
-                            fontFamily = Manrope,
-                            fontSize = 16.sp,
-                            lineHeight = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        AsyncImage(
+                            model = image,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .size(60.dp)
+                                .aspectRatio(1F),
+                            contentDescription = "winning photo",
                         )
+
+                        Column(
+                            modifier = Modifier
+                                .weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
+                        ) {
+                            Text(
+                                text = "pixle-photo-${today}.webp",
+                                fontFamily = Manrope,
+                                fontSize = 16.sp,
+                                lineHeight = 24.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+
+                            Text(
+                                text = "on ${today.dayOfMonth} ${today.month.getDisplayName(TextStyle.SHORT, Locale.UK)} ${today.year}",
+                                fontFamily = Manrope,
+                                fontSize = 16.sp,
+                                lineHeight = 24.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.opacity(0.6f)
+                            )
+                        }
                     }
                 }
 
@@ -166,13 +142,19 @@ fun ShareGame(attempts: List<Attempt>) {
                         .fillMaxWidth()
                         .clip(CircleShape)
                         .clickable {
-                            val intent = Intent().apply {
-                                action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT, sharedContent)
-                                type = "text/plain"
+                            if (isSaving) return@clickable
+                            scope.launch {
+                                val success =
+                                    context.saveImageToGallery(image, "pixle-photo-${today}.webp")
+                                setIsSaving(true)
+                                delay(500)
+                                setIsSaving(false)
+                                if (success) {
+                                    sheetState.hide()
+                                    delay(100)
+                                    setIsConfirming(false)
+                                }
                             }
-                            val shareIntent = Intent.createChooser(intent, "Share your game")
-                            context.startActivity(shareIntent)
                         }
                         .background(
                             color = MaterialTheme.colorScheme.primary.opacity(0.8f),
@@ -181,14 +163,21 @@ fun ShareGame(attempts: List<Attempt>) {
                         .padding(horizontal = 14.dp, vertical = 6.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "Share",
-                        fontFamily = Manrope,
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
+                    if (isSaving) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text(
+                            text = "Save photo",
+                            fontFamily = Manrope,
+                            fontSize = 16.sp,
+                            lineHeight = 24.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
                 }
             }
         }

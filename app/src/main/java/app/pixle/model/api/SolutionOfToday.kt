@@ -15,7 +15,6 @@ object SolutionOfToday: Queryable<List<String>, Solution> {
         Log.d("", "Querying solution of the day")
 
         val repository = PixleDatabase.getInstance(context).solutionRepository()
-
         return repository.getToday().also { Log.d("Today", it.toString()) }
             ?: SolutionDto.ofTheDay().asEntity().also { repository.add(it) }
     }

@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
+import app.pixle.lib.saveImageToGallery
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.composable.RandomTextmojiMessage
@@ -108,11 +109,7 @@ fun WinningPhoto(attempts: List<Attempt>) {
                 )
 
                 ShareGame(attempts = attempts)
-                SmallButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = "Save photo",
-                    onClick = { /* TODO */ }
-                )
+                SavePhoto(image = it)
             }
         }
     } ?: run {
