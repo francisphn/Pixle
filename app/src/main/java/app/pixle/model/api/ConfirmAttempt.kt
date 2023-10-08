@@ -6,6 +6,7 @@ import android.util.Log
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.database.PixleDatabase
 import app.pixle.lib.GameMode
+import app.pixle.model.api.contracts.Mutable
 
 object ConfirmAttempt: Mutable<List<String>, Triple<Attempt, Uri, GameMode>, Unit> {
     override val key: List<String>
