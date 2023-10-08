@@ -1,6 +1,9 @@
 package app.pixle.ui.composable.main
 
 import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -47,6 +50,7 @@ import app.pixle.ui.theme.Manrope
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -161,34 +165,66 @@ fun ShareGame(attempts: List<Attempt>) {
                     }
                 }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(CircleShape)
-                        .clickable {
-                            val intent = Intent().apply {
-                                action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT, sharedContent)
-                                type = "text/plain"
-                            }
-                            val shareIntent = Intent.createChooser(intent, "Share your game")
-                            context.startActivity(shareIntent)
-                        }
-                        .background(
-                            color = MaterialTheme.colorScheme.primary.opacity(0.8f),
-                            shape = CircleShape
-                        )
-                        .padding(horizontal = 14.dp, vertical = 6.dp),
-                    contentAlignment = Alignment.Center
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Share",
-                        fontFamily = Manrope,
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(CircleShape)
+                            .clickable {
+                                val intent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, sharedContent)
+                                    type = "text/plain"
+                                }
+                                val shareIntent = Intent.createChooser(intent, "Share your game")
+                                context.startActivity(shareIntent)
+                            }
+                            .background(
+                                color = MaterialTheme.colorScheme.primary.opacity(0.8f),
+                                shape = CircleShape
+                            )
+                            .padding(horizontal = 14.dp, vertical = 6.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Share",
+                            fontFamily = Manrope,
+                            fontSize = 16.sp,
+                            lineHeight = 24.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(CircleShape)
+                            .clickable {
+                                val text = URLEncoder.encode(sharedContent, "UTF-8")
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/intent/tweet?text=$text"))
+                                context.startActivity(intent)
+                            }
+                            .background(
+                                color = MaterialTheme.colorScheme.onBackground.opacity(0.9f),
+                                shape = CircleShape
+                            )
+                            .padding(horizontal = 14.dp, vertical = 6.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Share on 𝕏",
+                            fontFamily = Manrope,
+                            fontSize = 16.sp,
+                            lineHeight = 24.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.background,
+                        )
+                    }
                 }
             }
         }
