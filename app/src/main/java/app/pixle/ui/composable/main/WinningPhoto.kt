@@ -1,5 +1,6 @@
 package app.pixle.ui.composable.main
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
+import app.pixle.lib.saveImageToGallery
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.composable.RandomTextmojiMessage
@@ -51,7 +53,7 @@ fun WinningPhoto(attempts: List<Attempt>) {
         gameMode == GameMode.Hard && attempts.size >= 6
     }
 
-    val photo = remember(attempts) { attempts.lastOrNull { it.isWinningAttempt }?.winningPhoto }
+    val photo = remember(attempts) { attempts.firstOrNull { it.isWinningAttempt }?.winningPhoto }
     val rotation = remember(photo) { if (Math.random() < 0.5f) 1.5f else -1.5f }
 
     val animatedRotation = animateFloatAsState(
@@ -106,16 +108,8 @@ fun WinningPhoto(attempts: List<Attempt>) {
                     textAlign = TextAlign.Center,
                 )
 
-                SmallButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = "Share",
-                    onClick = { /* TODO */ }
-                )
-                SmallButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = "Save photo",
-                    onClick = { /* TODO */ }
-                )
+                ShareGame(attempts = attempts)
+                SavePhoto(image = it)
             }
         }
     } ?: run {

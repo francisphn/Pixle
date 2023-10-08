@@ -1,6 +1,9 @@
 package app.pixle.ui.composable.camera
 
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -36,10 +39,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import app.pixle.database.AppPreferences
+import app.pixle.lib.GameMode
 import app.pixle.model.api.AttemptsHistory
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.ConfirmAttempt
@@ -59,6 +65,7 @@ import app.pixle.ui.state.ObjectDetectionModel
 import app.pixle.ui.state.rememberInvalidate
 import app.pixle.ui.state.rememberMutable
 import app.pixle.ui.state.rememberObjectDetector
+import app.pixle.ui.state.rememberPreference
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import coil.compose.AsyncImage
@@ -69,20 +76,24 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoAnalysisSheet(
-    bitmap: Bitmap?,
+    uri: Uri?,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
-
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
 
+    val gameMode by rememberPreference(AppPreferences::getGameModePreference,
+        initialValue = AppPreferences.DEFAULT_GAME_MODE
+    )
+
     val (_, setAnimationState) = rememberGameAnimation()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val rotation = remember(bitmap) { if (Math.random() < 0.5f) 1.5f else -1.5f }
+    val rotation = remember(uri) { if (Math.random() < 0.5f) 1.5f else -1.5f }
 
     val animatedRotation = animateFloatAsState(
-        targetValue = bitmap?.let { rotation } ?: 0f,
+        targetValue = uri?.let { rotation } ?: 0f,
         label = "rotation",
         animationSpec = tween(300, 100)
     )
@@ -91,15 +102,19 @@ fun PhotoAnalysisSheet(
 
     val (goal, _) = rememberQueryable(SolutionOfToday)
     val (lib, _) = rememberQueryable(Library)
-    val invalidateToday = rememberInvalidate(AttemptsOfToday)
+    val (attempts, _, _, _, invalidateToday) = rememberQueryable(AttemptsOfToday)
     val invalidateHistory = rememberInvalidate(AttemptsHistory)
     val (_, _, mutate) = rememberMutable(ConfirmAttempt) {
         onSuccess = { _, _, _ ->
+            Log.d("pixle:debug", "created attempt")
             scope.launch {
+                Log.d("pixle:debug", "invalidating")
                 invalidateToday.invoke()
                 invalidateHistory.invoke()
+                Log.d("pixle:debug", "closing sheet")
                 sheetState.hide()
             }.invokeOnCompletion {
+                Log.d("pixle:debug", "removing sheet")
                 onConfirm()
             }
         }
@@ -108,14 +123,20 @@ fun PhotoAnalysisSheet(
     val (attempt, setAttempt) = remember { mutableStateOf<Attempt?>(null) }
 
 
-    LaunchedEffect(objectDetector, bitmap, lib, goal, attempt) {
+    LaunchedEffect(objectDetector, uri, lib, goal, attempt) {
         if (attempt != null) return@LaunchedEffect
         val detector = objectDetector ?: return@LaunchedEffect
-        val image = bitmap ?: return@LaunchedEffect
+        val image = uri ?: return@LaunchedEffect
         val knowledgeBase = lib ?: return@LaunchedEffect
         val items = goal?.solutionItems ?: return@LaunchedEffect
 
-        val predictions = detector.detect(TensorImage.fromBitmap(image))
+        val raw = ImageDecoder.decodeBitmap(
+            ImageDecoder.createSource(context.contentResolver, image)
+        )
+        val bitmap = raw.copy(Bitmap.Config.ARGB_8888, true)
+        raw.recycle()
+
+        val predictions = detector.detect(TensorImage.fromBitmap(bitmap))
         val givens = predictions
             .map { obj ->
                 obj.categories.mapNotNull { category ->
@@ -199,10 +220,11 @@ fun PhotoAnalysisSheet(
         }
 
         setAttempt(Attempt(currentAttempt, result))
+        bitmap.recycle()
         Log.d("pixle:analyse", "result: ${result.map { it.icon }.joinToString(", ")}")
     }
 
-    if (bitmap != null) {
+    if (uri != null) {
         ModalBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
@@ -239,7 +261,7 @@ fun PhotoAnalysisSheet(
                         .rotate(animatedRotation.value)
                 ) {
                     AsyncImage(
-                        model = bitmap,
+                        model = uri,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .width(250.dp)
@@ -303,9 +325,18 @@ fun PhotoAnalysisSheet(
                     Button(
                         shape = RoundedCornerShape(8.dp),
                         onClick = {
+                            if (attempts != null && attempts.size >= 6 && gameMode == GameMode.Hard) {
+                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                    if (!sheetState.isVisible) {
+                                        setAttempt(null)
+                                        onDismiss()
+                                    }
+                                }
+                                return@Button
+                            }
                             val confirmedAttempt = attempt ?: return@Button
                             scope.launch {
-                                mutate.invoke(Pair(confirmedAttempt, bitmap))
+                                mutate.invoke(Triple(confirmedAttempt, uri, gameMode))
                             }.invokeOnCompletion {
                                 val win = confirmedAttempt.attemptItems.all { it.kind == AtomicAttemptItem.KIND_EXACT }
                                 setAnimationState(if (win) GameAnimation.State.WIN else GameAnimation.State.ATTEMPT)

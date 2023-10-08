@@ -3,6 +3,7 @@ package app.pixle.ui.tabs
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.net.Uri
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
 import androidx.camera.core.CameraSelector
@@ -11,6 +12,7 @@ import androidx.camera.core.ImageCapture.CAPTURE_MODE_ZERO_SHUTTER_LAG
 import androidx.camera.core.ImageCapture.FLASH_MODE_AUTO
 import androidx.camera.core.ImageCapture.FLASH_MODE_OFF
 import androidx.camera.core.ImageCapture.FLASH_MODE_ON
+import androidx.camera.core.ImageCapture.OutputFileOptions
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.CameraController.IMAGE_CAPTURE
@@ -72,8 +74,11 @@ import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.theme.Translucent
+import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.File
+import java.util.UUID
 import java.util.concurrent.Executors
 
 private val flashModes = mapOf(
@@ -102,7 +107,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
     cameraController.imageCaptureMode = CAPTURE_MODE_ZERO_SHUTTER_LAG
 
     var isCapturing by remember { mutableStateOf(false) }
-    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var uri by remember { mutableStateOf<Uri?>(null) }
 
     val scope = rememberCoroutineScope()
 
@@ -121,33 +126,12 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
     var isLoaded by remember { mutableStateOf(false) }
 
-    val imageCaptureCallback = object : ImageCapture.OnImageCapturedCallback() {
-        override fun onCaptureSuccess(image: ImageProxy) {
-            val buffer = image.planes[0].buffer
-            val bytes = ByteArray(buffer.capacity())
-            buffer.get(bytes)
-
-            val tempBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
-
-            val matrix = Matrix().also { it.postRotate(if (isBackCamera) 90f else -90f) }
-
-            bitmap = Bitmap.createBitmap(
-                tempBitmap,
-                0,
-                0,
-                tempBitmap.getWidth(),
-                tempBitmap.getHeight(),
-                matrix,
-                true
-            )
-
-            image.close()
-
-            isCapturing = false
-            isLoaded = true
-
-            tempBitmap.recycle()
-            buffer.clear()
+    val imageSavedCallback = object : ImageCapture.OnImageSavedCallback {
+        override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+            uri = outputFileResults.savedUri?.also {
+                isCapturing = false
+                isLoaded = true
+            }
         }
 
         override fun onError(exception: ImageCaptureException) {
@@ -155,6 +139,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
             isLoaded = true
         }
     }
+
 
     LaunchedEffect(Unit) {
         cameraController.initializationFuture.addListener(
@@ -212,9 +197,13 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
                         isLoaded = false
 
+
+                        val filename = UUID.randomUUID().toString()
+                        val file = File(context.filesDir, filename)
                         cameraController.takePicture(
+                            OutputFileOptions.Builder(file).build(),
                             executor,
-                            imageCaptureCallback
+                            imageSavedCallback
                         )
                     }
                 },
@@ -309,9 +298,9 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                     .padding(vertical = 20.dp, horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                bitmap?.let {
-                    Image(
-                        bitmap = it.asImageBitmap(),
+                uri?.let {
+                    AsyncImage(
+                        model = it,
                         contentDescription = "captured image",
                         modifier = Modifier
                             .size(35.dp)
@@ -371,17 +360,13 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
         // Photo analysis sheet
         PhotoAnalysisSheet(
-            bitmap = bitmap,
+            uri = uri,
             onDismiss = {
-                bitmap?.recycle()
-
-                bitmap = null
+                uri = null
                 isLoaded = true
             },
             onConfirm = {
-                bitmap?.recycle()
-
-                bitmap = null
+                uri = null
                 navBuilder.navigateToMain()
             }
         )

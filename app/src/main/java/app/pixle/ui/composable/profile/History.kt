@@ -1,5 +1,8 @@
 package app.pixle.ui.composable.profile
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,106 +48,127 @@ import java.time.format.FormatStyle
 fun History() {
     val (history, error) = rememberQueryable(AttemptsHistory)
 
-    if (error != null) {
+
+    AnimatedVisibility(
+        visible = error != null,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
         Box(modifier = Modifier.fillMaxSize()) {
             RandomTextmojiMessage(message = "Cannot load all attempts history")
         }
-        return
     }
 
-    if (history == null) {
+    AnimatedVisibility(
+        visible = error == null && history == null,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
         LoadingScreen()
-        return
     }
 
-    if (history.isEmpty()) {
+    AnimatedVisibility(
+        visible = error == null && history != null && history.isEmpty(),
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
         Box(modifier = Modifier.fillMaxSize()) {
             RandomTextmojiMessage(message = "You haven't played any game yet")
         }
-        return
     }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier
-            .fillMaxSize(),
+    AnimatedVisibility(
+        visible = error == null && !history.isNullOrEmpty(),
+        enter = fadeIn(),
+        exit = fadeOut()
     ) {
-        items(history, key = { it.first }) { (date, attempts) ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val winningAttempt = attempts.firstOrNull { it.isWinningAttempt }
 
+        if (history.isNullOrEmpty()) {
+            return@AnimatedVisibility
+        }
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+            items(history, key = { it.first }) { (date, attempts) ->
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .background(
-                            MaterialTheme.colorScheme.surfaceContainer,
-                            RoundedCornerShape(12.dp)
-                        )
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.Center,
+                        .padding(vertical = 8.dp, horizontal = 10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    winningAttempt?.let {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(it.winningPhoto)
-                                .build(),
-                            contentDescription = date.toString(),
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape((12 - (8 / 2)).dp))
-                                .fillMaxSize()
-                                .aspectRatio(1F)
-                        )
-                    } ?: run {
-                        attempts
-                            .takeLast(attempts.size.coerceAtMost(6))
-                            .forEach { attempt ->
-                                Row {
-                                    attempt.attemptItems.forEach {
-                                        WordleItem(it.kind)
+                    val winningAttempt = attempts.firstOrNull { it.isWinningAttempt }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .background(
+                                MaterialTheme.colorScheme.surfaceContainer,
+                                RoundedCornerShape(12.dp)
+                            )
+                            .padding(8.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        winningAttempt?.let {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(it.winningPhoto)
+                                    .build(),
+                                contentDescription = date.toString(),
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape((12 - (8 / 2)).dp))
+                                    .fillMaxSize()
+                                    .aspectRatio(1F)
+                            )
+                        } ?: run {
+                            attempts
+                                .takeLast(attempts.size.coerceAtMost(6))
+                                .forEach { attempt ->
+                                    Row {
+                                        attempt.attemptItems.forEach {
+                                            WordleItem(it.kind)
+                                        }
                                     }
                                 }
-                            }
+                        }
                     }
-                }
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 4.dp, vertical = 2.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)),
-                        fontFamily = Manrope,
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onBackground.opacity(0.75f)
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 4.dp, vertical = 2.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)),
+                            fontFamily = Manrope,
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onBackground.opacity(0.75f)
+                        )
 
-                    winningAttempt?.let {
-                        Icon(
-                            imageVector = Icons.Filled.CheckCircle,
-                            contentDescription = "Winning",
-                            modifier = Modifier.size(14.dp),
-                            tint = Color(52, 211, 153).opacity(0.9f)
-                        )
-                    } ?: run {
-                        Icon(
-                            imageVector = Icons.Filled.IncompleteCircle,
-                            contentDescription = "In progress",
-                            modifier = Modifier.size(14.dp),
-                            tint = Color(251, 191, 36).opacity(0.9f)
-                        )
+                        winningAttempt?.let {
+                            Icon(
+                                imageVector = Icons.Filled.CheckCircle,
+                                contentDescription = "Winning",
+                                modifier = Modifier.size(14.dp),
+                                tint = Color(52, 211, 153).opacity(0.9f)
+                            )
+                        } ?: run {
+                            Icon(
+                                imageVector = Icons.Filled.IncompleteCircle,
+                                contentDescription = "In progress",
+                                modifier = Modifier.size(14.dp),
+                                tint = Color(251, 191, 36).opacity(0.9f)
+                            )
+                        }
                     }
                 }
             }
