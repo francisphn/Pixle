@@ -57,6 +57,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -112,7 +113,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
     cameraController.imageCaptureMode = CAPTURE_MODE_ZERO_SHUTTER_LAG
 
     var isCapturing by remember { mutableStateOf(false) }
-    var uri by remember { mutableStateOf<Uri?>(null) }
+    var uri by rememberSaveable { mutableStateOf<Uri?>(null) }
 
     val scope = rememberCoroutineScope()
 
@@ -122,7 +123,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         animationSpec = tween(125)
     )
 
-    var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_OFF) }
+    var currentFlashMode by rememberSaveable { mutableIntStateOf(FLASH_MODE_OFF) }
     var currentCameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
     val isBackCamera = currentCameraSelector == CameraSelector.DEFAULT_BACK_CAMERA
 

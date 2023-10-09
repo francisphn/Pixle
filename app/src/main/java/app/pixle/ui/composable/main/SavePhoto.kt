@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,8 +61,8 @@ fun SavePhoto(image: Uri) {
     val today = remember(image) { Utils.utcDate() }
     val filename = remember(today) { "pixle-photo-${today}.jpeg" }
 
-    val (isConfirming, setIsConfirming) = remember { mutableStateOf(false) }
-    val (isSaving, setIsSaving) = remember { mutableStateOf(false) }
+    val (isConfirming, setIsConfirming) = rememberSaveable { mutableStateOf(false) }
+    val (isSaving, setIsSaving) = rememberSaveable { mutableStateOf(false) }
 
 
     SmallButton(

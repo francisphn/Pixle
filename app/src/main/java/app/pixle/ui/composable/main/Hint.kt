@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -76,7 +77,7 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
         gameMode == GameMode.Easy || attempts.size >= 3
     }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val (isShowingHint, setIsShowingHint) = remember { mutableStateOf(false) }
+    val (isShowingHint, setIsShowingHint) = rememberSaveable { mutableStateOf(false) }
 
     val hintLevel = remember(attempts.size) { (attempts.size - 2).coerceAtLeast(1) }
     val symbol = remember(hintLevel) { runes[(hintLevel - 1).coerceAtMost(runes.size - 1)] }

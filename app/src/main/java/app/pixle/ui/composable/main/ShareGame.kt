@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,7 +52,7 @@ fun ShareGame(attempts: List<Attempt>) {
 
     val today = remember { Utils.utcDate() }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val (isSharing, setIsSharing) = remember { mutableStateOf(false) }
+    val (isSharing, setIsSharing) = rememberSaveable { mutableStateOf(false) }
 
     val gameMode by rememberPreference(AppPreferences::getGameModePreference,
         initialValue = AppPreferences.DEFAULT_GAME_MODE
