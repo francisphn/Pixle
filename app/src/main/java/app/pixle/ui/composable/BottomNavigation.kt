@@ -45,7 +45,8 @@ fun BottomNavigation(
         listOf(
             Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACTIVITY_RECOGNITION
         )
     ) { permissions ->
         val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
