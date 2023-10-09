@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Pixle</string>
+    <string name="initial_player_name">Player</string>
+    <string name="initial_player_bio">No bio provided. It\'s okay to be shy :)</string>
 </resources>
