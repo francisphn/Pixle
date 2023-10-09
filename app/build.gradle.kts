@@ -131,6 +131,7 @@ dependencies {
 
     // Others
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("nl.dionsegijn:konfetti-compose:2.0.3")
 
 
     // Testing and debugging
