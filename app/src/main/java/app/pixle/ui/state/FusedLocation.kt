@@ -24,44 +24,47 @@ data class FusedLocation(
     suspend fun lastLocation() = suspendCancellableCoroutine { cont ->
         providerClient.lastLocation
             .addOnSuccessListener { location ->
-                if (location != null) {
-                    cont.resume(location)
-                }
+                cont.resume(location)
             }
             .addOnCanceledListener {
-                cont.cancel()
+                cont.resume(null)
             }
             .addOnFailureListener {
-                cont.cancel()
+                cont.cancel(null)
             }
     }
 
     suspend fun lastLocationDisplayName(): String {
-        val location = lastLocation()
+        val location = lastLocation() ?: return "Unknown location"
         val geocoder = Geocoder(context, Locale.UK)
-        val addresses = suspendCancellableCoroutine { cont ->
-            geocoder.getFromLocation(
-                location.latitude,
-                location.longitude,
-                2,
-                cont::resume
-            )
-        }
-        val res = addresses
-            .mapNotNull { address ->
-                val res = listOf(
-                    address.featureName,
-                    address.subLocality,
-                    address.locality,
-                    address.countryName
+        try {
+            val addresses = suspendCancellableCoroutine { cont ->
+                geocoder.getFromLocation(
+                    location.latitude,
+                    location.longitude,
+                    2,
+                    cont::resume
                 )
-                    .filter { it != null && it.isNotBlank() }
-                    .joinToString(", ")
-                return@mapNotNull res.ifBlank { null }
             }
-            .lastOrNull()
+            val res = addresses
+                .mapNotNull { address ->
+                    val res = listOf(
+                        address.featureName,
+                        address.subLocality,
+                        address.locality,
+                        address.countryName
+                    )
+                        .filter { it != null && it.isNotBlank() }
+                        .joinToString(", ")
+                    return@mapNotNull res.ifBlank { null }
+                }
+                .lastOrNull()
 
-        return res ?: addresses[0].countryName
+            return res ?: addresses[0].countryName
+        } catch (e: Exception) {
+            Log.e("pixle:debug", "Cannot get location display name", e)
+            return "Unknown location"
+        }
     }
 
 }
