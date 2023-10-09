@@ -231,6 +231,7 @@ fun MainScreen() {
 
                             // Hint
                             Hint(
+                                goal = goal,
                                 attempts = attempts,
                                 color = difficultyColour
                             )
