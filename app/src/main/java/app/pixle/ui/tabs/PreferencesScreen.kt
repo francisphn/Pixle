@@ -38,9 +38,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.pixle.R
 import app.pixle.database.AppPreferences
 import app.pixle.database.AppPreferences.Companion.DEFAULT_GAME_MODE
 import app.pixle.database.AppPreferences.Companion.DEFAULT_SENSITIVITY
@@ -73,7 +75,7 @@ fun Preferences(navBuilder: NavigationBuilder) {
         TopAppBar(
             title = {
                 Text(
-                    text = "Preferences",
+                    text = stringResource(R.string.preferences),
                     fontFamily = Manrope,
                     fontSize = 16.sp,
                     lineHeight = 24.sp,
@@ -125,7 +127,7 @@ fun Preferences(navBuilder: NavigationBuilder) {
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "Game mode",
+                        text = stringResource(R.string.game_mode),
                         fontFamily = Manrope,
                         fontSize = 14.sp,
                         lineHeight = 20.sp,
@@ -138,8 +140,8 @@ fun Preferences(navBuilder: NavigationBuilder) {
 
 
                     Selection(
-                        label = "Hardcore (Wordle mode)",
-                        description = "6 attempts, hints after 3rd attempt",
+                        label = stringResource(R.string.mode_hardcore),
+                        description = stringResource(R.string.mode_hardcore_desc),
                         icon = Icons.Filled.Extension,
                         isSelected = gameModePreference == GameMode.Hard,
                         onClick = {
@@ -150,8 +152,8 @@ fun Preferences(navBuilder: NavigationBuilder) {
                     )
 
                     Selection(
-                        label = "Endless",
-                        description = "Unlimited attempts, hints always available",
+                        label = stringResource(R.string.mode_endless),
+                        description = stringResource(R.string.mode_endless_desc),
                         icon = Icons.Filled.AllInclusive,
                         isSelected = gameModePreference == GameMode.Easy,
                         onClick = {
@@ -179,7 +181,7 @@ fun Preferences(navBuilder: NavigationBuilder) {
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "Object Detection Sensitivity",
+                        text = stringResource(R.string.ml_sensitivity),
                         fontFamily = Manrope,
                         fontSize = 14.sp,
                         lineHeight = 20.sp,
@@ -192,8 +194,8 @@ fun Preferences(navBuilder: NavigationBuilder) {
 
 
                     Selection(
-                        label = "Lenient (Aggressive)",
-                        description = "More detected, but more false positive (≥ 0.2)",
+                        label = stringResource(R.string.ml_lenient),
+                        description = stringResource(R.string.ml_lenient_desc),
                         icon = Icons.Filled.BlurOn,
                         isSelected = (sensitivityPreference - 0.2f).absoluteValue < 0.01f,
                         onClick = {
@@ -204,8 +206,8 @@ fun Preferences(navBuilder: NavigationBuilder) {
                     )
 
                     Selection(
-                        label = "Medium (Balanced)",
-                        description = "Balancing accuracy and quantity (≥ 0.4)",
+                        label = stringResource(R.string.ml_medium),
+                        description = stringResource(R.string.ml_medium_desc),
                         icon = Icons.Filled.Deblur,
                         isSelected = (sensitivityPreference - 0.4f).absoluteValue < 0.01f,
                         onClick = {
@@ -217,8 +219,8 @@ fun Preferences(navBuilder: NavigationBuilder) {
 
 
                     Selection(
-                        label = "Strict (Conservative)",
-                        description = "Minimising false positives (≥ 0.6)",
+                        label = stringResource(R.string.ml_strict),
+                        description = stringResource(R.string.ml_strict_desc),
                         icon = Icons.Filled.Circle,
                         isSelected = (sensitivityPreference - 0.6f).absoluteValue < 0.01f,
                         onClick = {
@@ -246,7 +248,7 @@ fun Preferences(navBuilder: NavigationBuilder) {
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "Machine Learning Model (Experimental)",
+                        text = stringResource(R.string.ml_model),
                         fontFamily = Manrope,
                         fontSize = 14.sp,
                         lineHeight = 20.sp,
@@ -259,8 +261,8 @@ fun Preferences(navBuilder: NavigationBuilder) {
 
 
                     Selection(
-                        label = "v0",
-                        description = "Fastest, but least accurate",
+                        label = stringResource(R.string.ml_model_0),
+                        description = stringResource(R.string.ml_model_0_desc),
                         icon = Icons.Filled.Bolt,
                         isSelected = modelPreferences.filename == ObjectDetectionModel.EDL0.filename,
                         onClick = {
@@ -271,8 +273,8 @@ fun Preferences(navBuilder: NavigationBuilder) {
                     )
 
                     Selection(
-                        label = "v1",
-                        description = "Good balance between speed and accuracy",
+                        label = stringResource(R.string.ml_model_1),
+                        description = stringResource(R.string.ml_model_1_desc),
                         icon = Icons.Filled.WbTwilight,
                         isSelected = modelPreferences.filename == ObjectDetectionModel.EDL1.filename,
                         onClick = {
@@ -284,8 +286,8 @@ fun Preferences(navBuilder: NavigationBuilder) {
 
 
                     Selection(
-                        label = "v2",
-                        description = "Most accurate, but slowest",
+                        label = stringResource(R.string.ml_model_2),
+                        description = stringResource(R.string.ml_model_2_desc),
                         icon = Icons.Default.Psychology,
                         isSelected = modelPreferences.filename == ObjectDetectionModel.EDL2.filename,
                         onClick = {

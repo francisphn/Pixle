@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -171,7 +172,7 @@ fun OnboardingSheet() {
 
 
                 Text(
-                    text = "How to play",
+                    text = stringResource(R.string.how_to_play),
 
                     fontFamily = Manrope,
                     fontWeight = FontWeight.Bold
@@ -190,14 +191,14 @@ fun OnboardingSheet() {
                 )
 
                 Text(
-                    text = "Notifications",
+                    text = stringResource(R.string.notifications),
 
                     fontFamily = Manrope,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = "Pixle uses notifications to remind you to touch grass daily.",
+                    text = stringResource(R.string.notifications_desc),
 
                     modifier = Modifier.padding(bottom = 30.dp),
 
@@ -226,7 +227,7 @@ fun OnboardingSheet() {
                     .fillMaxWidth(),
                     contentAlignment = Alignment.Center) {
                     Text(
-                        text = "Continue",
+                        text = stringResource(R.string.continue_text),
                         fontFamily = Manrope,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.surface,
