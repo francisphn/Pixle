@@ -176,7 +176,7 @@ fun History() {
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
                     ) {
                         Text(
-                            text = winningAttempt?.location ?: "In progress",
+                            text = winningAttempt?.location ?: "No winning photo yet",
                             fontFamily = Manrope,
                             fontSize = 12.sp,
                             lineHeight = 16.sp,

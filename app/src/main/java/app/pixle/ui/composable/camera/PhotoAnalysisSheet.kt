@@ -368,7 +368,8 @@ fun PhotoAnalysisSheet(
                     Button(
                         shape = RoundedCornerShape(8.dp),
                         onClick = {
-                            if (attempts != null && attempts.size >= 6 && gameMode == GameMode.Hard) {
+                            val concluded = (attempts != null && (attempts.any { it.isWinningAttempt } || (attempts.size >= 6 && gameMode == GameMode.Hard)))
+                            if (concluded) {
                                 scope.launch { sheetState.hide() }.invokeOnCompletion {
                                     if (!sheetState.isVisible) {
                                         setAttempt(null)
