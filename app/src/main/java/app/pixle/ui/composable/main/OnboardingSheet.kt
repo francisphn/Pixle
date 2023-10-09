@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -140,17 +141,21 @@ fun OnboardingSheet() {
                     .padding(30.dp)
             ) {
                 Text(
-                    text = "Welcome to Pixle!",
+                    text = stringResource(R.string.welcome_to_pixle),
                     fontFamily = Manrope,
                     fontSize = 18.sp,
                     lineHeight = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 30.dp).fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(bottom = 30.dp)
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
                 
                 Row(
-                    modifier = Modifier.padding(bottom = 20.dp).fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(bottom = 20.dp)
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
@@ -165,39 +170,34 @@ fun OnboardingSheet() {
 
                     Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "")
 
-                    PhotoItem(item = "🕊️", AtomicAttemptItem.KIND_NONE)
+                    PhotoItem(item = stringResource(R.string.bird_icon), AtomicAttemptItem.KIND_NONE)
                 }
 
 
 
                 Text(
-                    text = "How to play",
+                    text = stringResource(R.string.how_to_play),
 
                     fontFamily = Manrope,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = "Pixle gives you a daily puzzle of objects around you, " +
-                        "represented by emojis, and this puzzle resets at $localTimeOfReset (local time) each day. " +
-                        "Your job is to use the camera to capture these objects, " +
-                        "and Pixle will then infer emojis from them.",
-
+                    text = stringResource(R.string.onboarding_desc, localTimeOfReset),
                     modifier = Modifier.padding(bottom = 20.dp),
-
                     fontFamily = Manrope,
                     fontWeight = FontWeight.Normal
                 )
 
                 Text(
-                    text = "Notifications",
+                    text = stringResource(R.string.notifications),
 
                     fontFamily = Manrope,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = "Pixle uses notifications to remind you to touch grass daily.",
+                    text = stringResource(R.string.notifications_desc),
 
                     modifier = Modifier.padding(bottom = 30.dp),
 
@@ -226,7 +226,7 @@ fun OnboardingSheet() {
                     .fillMaxWidth(),
                     contentAlignment = Alignment.Center) {
                     Text(
-                        text = "Continue",
+                        text = stringResource(R.string.continue_text),
                         fontFamily = Manrope,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.surface,

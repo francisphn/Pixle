@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 fun EditProfile() {
     val (isEditing, setIsEditing) = remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    
+
     val scope = rememberCoroutineScope()
     val preferences = rememberPreferences()
     val initialName = stringResource(R.string.initial_player_name)
@@ -52,7 +52,7 @@ fun EditProfile() {
         bio = playerBio
     }
     SmallButton(
-        label = "Edit profile",
+        label = stringResource(R.string.edit_profile),
         onClick = {
             setIsEditing(true)
         }

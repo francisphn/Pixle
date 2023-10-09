@@ -48,10 +48,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import app.pixle.R
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
 import app.pixle.model.api.AttemptsHistory
@@ -262,7 +264,7 @@ fun PhotoAnalysisSheet(
                         .padding(horizontal = 44.dp),
                 ) {
                     Text(
-                        text = "Evaluating photo",
+                        text = stringResource(R.string.eval_photo),
                         fontFamily = Manrope,
                         fontSize = 18.sp,
                         lineHeight = 28.sp,
@@ -357,7 +359,7 @@ fun PhotoAnalysisSheet(
                         }
                     ) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.cancel),
                             fontFamily = Manrope,
                             fontSize = 16.sp,
                             lineHeight = 24.sp,
@@ -388,7 +390,7 @@ fun PhotoAnalysisSheet(
                         }
                     ) {
                         Text(
-                            text = "Confirm",
+                            text = stringResource(R.string.confirm),
                             fontFamily = Manrope,
                             fontSize = 16.sp,
                             lineHeight = 24.sp,

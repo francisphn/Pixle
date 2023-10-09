@@ -27,10 +27,12 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.pixle.R
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
 import app.pixle.lib.saveImageToGallery
@@ -100,7 +102,7 @@ fun WinningPhoto(attempts: List<Attempt>) {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "Snapped a winning photo!",
+                    text = stringResource(R.string.snapped_winning_photo),
                     fontFamily = Manrope,
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
@@ -125,9 +127,9 @@ fun WinningPhoto(attempts: List<Attempt>) {
         ) {
             RandomTextmojiMessage(
                 message = if (hasEnded)
-                    "Welp, better luck tomorrow!"
+                    stringResource(R.string.welp_too_bad)
                 else
-                    "No winning photo, time to go outside!",
+                    stringResource(R.string.go_outside),
                 size = TextmojiSize.SMALL,
                 modifier = Modifier.fillMaxSize(),
             )

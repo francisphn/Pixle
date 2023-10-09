@@ -26,10 +26,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import app.pixle.R
 import app.pixle.model.api.AttemptsHistory
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.Forfeit
@@ -82,7 +84,7 @@ fun ForfeitToday() {
             onDismissRequest = { setIsOpen(false) },
             title = {
                 Text(
-                    text = "Forfeit today's attempts?",
+                    text = stringResource(R.string.forfeit),
                     fontFamily = Manrope,
                     fontSize = 18.sp,
                     lineHeight = 28.sp,
@@ -106,7 +108,7 @@ fun ForfeitToday() {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Forfeit",
+                        text = stringResource(R.string.confirm),
                         fontFamily = Manrope,
                         fontSize = 12.sp,
                         lineHeight = 18.sp,
@@ -130,7 +132,7 @@ fun ForfeitToday() {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         fontFamily = Manrope,
                         fontSize = 12.sp,
                         lineHeight = 18.sp,

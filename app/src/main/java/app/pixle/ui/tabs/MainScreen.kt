@@ -85,10 +85,12 @@ fun MainScreen() {
         exit = fadeOut()
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
             contentAlignment = Alignment.Center
         ) {
-            RandomTextmojiMessage(message = "Unable to load goal, make sure you're connected to the internet")
+            RandomTextmojiMessage(message = stringResource(R.string.no_internet))
         }
     }
 
@@ -98,10 +100,12 @@ fun MainScreen() {
         exit = fadeOut()
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
             contentAlignment = Alignment.Center
         ) {
-            RandomTextmojiMessage(message = "Unable to load previous attempts, please try again later")
+            RandomTextmojiMessage(message = stringResource(R.string.load_attempts_error))
         }
     }
 
@@ -147,7 +151,7 @@ fun MainScreen() {
                             modifier = Modifier.alpha(0.5f)
                         )
                         Text(
-                            text = "Welcome Back!",
+                            text = stringResource(R.string.welcome),
                             fontFamily = Manrope,
                             fontSize = 18.sp,
                             lineHeight = 28.sp,
@@ -192,7 +196,7 @@ fun MainScreen() {
                             }
 
                             Text(
-                                text = "Today's goal",
+                                text = stringResource(R.string.goal),
                                 fontFamily = Manrope,
                                 fontSize = 16.sp,
                                 lineHeight = 24.sp,
@@ -208,11 +212,7 @@ fun MainScreen() {
                                     fontWeight = FontWeight.SemiBold,
                                 )
                                 Text(
-                                    text = "${
-                                        today.month.getDisplayName(
-                                            TextStyle.SHORT, Locale.UK
-                                        )
-                                    } ${today.year}",
+                                    text = today.month.getDisplayName(TextStyle.SHORT, Locale.UK) + " " + today.year.toString(),
                                     fontFamily = Manrope,
                                     fontSize = 10.sp,
                                     lineHeight = 10.sp,
@@ -230,7 +230,7 @@ fun MainScreen() {
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                text = "${goal.solutionItems.size} items • ${goal.difficulty} difficulty",
+                                text = stringResource(R.string.game_desc, goal.solutionItems.size, goal.difficulty),
                                 fontFamily = Manrope,
                                 fontSize = 16.sp,
                                 lineHeight = 24.sp,
@@ -239,6 +239,7 @@ fun MainScreen() {
 
                             // Hint
                             Hint(
+                                goal = goal,
                                 attempts = attempts,
                                 color = difficultyColour
                             )

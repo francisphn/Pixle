@@ -2,26 +2,18 @@ package app.pixle.ui.composable.main
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -34,24 +26,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.pixle.R
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
 import app.pixle.lib.Utils
-import app.pixle.lib.saveImageToGallery
 import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.model.entity.attempt.Attempt
-import app.pixle.ui.composable.SmallButton
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberPreference
 import app.pixle.ui.theme.Manrope
-import coil.compose.AsyncImage
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.net.URLEncoder
 import java.time.format.TextStyle
 import java.util.Locale
@@ -61,6 +49,7 @@ import java.util.Locale
 fun ShareGame(attempts: List<Attempt>) {
     val context = LocalContext.current
 
+    val today = remember { Utils.utcDate() }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val (isSharing, setIsSharing) = remember { mutableStateOf(false) }
 
@@ -68,16 +57,17 @@ fun ShareGame(attempts: List<Attempt>) {
         initialValue = AppPreferences.DEFAULT_GAME_MODE
 
     )
-    val sharedContent = remember(attempts, gameMode) {
-        val today = Utils.utcDate()
-        val date = "${today.dayOfMonth} ${today.month.getDisplayName(TextStyle.SHORT, Locale.UK)} ${today.year}"
+
+    val unknown = stringResource(R.string.unknown)
+    val header = stringResource(
+        R.string.shared_content_header,
+        if (gameMode == GameMode.Hard) "${attempts.size.coerceAtMost(6)}/6" else "${attempts.size}/∞",
+        "${today.dayOfMonth} ${today.month.getDisplayName(TextStyle.SHORT, Locale.UK)} ${today.year}"
+    )
+    val footer = stringResource(R.string.shared_content_footer, attempts.firstOrNull { it.isWinningAttempt }?.location ?: unknown)
+
+    val sharedContent = remember(attempts, header, footer) {
         val count = attempts.size.coerceAtMost(6)
-        val location = attempts.firstOrNull { it.isWinningAttempt }?.location ?: "Unknown"
-        val ratio = if (gameMode == GameMode.Hard) "$count/6" else "${attempts.size}/∞"
-
-        val header =  "#Pixle • \uD83D\uDCF8${ratio} • ($date)"
-        val footer = "taken near $location"
-
         val body = attempts
             .takeLast(count)
             .joinToString("\n") { attempt ->
@@ -113,7 +103,7 @@ fun ShareGame(attempts: List<Attempt>) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Share",
+            text = stringResource(R.string.share),
             fontFamily = Manrope,
             fontSize = 12.sp,
             lineHeight = 18.sp,
@@ -137,7 +127,7 @@ fun ShareGame(attempts: List<Attempt>) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Share your spoiler-free game result",
+                    text = stringResource(R.string.share_spoiler_free),
                     fontFamily = Manrope,
                     fontSize = 18.sp,
                     lineHeight = 28.sp,
@@ -195,7 +185,7 @@ fun ShareGame(attempts: List<Attempt>) {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Share",
+                            text = stringResource(R.string.share),
                             fontFamily = Manrope,
                             fontSize = 16.sp,
                             lineHeight = 24.sp,
@@ -210,7 +200,10 @@ fun ShareGame(attempts: List<Attempt>) {
                             .clip(CircleShape)
                             .clickable {
                                 val text = URLEncoder.encode(sharedContent, "UTF-8")
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/intent/tweet?text=$text"))
+                                val intent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("https://twitter.com/intent/tweet?text=$text")
+                                )
                                 context.startActivity(intent)
                             }
                             .background(
@@ -221,7 +214,7 @@ fun ShareGame(attempts: List<Attempt>) {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Share on 𝕏",
+                            text = stringResource(R.string.share_on_x),
                             fontFamily = Manrope,
                             fontSize = 16.sp,
                             lineHeight = 24.sp,
