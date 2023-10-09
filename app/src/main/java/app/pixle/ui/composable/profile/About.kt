@@ -77,7 +77,7 @@ fun About() {
             fontWeight = FontWeight.Bold,
         )
         Text(
-            text = stringResource(R.string.initial_player_name),
+            text = stringResource(R.string.initial_player_bio),
             fontFamily = Manrope,
             fontSize = 14.sp,
             lineHeight = 20.sp,

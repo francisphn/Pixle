@@ -137,7 +137,7 @@ fun MainScreen() {
                     ) {
                         // TODO: Show user's name
                         Text(
-                            text = "Hi, player",
+                            text = stringResource(R.string.hi_player, "player"),
                             fontFamily = Manrope,
                             fontSize = 12.sp,
                             lineHeight = 18.sp,

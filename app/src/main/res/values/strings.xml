@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Pixle</string>
     <string name="welcome_to_pixle">Welcome to Pixle!</string>
+    <string name="hi_player">Hi, %s</string>
     <string name="initial_player_name">Player</string>
     <string name="initial_player_bio">No bio provided. It\'s okay to be shy :)</string>
     <string name="games_played">Games Played</string>
