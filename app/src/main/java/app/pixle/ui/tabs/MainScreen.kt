@@ -137,7 +137,7 @@ fun MainScreen() {
                     ) {
                         // TODO: Show user's name
                         Text(
-                            text = "Hi, player",
+                            text = stringResource(R.string.hi_player, "player"),
                             fontFamily = Manrope,
                             fontSize = 12.sp,
                             lineHeight = 18.sp,
@@ -205,11 +205,7 @@ fun MainScreen() {
                                     fontWeight = FontWeight.SemiBold,
                                 )
                                 Text(
-                                    text = "${
-                                        today.month.getDisplayName(
-                                            TextStyle.SHORT, Locale.UK
-                                        )
-                                    } ${today.year}",
+                                    text = today.month.getDisplayName(TextStyle.SHORT, Locale.UK) + " " + today.year.toString(),
                                     fontFamily = Manrope,
                                     fontSize = 10.sp,
                                     lineHeight = 10.sp,
@@ -227,7 +223,7 @@ fun MainScreen() {
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                text = "${goal.solutionItems.size} items • ${goal.difficulty} difficulty",
+                                text = stringResource(R.string.game_desc, goal.solutionItems.size, goal.difficulty),
                                 fontFamily = Manrope,
                                 fontSize = 16.sp,
                                 lineHeight = 24.sp,
@@ -236,6 +232,7 @@ fun MainScreen() {
 
                             // Hint
                             Hint(
+                                goal = goal,
                                 attempts = attempts,
                                 color = difficultyColour
                             )

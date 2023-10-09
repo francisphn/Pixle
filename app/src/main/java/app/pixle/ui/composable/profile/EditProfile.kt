@@ -18,10 +18,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import app.pixle.R
 import app.pixle.ui.composable.RandomTextmojiMessage
 import app.pixle.ui.composable.SmallButton
 import app.pixle.ui.modifier.opacity
@@ -34,7 +36,7 @@ fun EditProfile() {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     SmallButton(
-        label = "Edit profile",
+        label = stringResource(R.string.edit_profile),
         onClick = {
             setIsEditing(true)
         }

@@ -42,8 +42,6 @@ fun ObjectDetectionProvider(
         ObjectDetectionState(objectDetector)
     }
 
-    // TODO: Change the model based on preferences if needed
-
     CompositionLocalProvider(LocalObjectDetection provides objectDetectionState) {
         content()
     }

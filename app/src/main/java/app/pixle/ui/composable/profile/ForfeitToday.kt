@@ -108,7 +108,7 @@ fun ForfeitToday() {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Forfeit",
+                        text = stringResource(R.string.confirm),
                         fontFamily = Manrope,
                         fontSize = 12.sp,
                         lineHeight = 18.sp,
