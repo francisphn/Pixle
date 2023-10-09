@@ -44,8 +44,10 @@ import androidx.compose.material.icons.filled.FlashAuto
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -178,12 +180,15 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 CameraView(cameraController = cameraController, lifecycleOwner = lifecycleOwner)
 
                 androidx.compose.animation.AnimatedVisibility(visible = !isLoaded, enter = fadeIn(), exit = fadeOut()) {
-                    Box(modifier = Modifier
+                    Box(
+                        modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.Translucent())
                         .aspectRatio(1F)
-                        .clip(RoundedCornerShape(2.dp))) {
-                        LoadingScreen()
+                        .clip(RoundedCornerShape(2.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
 
                 }

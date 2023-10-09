@@ -41,6 +41,7 @@ import app.pixle.lib.Utils
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.ui.composable.LoadingScreen
+import app.pixle.ui.composable.RandomTextmojiMessage
 import app.pixle.ui.composable.main.Celebration
 import app.pixle.ui.composable.main.Game
 import app.pixle.ui.composable.main.Hint
@@ -63,15 +64,40 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val (goal, _) = rememberQueryable(SolutionOfToday)
-    val (attempts, _) = rememberQueryable(AttemptsOfToday)
+    val (goal, goalError) = rememberQueryable(SolutionOfToday)
+    val (attempts, attemptsError) = rememberQueryable(AttemptsOfToday)
 
     val today = remember(goal) { Utils.utcDate() }
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
 
+    AnimatedVisibility(
+        visible = goalError != null,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            RandomTextmojiMessage(message = "Unable to load goal, make sure you're connected to the internet")
+        }
+    }
 
     AnimatedVisibility(
-        visible = goal == null || attempts == null || difficultyColour == null,
+        visible = goalError == null && attemptsError != null,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            RandomTextmojiMessage(message = "Unable to load previous attempts, please try again later")
+        }
+    }
+
+    AnimatedVisibility(
+        visible = goalError == null && attemptsError == null && (goal == null || attempts == null || difficultyColour == null),
         enter = fadeIn(),
         exit = fadeOut()
     ) {
@@ -79,7 +105,7 @@ fun MainScreen() {
     }
 
     AnimatedVisibility(
-        visible = goal != null && attempts != null && difficultyColour != null,
+        visible = goalError == null && attemptsError == null && goal != null && attempts != null && difficultyColour != null,
         enter = fadeIn(),
         exit = fadeOut()
     ) {

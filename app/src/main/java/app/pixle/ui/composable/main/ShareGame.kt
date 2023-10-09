@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -70,9 +72,11 @@ fun ShareGame(attempts: List<Attempt>) {
         val today = Utils.utcDate()
         val date = "${today.dayOfMonth} ${today.month.getDisplayName(TextStyle.SHORT, Locale.UK)} ${today.year}"
         val count = attempts.size.coerceAtMost(6)
+        val location = attempts.firstOrNull { it.isWinningAttempt }?.location ?: "Unknown"
         val ratio = if (gameMode == GameMode.Hard) "$count/6" else "${attempts.size}/∞"
 
-        val header =  "#Pixle • \uD83D\uDCF8${ratio} • (on $date)"
+        val header =  "#Pixle • \uD83D\uDCF8${ratio} • ($date)"
+        val footer = "taken near $location"
 
         val body = attempts
             .takeLast(count)
@@ -89,7 +93,7 @@ fun ShareGame(attempts: List<Attempt>) {
 
             }
 
-        return@remember listOf(header, "", body)
+        return@remember listOf(header, "", body, "", footer)
             .joinToString("\n")
     }
 
@@ -122,7 +126,7 @@ fun ShareGame(attempts: List<Attempt>) {
         ModalBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
-                .height((210 + 24 * sharedContent.split("\n").size).dp),
+                .height((210 + 32 * sharedContent.split("\n").size).dp),
             sheetState = sheetState,
             onDismissRequest = { setIsSharing(false) }
         ) {

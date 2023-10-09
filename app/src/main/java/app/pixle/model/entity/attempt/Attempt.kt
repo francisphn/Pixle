@@ -30,6 +30,9 @@ data class Attempt(
     val isWinningAttempt: Boolean
         get() = attemptItems.all { it.kind == AtomicAttemptItem.KIND_EXACT }
 
+    val location: String
+        get() = attempt.location
+
     override fun toString(): String {
         return attemptItems
             .sortedBy { it.positionInAttempt }

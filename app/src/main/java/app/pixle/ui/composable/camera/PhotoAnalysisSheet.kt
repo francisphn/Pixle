@@ -2,12 +2,17 @@ package app.pixle.ui.composable.camera
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.location.Geocoder
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -23,8 +29,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -62,6 +70,7 @@ import app.pixle.ui.composition.LocalObjectDetection
 import app.pixle.ui.composition.rememberGameAnimation
 import app.pixle.ui.composition.rememberObjectDetection
 import app.pixle.ui.state.ObjectDetectionModel
+import app.pixle.ui.state.rememberFusedLocation
 import app.pixle.ui.state.rememberInvalidate
 import app.pixle.ui.state.rememberMutable
 import app.pixle.ui.state.rememberObjectDetector
@@ -83,6 +92,7 @@ fun PhotoAnalysisSheet(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
+    val fusedLocation = rememberFusedLocation()
 
     val gameMode by rememberPreference(AppPreferences::getGameModePreference,
         initialValue = AppPreferences.DEFAULT_GAME_MODE
@@ -136,6 +146,10 @@ fun PhotoAnalysisSheet(
         val bitmap = raw.copy(Bitmap.Config.ARGB_8888, true)
         raw.recycle()
 
+        val location = fusedLocation.lastLocationDisplayName()
+
+        Log.d("pixle:analysis", "Photo taken at $location")
+
         val predictions = detector.detect(TensorImage.fromBitmap(bitmap))
         val givens = predictions
             .map { obj ->
@@ -148,7 +162,8 @@ fun PhotoAnalysisSheet(
         val currentAttempt = AtomicAttempt(
             uuid = UUID.randomUUID().toString(),
             solutionDate = goal.solution.date,
-            winningPhoto = null
+            winningPhoto = null,
+            location = location
         )
 
         Log.d("pixle:analyse", "goal items: ${items.map { it.name }.joinToString(", ")}")
@@ -270,26 +285,54 @@ fun PhotoAnalysisSheet(
                     )
                 }
 
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 44.dp, vertical = 24.dp),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        10.dp,
-                        Alignment.CenterHorizontally
-                    ),
-                ) {
-                    items(
-                        items = attempt?.attemptItems
-                            ?: listOf(),
-                        key = { it.positionInAttempt }
+                Box {
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = attempt == null,
+                        enter = fadeIn(),
+                        exit = fadeOut()
                     ) {
-                        PhotoItem(
-                            item = it.icon,
-                            kind = AtomicAttemptItem.KIND_NONE,
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 44.dp, vertical = 24.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .padding(12.dp)
+                                    .height(24.dp)
+                            )
+                        }
+                    }
+
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = attempt != null,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 44.dp, vertical = 24.dp),
+                            horizontalArrangement = Arrangement.spacedBy(
+                                10.dp,
+                                Alignment.CenterHorizontally
+                            ),
+                        ) {
+                            items(
+                                items = attempt?.attemptItems
+                                    ?: listOf(),
+                                key = { it.positionInAttempt }
+                            ) {
+                                PhotoItem(
+                                    item = it.icon,
+                                    kind = AtomicAttemptItem.KIND_NONE,
+                                )
+                            }
+                        }
                     }
                 }
+
 
                 Row(
                     modifier = Modifier

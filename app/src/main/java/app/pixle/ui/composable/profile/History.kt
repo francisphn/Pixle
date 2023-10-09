@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.model.api.AttemptsHistory
@@ -54,7 +55,7 @@ fun History() {
         enter = fadeIn(),
         exit = fadeOut()
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             RandomTextmojiMessage(message = "Cannot load all attempts history")
         }
     }
@@ -72,7 +73,7 @@ fun History() {
         enter = fadeIn(),
         exit = fadeOut()
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             RandomTextmojiMessage(message = "You haven't played any game yet")
         }
     }
@@ -169,6 +170,20 @@ fun History() {
                                 tint = Color(251, 191, 36).opacity(0.9f)
                             )
                         }
+                    }
+
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
+                    ) {
+                        Text(
+                            text = winningAttempt?.location ?: "In progress",
+                            fontFamily = Manrope,
+                            fontSize = 12.sp,
+                            lineHeight = 16.sp,
+                            color = MaterialTheme.colorScheme.onBackground.opacity(0.5f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             }
