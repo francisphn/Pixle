@@ -66,7 +66,7 @@ fun ShareGame(attempts: List<Attempt>) {
     )
     val footer = stringResource(R.string.shared_content_footer, attempts.firstOrNull { it.isWinningAttempt }?.location ?: unknown)
 
-    val sharedContent = remember(attempts, gameMode) {
+    val sharedContent = remember(attempts, header, footer) {
         val count = attempts.size.coerceAtMost(6)
         val body = attempts
             .takeLast(count)
