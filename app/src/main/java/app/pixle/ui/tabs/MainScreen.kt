@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -76,10 +77,12 @@ fun MainScreen() {
         exit = fadeOut()
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
             contentAlignment = Alignment.Center
         ) {
-            RandomTextmojiMessage(message = "Unable to load goal, make sure you're connected to the internet")
+            RandomTextmojiMessage(message = stringResource(R.string.no_internet))
         }
     }
 
@@ -89,10 +92,12 @@ fun MainScreen() {
         exit = fadeOut()
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
             contentAlignment = Alignment.Center
         ) {
-            RandomTextmojiMessage(message = "Unable to load previous attempts, please try again later")
+            RandomTextmojiMessage(message = stringResource(R.string.load_attempts_error))
         }
     }
 
@@ -139,7 +144,7 @@ fun MainScreen() {
                             modifier = Modifier.alpha(0.5f)
                         )
                         Text(
-                            text = "Welcome Back!",
+                            text = stringResource(R.string.welcome),
                             fontFamily = Manrope,
                             fontSize = 18.sp,
                             lineHeight = 28.sp,
@@ -184,7 +189,7 @@ fun MainScreen() {
                             }
 
                             Text(
-                                text = "Today's goal",
+                                text = stringResource(R.string.goal),
                                 fontFamily = Manrope,
                                 fontSize = 16.sp,
                                 lineHeight = 24.sp,
