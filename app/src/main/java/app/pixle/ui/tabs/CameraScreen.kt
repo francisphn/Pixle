@@ -44,8 +44,10 @@ import androidx.compose.material.icons.filled.FlashAuto
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -69,10 +71,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import app.pixle.R
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
+import app.pixle.ui.state.rememberSoundEffect
 import app.pixle.ui.theme.Translucent
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
@@ -100,6 +104,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val shutterSound = rememberSoundEffect(R.raw.shutter)
     val cameraController = remember { LifecycleCameraController(context) }
     val executor = Executors.newSingleThreadExecutor()
 
@@ -178,12 +183,15 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 CameraView(cameraController = cameraController, lifecycleOwner = lifecycleOwner)
 
                 androidx.compose.animation.AnimatedVisibility(visible = !isLoaded, enter = fadeIn(), exit = fadeOut()) {
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.Translucent())
-                        .aspectRatio(1F)
-                        .clip(RoundedCornerShape(2.dp))) {
-                        LoadingScreen()
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.Translucent())
+                            .aspectRatio(1F)
+                            .clip(RoundedCornerShape(2.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
 
                 }
@@ -194,9 +202,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 onClick = {
                     if (!isCapturing) {
                         isCapturing = true
-
                         isLoaded = false
-
 
                         val filename = UUID.randomUUID().toString()
                         val file = File(context.filesDir, filename)
@@ -205,6 +211,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                             executor,
                             imageSavedCallback
                         )
+                        shutterSound.start()
                     }
                 },
                 modifier = Modifier

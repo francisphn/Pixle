@@ -7,8 +7,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,43 +38,44 @@ import app.pixle.asset.CAMERA_ROUTE
 import app.pixle.asset.MAIN_ROUTE
 import app.pixle.asset.PROFILE_ROUTE
 import app.pixle.ui.composition.LocalGameAnimation
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun BottomNavigation(
     navBuilder: NavigationBuilder, backStackEntry: NavBackStackEntry?
 ) {
 
     val context = LocalContext.current
-
-    var cameraPermissionState by remember {
-        mutableStateOf(
-            ActivityCompat.checkSelfPermission(
-                context, Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
+    val cameraAndLocationPermissionState = rememberMultiplePermissionsState(
+        listOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
         )
-    }
-
-    val permissionsLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            cameraPermissionState = true
-            navBuilder.navigateToCamera()
-        } else {
-            cameraPermissionState = false
-            Toast.makeText(
+    ) { permissions ->
+        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
+        val locationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+        if (!cameraGranted || !locationGranted) {
+            val toast = Toast.makeText(
                 context,
-                "Pixle does not have permissions to access camera",
+                "Camera and location permissions are required to use this app",
                 Toast.LENGTH_LONG
-            ).show()
+            )
+            toast.show()
+        } else {
+            navBuilder.navigateToCamera()
         }
     }
+
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(bottom = 12.dp, top = 8.dp),
+            .navigationBarsPadding()
+            .padding(top = 8.dp, bottom = 6.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -93,10 +96,10 @@ fun BottomNavigation(
                 .background(MaterialTheme.colorScheme.onBackground, CircleShape)
                 .padding(2.dp),
             onClick = {
-                if (cameraPermissionState) {
+                if (cameraAndLocationPermissionState.allPermissionsGranted) {
                     navBuilder.navigateToCamera()
                 } else {
-                    permissionsLauncher.launch(Manifest.permission.CAMERA)
+                    cameraAndLocationPermissionState.launchMultiplePermissionRequest()
                 }
             },
             enabled = backStackEntry?.destination?.route != CAMERA_ROUTE

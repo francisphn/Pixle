@@ -74,7 +74,7 @@ fun SavePhoto(image: Uri) {
         ModalBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(280.dp),
+                .height(300.dp),
             sheetState = sheetState,
             onDismissRequest = { setIsConfirming(false) }
         ) {
