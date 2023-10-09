@@ -47,12 +47,6 @@ fun About() {
     val playerName by preferences.getPlayerName.collectAsState(initial = stringResource(R.string.initial_player_name))
     val playerBio by preferences.getPlayerBio.collectAsState(initial = stringResource(R.string.initial_player_bio))
 
-    val initialName = stringResource(R.string.initial_player_name)
-    var name by remember { mutableStateOf(initialName) }
-    if (playerName !== stringResource(R.string.initial_player_name)) {
-        name = playerName
-    }
-
     // Profile picture and edit button
     Row(
         modifier = Modifier
@@ -64,7 +58,7 @@ fun About() {
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data("https://api.dicebear.com/7.x/thumbs/svg?seed=$name")
+                .data("https://api.dicebear.com/7.x/thumbs/png?seed=$playerName")
                 .transformations(CircleCropTransformation()).build(),
             contentDescription = "profile",
             modifier = Modifier.size(56.dp)
