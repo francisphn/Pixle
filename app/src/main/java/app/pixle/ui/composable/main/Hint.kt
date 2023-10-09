@@ -37,9 +37,11 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.pixle.R
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
 import app.pixle.model.entity.attempt.Attempt
@@ -48,18 +50,23 @@ import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberPreference
 import app.pixle.ui.theme.Manrope
 
-val RUNES = "ᚠᚡᚢᚣᚤᚥᚦᚧᚨᚩᚪᚫᚬᚭᚮᚯᚰᚱᚲᚳᚴᚵᚶᚷᚸᚹᚺᚻᚼᚽᚾᚿᛀᛁᛂᛃᛄᛅᛆᛇᛈᛉᛊᛋᛌᛍᛎᛏᛐᛑᛒᛓᛔᛕᛖᛗᛘᛙᛚᛛᛜᛝᛞᛟᛧᛦᛥᛤᛣᛡᛠᛨᛩᛮᛯᛰ"
-        .split("")
-
-val RUNES_SYMBOL = listOf("ᛋ", "ᚥ", "ᚡ")
-fun runify(text: String): String {
-    return text.map { RUNES.random() }.joinToString("")
-}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
+    val runesChar = stringResource(R.string.runes_characters).split("")
+    val rune1 = stringResource(R.string.rune_1)
+    val rune2 = stringResource(R.string.rune_2)
+    val rune3 = stringResource(R.string.rune_3)
+    val runes = listOf(rune1, rune2, rune3)
+
+    val runify = remember<(String) -> String>(runesChar) {
+        return@remember {
+            it.map { runesChar.random() }.joinToString("")
+        }
+    }
+
     val gameMode by rememberPreference(
         AppPreferences::getGameModePreference,
         initialValue = AppPreferences.DEFAULT_GAME_MODE
@@ -72,16 +79,17 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
     val (isShowingHint, setIsShowingHint) = remember { mutableStateOf(false) }
 
     val hintLevel = remember(attempts.size) { (attempts.size - 2).coerceAtLeast(1) }
-    val symbol = remember(hintLevel) { RUNES_SYMBOL[(hintLevel - 1).coerceAtMost(RUNES_SYMBOL.size - 1)] }
+    val symbol = remember(hintLevel) { runes[(hintLevel - 1).coerceAtMost(runes.size - 1)] }
 
+    
     val firstHint = remember(goal.date) {
         val similarItem = goal.solutionItems.groupBy { it.name }.maxBy { it.value.size }
         val similarCategory = goal.solutionItems.groupBy { it.category }.maxBy { it.value.size }
 
         if (similarItem.value.size > similarCategory.value.size)
-            "${similarItem.value.size} repeated item(s)"
+            Pair(R.string.repeated_items, arrayOf(similarItem.value.size))
         else
-            "${similarCategory.value.size} item(s) of the same category"
+            Pair(R.string.same_category_items, arrayOf(similarCategory.value.size))
     }
 
     val secondHint = remember(goal.date) {
@@ -93,9 +101,9 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
         val secondRevealed = goal.solutionItems[secondIndex].category
 
         if (firstRevealed == secondRevealed)
-            "2 \"${firstRevealed}\" items"
+            Pair(R.string.revealed_category_2, arrayOf(firstRevealed))
         else
-            "1 \"${firstRevealed}\" item and 1 \"${secondRevealed}\" item"
+            Pair(R.string.revealed_category_1, arrayOf(firstRevealed, secondRevealed))
     }
 
     val lastHint = remember(goal.date) {
@@ -103,14 +111,14 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
         val last = goal.solutionItems.last()
 
         if (goal.solutionItems.size > 2)
-            "The first is of \"${first.category}\" and the last is of \"${last.category}\""
+            Pair(R.string.revealed_items_2, arrayOf(first.category, last.category))
         else
-            "The first item is ${first.name}"
+            Pair(R.string.revealed_items_1, arrayOf(first.name))
     }
 
     if (hintAvailable) {
         Text(
-            text = " •",
+            text = stringResource(R.string.hint_dots),
             fontFamily = Manrope,
             fontSize = 16.sp,
             lineHeight = 24.sp,
@@ -154,7 +162,7 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Revealed runes",
+                    text = stringResource(R.string.runes_title),
                     fontFamily = Manrope,
                     fontSize = 18.sp,
                     lineHeight = 28.sp,
@@ -168,7 +176,7 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "ᛋ",
+                        text = rune1,
                         fontFamily = Manrope,
                         fontSize = 24.sp,
                         lineHeight = 32.sp,
@@ -187,7 +195,10 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
                             .padding(12.dp),
                     ) {
                         Text(
-                            text = if (hintLevel < 1) runify(firstHint) else firstHint,
+                            text = if (hintLevel < 1)
+                                runify(stringResource(firstHint.first, formatArgs = firstHint.second))
+                            else
+                                stringResource(firstHint.first, formatArgs = firstHint.second),
                             fontFamily = Manrope,
                             fontSize = 14.sp,
                             lineHeight = 20.sp,
@@ -205,7 +216,7 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "ᚥ",
+                        text = rune2,
                         fontFamily = Manrope,
                         fontSize = 24.sp,
                         lineHeight = 32.sp,
@@ -222,7 +233,10 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
                             .padding(12.dp),
                     ) {
                         Text(
-                            text = if (hintLevel < 2) runify(secondHint) else secondHint,
+                            text = if (hintLevel < 2)
+                                runify(stringResource(secondHint.first, formatArgs = secondHint.second))
+                            else
+                                stringResource(secondHint.first, formatArgs = secondHint.second),
                             fontFamily = Manrope,
                             fontSize = 14.sp,
                             lineHeight = 20.sp,
@@ -241,7 +255,7 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "ᚡ",
+                        text = rune3,
                         fontFamily = Manrope,
                         fontSize = 24.sp,
                         lineHeight = 32.sp,
@@ -258,7 +272,10 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
                             .padding(12.dp),
                     ) {
                         Text(
-                            text = if (hintLevel < 3) runify(lastHint) else lastHint,
+                            text = if (hintLevel < 3)
+                                runify(stringResource(lastHint.first, formatArgs = lastHint.second))
+                            else
+                                stringResource(lastHint.first, formatArgs =lastHint.second),
                             fontFamily = Manrope,
                             fontSize = 14.sp,
                             lineHeight = 20.sp,

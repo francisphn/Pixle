@@ -14,7 +14,6 @@ fun Modifier.leftBorder(strokeWidth: Dp, color: Color) = composed(
         val strokeWidthPx = density.run { strokeWidth.toPx() }
 
         Modifier.drawBehind {
-            val width = size.width - strokeWidthPx / 2
             val height = size.height
 
             drawLine(
