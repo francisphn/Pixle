@@ -30,10 +30,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.pixle.R
 import app.pixle.model.api.AttemptsHistory
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.RandomTextmojiMessage
@@ -56,7 +58,7 @@ fun History() {
         exit = fadeOut()
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            RandomTextmojiMessage(message = "Cannot load all attempts history")
+            RandomTextmojiMessage(message = stringResource(R.string.history_error))
         }
     }
 
@@ -74,7 +76,7 @@ fun History() {
         exit = fadeOut()
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            RandomTextmojiMessage(message = "You haven't played any game yet")
+            RandomTextmojiMessage(message = stringResource(R.string.no_games))
         }
     }
 
@@ -173,10 +175,12 @@ fun History() {
                     }
 
                     Box(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 4.dp)
                     ) {
                         Text(
-                            text = winningAttempt?.location ?: "No winning photo yet",
+                            text = winningAttempt?.location ?: stringResource(R.string.no_winning_photo),
                             fontFamily = Manrope,
                             fontSize = 12.sp,
                             lineHeight = 16.sp,
