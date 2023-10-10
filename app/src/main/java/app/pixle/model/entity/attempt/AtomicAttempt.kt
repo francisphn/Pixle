@@ -1,11 +1,14 @@
 package app.pixle.model.entity.attempt
 
 import android.net.Uri
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
 import java.util.UUID
 
+@Parcelize
 @Entity
 data class AtomicAttempt(
     /**
@@ -27,4 +30,4 @@ data class AtomicAttempt(
 
     var winningPhoto: String?,
 
-)
+): Parcelable

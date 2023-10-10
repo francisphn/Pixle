@@ -1,8 +1,6 @@
 package app.pixle.ui.tabs
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
+import android.Manifest
 import android.net.Uri
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
@@ -14,7 +12,6 @@ import androidx.camera.core.ImageCapture.FLASH_MODE_OFF
 import androidx.camera.core.ImageCapture.FLASH_MODE_ON
 import androidx.camera.core.ImageCapture.OutputFileOptions
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
 import androidx.camera.view.CameraController.IMAGE_CAPTURE
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
@@ -22,7 +19,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -43,11 +39,9 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FlashAuto
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -57,12 +51,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -72,13 +66,17 @@ import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import app.pixle.R
-import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.NavigationBuilder
+import app.pixle.ui.composable.camera.SmartPreview
+import app.pixle.ui.composable.camera.SmartPreviewToggle
 import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberSoundEffect
 import app.pixle.ui.theme.Translucent
 import coil.compose.AsyncImage
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -91,6 +89,7 @@ private val flashModes = mapOf(
     Pair(FLASH_MODE_OFF, Icons.Filled.FlashOff)
 )
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
 fun CameraScreen(navBuilder: NavigationBuilder) {
@@ -102,6 +101,14 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         label = "rotation"
     )
 
+    val (isDetectingMotion, setIsDetectingMotion) = rememberSaveable { mutableStateOf(false) }
+    val permission = rememberPermissionState(Manifest.permission.ACTIVITY_RECOGNITION) {
+        setIsDetectingMotion(it)
+    }
+
+    // Keep track of how many times we've captured an image
+    val captureCount = remember { mutableIntStateOf(0) }
+
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val shutterSound = rememberSoundEffect(R.raw.shutter)
@@ -112,7 +119,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
     cameraController.imageCaptureMode = CAPTURE_MODE_ZERO_SHUTTER_LAG
 
     var isCapturing by remember { mutableStateOf(false) }
-    var uri by remember { mutableStateOf<Uri?>(null) }
+    var uri by rememberSaveable { mutableStateOf<Uri?>(null) }
 
     val scope = rememberCoroutineScope()
 
@@ -122,11 +129,10 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         animationSpec = tween(125)
     )
 
-    var currentFlashMode by remember { mutableIntStateOf(FLASH_MODE_OFF) }
+    var currentFlashMode by rememberSaveable { mutableIntStateOf(FLASH_MODE_OFF) }
     var currentCameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
     val isBackCamera = currentCameraSelector == CameraSelector.DEFAULT_BACK_CAMERA
 
-    cameraController.imageCaptureFlashMode = currentFlashMode
     cameraController.cameraSelector = currentCameraSelector
 
     var isLoaded by remember { mutableStateOf(false) }
@@ -137,6 +143,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 isCapturing = false
                 isLoaded = true
             }
+            captureCount.intValue += 1
         }
 
         override fun onError(exception: ImageCaptureException) {
@@ -145,6 +152,13 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
         }
     }
 
+    // This is a hack to reset the camera after a few s
+    LaunchedEffect(captureCount, currentCameraSelector) {
+        if (captureCount.intValue < 10) return@LaunchedEffect
+        cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+        cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+        cameraController.cameraSelector = currentCameraSelector
+    }
 
     LaunchedEffect(Unit) {
         cameraController.initializationFuture.addListener(
@@ -206,6 +220,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
 
                         val filename = UUID.randomUUID().toString()
                         val file = File(context.filesDir, filename)
+                        cameraController.imageCaptureFlashMode = currentFlashMode
                         cameraController.takePicture(
                             OutputFileOptions.Builder(file).build(),
                             executor,
@@ -283,19 +298,21 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                     )
                 }
 
-                IconButton(
-                    onClick = {
-                        /* TODO: More settings stuff if needed */
+
+
+                SmartPreviewToggle(
+                    isDetectingMotion = isDetectingMotion,
+                    onEnable = {
+                        if (!permission.status.isGranted) {
+                            permission.launchPermissionRequest()
+                        } else {
+                            setIsDetectingMotion(true)
+                        }
+                    },
+                    onDisable = {
+                        setIsDetectingMotion(false)
                     }
-                ) {
-                    Icon(
-                        Icons.Filled.Settings,
-                        contentDescription = "settings",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(28.dp)
-                    )
-                }
+                )
             }
 
             // Bottom bar
@@ -363,6 +380,14 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
                 }
             }
         }
+
+
+        SmartPreview(
+            uri = uri,
+            isDetectingMotion = isDetectingMotion,
+            captureCount = captureCount,
+            cameraController = cameraController
+        )
 
 
         // Photo analysis sheet
