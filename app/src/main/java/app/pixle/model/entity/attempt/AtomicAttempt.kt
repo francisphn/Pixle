@@ -20,6 +20,11 @@ data class AtomicAttempt(
      */
     var solutionDate: String,
 
+    /**
+     * The general location of the attempt when it was taken
+     */
+    var location: String,
 
-    var winningPhoto: String?
+    var winningPhoto: String?,
+
 )

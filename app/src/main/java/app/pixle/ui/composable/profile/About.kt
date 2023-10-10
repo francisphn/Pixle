@@ -17,10 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.pixle.R
 import app.pixle.model.api.AttemptsHistory
 import app.pixle.ui.modifier.bottomBorder
 import app.pixle.ui.modifier.opacity
@@ -68,14 +70,14 @@ fun About() {
     ) {
 
         Text(
-            text = "Player",
+            text = stringResource(R.string.initial_player_name),
             fontFamily = Manrope,
             fontSize = 16.sp,
             lineHeight = 24.sp,
             fontWeight = FontWeight.Bold,
         )
         Text(
-            text = "No bio provided. It's ok to be shy :)",
+            text = stringResource(R.string.initial_player_bio),
             fontFamily = Manrope,
             fontSize = 14.sp,
             lineHeight = 20.sp,
@@ -104,7 +106,7 @@ fun About() {
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = "Games played",
+                    text = stringResource(R.string.games_played),
                     fontFamily = Manrope,
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
@@ -123,7 +125,7 @@ fun About() {
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = "Games won",
+                    text = stringResource(R.string.games_won),
                     fontFamily = Manrope,
                     fontSize = 14.sp,
                     lineHeight = 20.sp,

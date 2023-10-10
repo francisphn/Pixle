@@ -32,9 +32,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.pixle.R
 import app.pixle.lib.Utils
 import app.pixle.lib.saveImageToGallery
 import app.pixle.ui.composable.SmallButton
@@ -64,7 +66,7 @@ fun SavePhoto(image: Uri) {
 
     SmallButton(
         modifier = Modifier.fillMaxWidth(),
-        label = "Save photo",
+        label = stringResource(R.string.save_photo),
         onClick = {
             setIsConfirming(true)
         }
@@ -74,7 +76,7 @@ fun SavePhoto(image: Uri) {
         ModalBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(280.dp),
+                .height(300.dp),
             sheetState = sheetState,
             onDismissRequest = { setIsConfirming(false) }
         ) {
@@ -85,7 +87,7 @@ fun SavePhoto(image: Uri) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Save to photo gallery",
+                    text = stringResource(R.string.save_winning_photo),
                     fontFamily = Manrope,
                     fontSize = 18.sp,
                     lineHeight = 28.sp,
@@ -123,7 +125,7 @@ fun SavePhoto(image: Uri) {
                             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
                         ) {
                             Text(
-                                text = filename,
+                                text = stringResource(R.string.file_name, today.toString()),
                                 fontFamily = Manrope,
                                 fontSize = 16.sp,
                                 lineHeight = 24.sp,
@@ -131,7 +133,11 @@ fun SavePhoto(image: Uri) {
                             )
 
                             Text(
-                                text = "on ${today.dayOfMonth} ${today.month.getDisplayName(TextStyle.SHORT, Locale.UK)} ${today.year}",
+                                text = stringResource(R.string.on_date,
+                                    today.dayOfMonth,
+                                    today.month.getDisplayName(TextStyle.SHORT, Locale.UK),
+                                    today.year
+                                ),
                                 fontFamily = Manrope,
                                 fontSize = 16.sp,
                                 lineHeight = 24.sp,
@@ -171,7 +177,7 @@ fun SavePhoto(image: Uri) {
                         )
                     } else {
                         Text(
-                            text = "Save photo",
+                            text = stringResource(R.string.save_photo),
                             fontFamily = Manrope,
                             fontSize = 16.sp,
                             lineHeight = 24.sp,

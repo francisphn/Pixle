@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -85,6 +86,7 @@ fun RandomTextmojiMessage(
                 fontFamily = Manrope,
                 fontSize = size.message,
                 fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
             )
         }
     }

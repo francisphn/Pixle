@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +46,8 @@ import app.pixle.lib.Utils
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.SolutionOfToday
 import app.pixle.ui.composable.LoadingScreen
+import app.pixle.ui.composable.RandomTextmojiMessage
+import app.pixle.ui.composable.main.Celebration
 import app.pixle.ui.composable.main.Game
 import app.pixle.ui.composable.main.Hint
 import app.pixle.ui.composable.main.MissingRowAttempt
@@ -67,8 +70,8 @@ import java.util.Locale
 
 @Composable
 fun MainScreen() {
-    val (goal, _) = rememberQueryable(SolutionOfToday)
-    val (attempts, _) = rememberQueryable(AttemptsOfToday)
+    val (goal, goalError) = rememberQueryable(SolutionOfToday)
+    val (attempts, attemptsError) = rememberQueryable(AttemptsOfToday)
 
     val today = remember(goal) { Utils.utcDate() }
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
@@ -76,7 +79,37 @@ fun MainScreen() {
     var shouldLaunchTwiceDown by remember { mutableStateOf(false) }
 
     AnimatedVisibility(
-        visible = goal == null || attempts == null || difficultyColour == null,
+        visible = goalError != null,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            RandomTextmojiMessage(message = stringResource(R.string.no_internet))
+        }
+    }
+
+    AnimatedVisibility(
+        visible = goalError == null && attemptsError != null,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            RandomTextmojiMessage(message = stringResource(R.string.load_attempts_error))
+        }
+    }
+
+    AnimatedVisibility(
+        visible = goalError == null && attemptsError == null && (goal == null || attempts == null || difficultyColour == null),
         enter = fadeIn(),
         exit = fadeOut()
     ) {
@@ -84,7 +117,7 @@ fun MainScreen() {
     }
 
     AnimatedVisibility(
-        visible = goal != null && attempts != null && difficultyColour != null,
+        visible = goalError == null && attemptsError == null && goal != null && attempts != null && difficultyColour != null,
         enter = fadeIn(),
         exit = fadeOut()
     ) {
@@ -93,174 +126,173 @@ fun MainScreen() {
             return@AnimatedVisibility
         }
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp),
-        ) {
+        Celebration(attempts = attempts) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+            ) {
 
 
-            // Welcome message
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 32.dp, bottom = 28.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                // Welcome message
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 32.dp, bottom = 28.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                    Column(
-                        modifier = Modifier,
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        // TODO: Show user's name
-                        Text(
-                            text = "Hi, player",
-                            fontFamily = Manrope,
-                            fontSize = 12.sp,
-                            lineHeight = 18.sp,
-                            modifier = Modifier.alpha(0.5f)
-                        )
-                        Text(
-                            text = "Welcome Back!",
-                            fontFamily = Manrope,
-                            fontSize = 18.sp,
-                            lineHeight = 28.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-
-                    Column {
-                        IconButton(
-                            onClick = {
-                                shouldLaunchTwiceDown = true
-                            },
-                            modifier = Modifier
-                                .size(32.dp)
+                        Column(
+                            modifier = Modifier,
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.VideogameAsset,
-                                contentDescription = "Hint",
-                                tint = difficultyColour
+                            // TODO: Show user's name
+                            Text(
+                                text = stringResource(R.string.hi_player, "player"),
+                                fontFamily = Manrope,
+                                fontSize = 12.sp,
+                                lineHeight = 18.sp,
+                                modifier = Modifier.alpha(0.5f)
                             )
+                            Text(
+                                text = stringResource(R.string.welcome),
+                                fontFamily = Manrope,
+                                fontSize = 18.sp,
+                                lineHeight = 28.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+
+                        Column {
+                            IconButton(
+                                onClick = {
+                                    shouldLaunchTwiceDown = true
+                                },
+                                modifier = Modifier
+                                    .size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.VideogameAsset,
+                                    contentDescription = "Hint",
+                                    tint = difficultyColour
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            // Main content
-            item {
-                Column(
-                    modifier = Modifier
-                        .padding(bottom = 20.dp)
-                        .fillMaxWidth()
-                        .border(
-                            width = 1.dp,
-                            color = difficultyColour,
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 20.dp),
-                ) {
-
-                    // Header
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    MaterialTheme.colorScheme.surfaceVariant,
-                                    shape = CircleShape
-                                )
-                                .padding(8.dp)
-                        ) {
-                            Image(
-                                modifier = Modifier.size(18.dp),
-                                painter = painterResource(R.drawable.bling),
-                                contentDescription = "bling",
-                                colorFilter = ColorFilter.tint(difficultyColour)
-                            )
-                        }
-
-                        Text(
-                            text = "Today's goal",
-                            fontFamily = Manrope,
-                            fontSize = 16.sp,
-                            lineHeight = 24.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Column {
-                            Text(
-                                text = "${if (today.dayOfMonth < 10) "0" else ""}${today.dayOfMonth}",
-                                fontFamily = Manrope,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                            Text(
-                                text = "${
-                                    today.month.getDisplayName(
-                                        TextStyle.SHORT, Locale.UK
-                                    )
-                                } ${today.year}",
-                                fontFamily = Manrope,
-                                fontSize = 10.sp,
-                                lineHeight = 10.sp,
-                                modifier = Modifier.alpha(0.75f)
-                            )
-                        }
-                    }
-
-                    // Info
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
-                            .padding(horizontal = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = "${goal.solutionItems.size} items • ${goal.difficulty} difficulty",
-                            fontFamily = Manrope,
-                            fontSize = 16.sp,
-                            lineHeight = 24.sp,
-                            fontWeight = FontWeight.Medium,
-                        )
-
-                        // Hint
-                        Hint(
-                            attempts = attempts,
-                            color = difficultyColour
-                        )
-                    }
-
-
-                    // Attempts
+                // Main content
+                item {
                     Column(
                         modifier = Modifier
-                            .padding(top = 24.dp)
+                            .padding(bottom = 20.dp)
                             .fillMaxWidth()
+                            .border(
+                                width = 1.dp,
+                                color = difficultyColour,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .padding(horizontal = 12.dp, vertical = 20.dp),
                     ) {
+
+                        // Header
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        MaterialTheme.colorScheme.surfaceVariant,
+                                        shape = CircleShape
+                                    )
+                                    .padding(8.dp)
+                            ) {
+                                Image(
+                                    modifier = Modifier.size(18.dp),
+                                    painter = painterResource(R.drawable.bling),
+                                    contentDescription = "bling",
+                                    colorFilter = ColorFilter.tint(difficultyColour)
+                                )
+                            }
+
+                            Text(
+                                text = stringResource(R.string.goal),
+                                fontFamily = Manrope,
+                                fontSize = 16.sp,
+                                lineHeight = 24.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Column {
+                                Text(
+                                    text = "${if (today.dayOfMonth < 10) "0" else ""}${today.dayOfMonth}",
+                                    fontFamily = Manrope,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+                                Text(
+                                    text = today.month.getDisplayName(TextStyle.SHORT, Locale.UK) + " " + today.year.toString(),
+                                    fontFamily = Manrope,
+                                    fontSize = 10.sp,
+                                    lineHeight = 10.sp,
+                                    modifier = Modifier.alpha(0.75f)
+                                )
+                            }
+                        }
+
+                        // Info
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp)
+                                .padding(horizontal = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = stringResource(R.string.game_desc, goal.solutionItems.size, goal.difficulty),
+                                fontFamily = Manrope,
+                                fontSize = 16.sp,
+                                lineHeight = 24.sp,
+                                fontWeight = FontWeight.Medium,
+                            )
+
+                            // Hint
+                            Hint(
+                                goal = goal,
+                                attempts = attempts,
+                                color = difficultyColour
+                            )
+                        }
+
+
+                        // Attempts
                         Column(
                             modifier = Modifier
-                                .padding(horizontal = 16.dp)
+                                .padding(top = 24.dp)
                                 .fillMaxWidth()
-                                .leftBorder(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.onBackground.opacity(0.3f)
-                                ),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            Game(attempts = attempts, goal = goal)
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .fillMaxWidth()
+                                    .leftBorder(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.onBackground.opacity(0.3f)
+                                    ),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                Game(attempts = attempts, goal = goal)
+                            }
                         }
-                    }
 
-                    // No winning photo
-                    WinningPhoto(
-                        attempts = attempts
-                    )
+                        // No winning photo
+                        WinningPhoto(
+                            attempts = attempts
+                        )
+                    }
                 }
             }
         }
