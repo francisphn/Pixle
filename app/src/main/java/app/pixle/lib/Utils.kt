@@ -43,10 +43,3 @@ fun String.asPayload(): Payload {
 fun ByteArray.stringify(): String {
     return String(this, Charsets.UTF_32)
 }
-
-data class Quadruple<A, B, C, D>(
-    val first: A,
-    val second: B,
-    val third: C,
-    val fourth: D
-)

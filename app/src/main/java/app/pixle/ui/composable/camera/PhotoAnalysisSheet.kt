@@ -53,7 +53,6 @@ import app.pixle.R
 import app.pixle.asset.NEARBY_CONN_D_TAG
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
-import app.pixle.lib.Quadruple
 import app.pixle.lib.asPayload
 import app.pixle.lib.bA
 import app.pixle.model.api.AttemptsHistory
@@ -400,13 +399,6 @@ fun PhotoAnalysisSheet(
                                     nearby.sendPayload(
                                         it,
                                         "ATTEMPT|||${Json.encodeToString(confirmedAttempt)}".asPayload()
-                                    )
-                                }
-
-                                connInfo.endpoints.otherEndpointNumericId?.let {
-                                    nearby.sendPayload(
-                                        it,
-                                        "ATTEMPT_$confirmedAttempt".asPayload()
                                     )
                                 }
 
