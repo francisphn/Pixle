@@ -1,14 +1,17 @@
 package app.pixle.database
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import app.pixle.asset.NEARBY_CONN_D_TAG
 import app.pixle.lib.GameMode
 import app.pixle.ui.state.ObjectDetectionModel
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +27,21 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
     private val onboardedKey = booleanPreferencesKey("onboarded")
     private val nextNotificationIdKey = intPreferencesKey("next_notification_id")
     private val usernameKey = stringPreferencesKey("username")
+
+    private val twiceDownKey = stringPreferencesKey("passed_answer")
+
+    suspend fun saveTwiceDown(twiceDown: String) {
+        Log.d(NEARBY_CONN_D_TAG, "I'm inside datastore just saving twice down")
+        dataStore.edit {
+            it[twiceDownKey] = twiceDown
+        }
+    }
+
+    val getTwiceDown: Flow<String?> = dataStore.data.map {
+        Log.d(NEARBY_CONN_D_TAG, "I'm inside datastore just GETTING twice down")
+        it[twiceDownKey]
+    }
+
 
     val getUserName: Flow<String> = dataStore.data
         .map { preferences ->

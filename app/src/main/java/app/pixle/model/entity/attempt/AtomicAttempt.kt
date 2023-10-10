@@ -3,9 +3,11 @@ package app.pixle.model.entity.attempt
 import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.util.UUID
 
+@Serializable
 @Entity
 data class AtomicAttempt(
     /**

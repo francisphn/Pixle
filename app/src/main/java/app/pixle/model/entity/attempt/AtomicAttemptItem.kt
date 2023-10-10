@@ -1,9 +1,11 @@
 package app.pixle.model.entity.attempt
 
 import androidx.room.Entity
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
 
+@Serializable
 @Entity(primaryKeys = ["attemptUuid", "positionInAttempt"])
 data class AtomicAttemptItem(
     /**

@@ -4,9 +4,12 @@ import android.net.Uri
 import androidx.room.Embedded
 import androidx.room.Ignore
 import androidx.room.Relation
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.util.UUID
 
+
+@Serializable
 data class Attempt(
     @Embedded
     val attempt: AtomicAttempt,

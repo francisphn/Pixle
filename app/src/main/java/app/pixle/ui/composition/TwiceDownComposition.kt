@@ -10,19 +10,6 @@ import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import kotlin.random.Random
 
-data class PlayMode(
-    val state: State = State.SINGLE,
-    val setState: (State) -> Unit = { }
-): androidx.compose.runtime.State<PlayMode.State> {
-    enum class State {
-        SINGLE,
-        TWICE_DOWN
-    }
-
-    override val value: State
-        get() = state
-}
-
 data class ConnectionInformation(
     val endpoints: EndpointInformation,
     val setEndpoints: (EndpointInformation) -> Unit = {}
@@ -32,16 +19,25 @@ data class ConnectionInformation(
 
     data class EndpointInformation(
         val thisEndpointNumericId: String,
-        val otherEndpointNumericId: String? = null,
-        val otherEndpointReadableId: String? = null,
+        var otherEndpointNumericId: String? = null,
+        var otherEndpointReadableId: String? = null,
+        var connectionState: ConnectionState = ConnectionState.NOT_CONNECTED
     )
+
+    enum class ConnectionState {
+        ACTIVELY_DISCOVERING,
+        SENDING_REQUEST,
+        WAITING_FOR_REQUEST,
+        CONNECTING,
+        CONNECTED,
+        PAIRED_TWICEDOWN,
+        NOT_CONNECTED
+    }
 }
 
 private val localNearbyConnections = compositionLocalOf<ConnectionsClient> {
     error("No Nearby Connections context provided")
 }
-
-private val localPlayMode = compositionLocalOf { PlayMode() }
 
 private val localConnectionInformation = compositionLocalOf<ConnectionInformation> {
     error("No connection information context provided")
@@ -51,10 +47,9 @@ private val localConnectionInformation = compositionLocalOf<ConnectionInformatio
 fun rememberNearbyConnections(): ConnectionsClient {
     return localNearbyConnections.current
 }
-
 @Composable
-fun rememberPlayMode() : PlayMode {
-    return localPlayMode.current
+fun rememberConnectionInformation() : ConnectionInformation {
+    return localConnectionInformation.current
 }
 
 @Composable
@@ -64,12 +59,6 @@ fun TwiceDownProvider(
     val context = LocalContext.current
 
     val instance = Nearby.getConnectionsClient(context)
-
-    val (state, setState) = remember { mutableStateOf(PlayMode.State.SINGLE) }
-
-    val playMode = remember(state, setState) {
-        PlayMode(state, setState)
-    }
 
     val (endpointState, setEndpointState) = remember { mutableStateOf(
         ConnectionInformation.EndpointInformation(
@@ -82,10 +71,8 @@ fun TwiceDownProvider(
     }
 
     CompositionLocalProvider(localNearbyConnections provides instance) {
-        CompositionLocalProvider(localPlayMode provides playMode) {
-            CompositionLocalProvider(localConnectionInformation provides endpoint) {
-                content()
-            }
+        CompositionLocalProvider(localConnectionInformation provides endpoint) {
+            content()
         }
     }
 }

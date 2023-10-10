@@ -10,3 +10,7 @@ const val PREFERENCES_ROUTE = "preferences"
 const val PIXLE_DATABASE_NAME = "pixle"
 
 const val NOTIFICATION_HOUR_OF_DAY = 10
+
+const val APP_NAME = "app.pixle"
+
+const val NEARBY_CONN_D_TAG = "pixle:debugNearbyConnections"

@@ -1,5 +1,7 @@
 package app.pixle.ui.tabs
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -19,7 +21,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.JoinLeft
+import androidx.compose.material.icons.filled.JoinRight
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.filled.VideogameAsset
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,14 +61,18 @@ import app.pixle.ui.composable.main.MissingRowAttempt
 import app.pixle.ui.composable.main.WinningPhoto
 import app.pixle.ui.composable.main.RowAttempt
 import app.pixle.ui.composable.twicedown.TwiceDownSheet
+import app.pixle.ui.composition.ConnectionInformation
 import app.pixle.ui.composition.GameAnimation
 import app.pixle.ui.composition.LocalGameAnimation
+import app.pixle.ui.composition.rememberConnectionInformation
 import app.pixle.ui.composition.rememberGameAnimation
+import app.pixle.ui.composition.rememberNearbyConnections
 import app.pixle.ui.modifier.leftBorder
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import app.pixle.ui.theme.rarityColour
+import com.google.android.gms.nearby.Nearby
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.format.TextStyle
@@ -71,7 +82,10 @@ import java.util.Locale
 @Composable
 fun MainScreen() {
     val (goal, goalError) = rememberQueryable(SolutionOfToday)
+    val connInfo = rememberConnectionInformation()
+
     val (attempts, attemptsError) = rememberQueryable(AttemptsOfToday)
+    val context = LocalContext.current
 
     val today = remember(goal) { Utils.utcDate() }
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
@@ -164,7 +178,10 @@ fun MainScreen() {
                             )
                         }
 
-                        Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
                             IconButton(
                                 onClick = {
                                     shouldLaunchTwiceDown = true
@@ -172,11 +189,18 @@ fun MainScreen() {
                                 modifier = Modifier
                                     .size(32.dp)
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.VideogameAsset,
-                                    contentDescription = "Hint",
-                                    tint = difficultyColour
-                                )
+                                if (connInfo.endpoints.connectionState != ConnectionInformation.ConnectionState.PAIRED_TWICEDOWN) {
+                                    Icon(
+                                        imageVector = Icons.Default.JoinLeft,
+                                        contentDescription = "Twice Down not activated",
+                                        tint = difficultyColour
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Default.JoinRight,
+                                        contentDescription = "Twice Down activated",
+                                    )
+                                }
                             }
                         }
                     }

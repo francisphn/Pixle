@@ -54,8 +54,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import app.pixle.R
+import app.pixle.asset.NEARBY_CONN_D_TAG
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
+import app.pixle.lib.Quadruple
+import app.pixle.lib.asPayload
+import app.pixle.lib.bA
 import app.pixle.model.api.AttemptsHistory
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.ConfirmAttempt
@@ -69,7 +73,9 @@ import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.composition.GameAnimation
 import app.pixle.ui.composition.LocalGameAnimation
 import app.pixle.ui.composition.LocalObjectDetection
+import app.pixle.ui.composition.rememberConnectionInformation
 import app.pixle.ui.composition.rememberGameAnimation
+import app.pixle.ui.composition.rememberNearbyConnections
 import app.pixle.ui.composition.rememberObjectDetection
 import app.pixle.ui.state.ObjectDetectionModel
 import app.pixle.ui.state.rememberFusedLocation
@@ -81,6 +87,9 @@ import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonEncoder
 import org.tensorflow.lite.support.image.TensorImage
 import java.util.UUID
 
@@ -95,6 +104,9 @@ fun PhotoAnalysisSheet(
     val scope = rememberCoroutineScope()
     val scroll = rememberScrollState()
     val fusedLocation = rememberFusedLocation()
+
+    val connInfo = rememberConnectionInformation()
+    val nearby = rememberNearbyConnections()
 
     val gameMode by rememberPreference(AppPreferences::getGameModePreference,
         initialValue = AppPreferences.DEFAULT_GAME_MODE
@@ -116,6 +128,7 @@ fun PhotoAnalysisSheet(
     val (lib, _) = rememberQueryable(Library)
     val (attempts, _, _, _, invalidateToday) = rememberQueryable(AttemptsOfToday)
     val invalidateHistory = rememberInvalidate(AttemptsHistory)
+
     val (_, _, mutate) = rememberMutable(ConfirmAttempt) {
         onSuccess = { _, _, _ ->
             Log.d("pixle:debug", "created attempt")
@@ -380,13 +393,33 @@ fun PhotoAnalysisSheet(
                                 }
                                 return@Button
                             }
+
                             val confirmedAttempt = attempt ?: return@Button
+
                             scope.launch {
                                 mutate.invoke(Triple(confirmedAttempt, uri, gameMode))
+
+                                Log.d(NEARBY_CONN_D_TAG, "Sending attempt to other device...")
+
+                                connInfo.endpoints.otherEndpointReadableId?.let {
+                                    nearby.sendPayload(
+                                        it,
+                                        "ATTEMPT|||${Json.encodeToString(confirmedAttempt)}".asPayload()
+                                    )
+                                }
+
+                                connInfo.endpoints.otherEndpointNumericId?.let {
+                                    nearby.sendPayload(
+                                        it,
+                                        "ATTEMPT_$confirmedAttempt".asPayload()
+                                    )
+                                }
+
                             }.invokeOnCompletion {
                                 val win = confirmedAttempt.attemptItems.all { it.kind == AtomicAttemptItem.KIND_EXACT }
                                 setAnimationState(if (win) GameAnimation.State.WIN else GameAnimation.State.ATTEMPT)
                             }
+
                         }
                     ) {
                         Text(
