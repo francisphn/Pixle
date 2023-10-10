@@ -69,7 +69,8 @@ class DatabaseTest {
         val yesterdayAttempt = AtomicAttempt(
             uuid = yesterdayAttemptUuid,
             solutionDate = Utils.utcDate().minusDays(1).toString(),
-            winningPhoto = null
+            winningPhoto = null,
+            location = ""
         )
 
         val yesterdayAttemptItems = listOf("😱", "😭").mapIndexed { index, emoji ->
@@ -84,7 +85,8 @@ class DatabaseTest {
         val todayAttempt = AtomicAttempt(
             uuid = todayAttemptUuid.toString(),
             solutionDate = Utils.utcDate().toString(),
-            winningPhoto = null
+            winningPhoto = null,
+            location = ""
         )
 
         val todayAttemptItems = listOf("😁", "🇬🇧").mapIndexed { index, emoji ->
