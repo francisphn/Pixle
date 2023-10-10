@@ -28,20 +28,6 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
     private val nextNotificationIdKey = intPreferencesKey("next_notification_id")
     private val usernameKey = stringPreferencesKey("username")
 
-    private val twiceDownKey = stringPreferencesKey("passed_answer")
-
-    suspend fun saveTwiceDown(twiceDown: String) {
-        Log.d(NEARBY_CONN_D_TAG, "I'm inside datastore just saving twice down")
-        dataStore.edit {
-            it[twiceDownKey] = twiceDown
-        }
-    }
-
-    val getTwiceDown: Flow<String?> = dataStore.data.map {
-        Log.d(NEARBY_CONN_D_TAG, "I'm inside datastore just GETTING twice down")
-        it[twiceDownKey]
-    }
-
 
     val getUserName: Flow<String> = dataStore.data
         .map { preferences ->
