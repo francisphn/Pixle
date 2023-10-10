@@ -144,7 +144,7 @@ fun MainScreen() {
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
-                            text = "Hi, $playerName",
+                            text = stringResource(R.string.hi_player, playerName),
                             fontFamily = Manrope,
                             fontSize = 12.sp,
                             lineHeight = 18.sp,

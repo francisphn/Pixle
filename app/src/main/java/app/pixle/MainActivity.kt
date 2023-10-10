@@ -1,6 +1,5 @@
 package app.pixle
 
-import app.pixle.notification.alarm.AlarmBroadcaster
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -14,7 +13,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -32,6 +30,7 @@ import app.pixle.asset.MAIN_ROUTE
 import app.pixle.asset.PREFERENCES_ROUTE
 import app.pixle.asset.PROFILE_ROUTE
 import app.pixle.model.api.Library
+import app.pixle.notification.alarm.AlarmBroadcaster
 import app.pixle.ui.composable.BottomNavigation
 import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.main.OnboardingSheet
@@ -44,8 +43,6 @@ import app.pixle.ui.tabs.Preferences
 import app.pixle.ui.tabs.ProfileScreen
 import app.pixle.ui.theme.PixleTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {

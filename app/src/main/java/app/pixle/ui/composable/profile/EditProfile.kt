@@ -24,11 +24,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import app.pixle.R
 import app.pixle.ui.composable.SmallButton
 import app.pixle.ui.state.rememberPreferences
+import app.pixle.ui.theme.Manrope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,7 +89,11 @@ fun EditProfile() {
                                 name = it
                             }
                         },
-                        label = { Text("Name") },
+                        label = { Text("Name", fontFamily = Manrope) },
+                        textStyle = TextStyle(
+                            fontFamily = Manrope,
+                        )
+
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -105,7 +111,11 @@ fun EditProfile() {
                                 bio = it
                             }
                         },
-                        label = { Text("Bio") }
+                        label = { Text("Bio", fontFamily = Manrope) },
+                        textStyle = TextStyle(
+                            fontFamily = Manrope,
+                        )
+
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -119,7 +129,9 @@ fun EditProfile() {
                                 setIsEditing(false)
                             }                        }
                     ) {
-                        Text("Save profile")
+                        Text("Save profile",
+                            fontFamily = Manrope,
+                            )
                     }
                 }
             }
