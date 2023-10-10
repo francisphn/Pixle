@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,7 +47,7 @@ import kotlinx.coroutines.launch
 fun ForfeitToday() {
     val isDarkTheme = isSystemInDarkTheme()
     val scope = rememberCoroutineScope()
-    val (isOpen, setIsOpen) = remember { mutableStateOf(false) }
+    val (isOpen, setIsOpen) = rememberSaveable { mutableStateOf(false) }
 
     val invalidateToday = rememberInvalidate(AttemptsOfToday)
     val invalidateHistory = rememberInvalidate(AttemptsHistory)

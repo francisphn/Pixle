@@ -1,15 +1,18 @@
 package app.pixle.model.entity.attempt
 
 import android.net.Uri
+import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Ignore
 import androidx.room.Relation
 import kotlinx.serialization.Serializable
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
 import java.util.UUID
 
 
 @Serializable
+@Parcelize
 data class Attempt(
     @Embedded
     val attempt: AtomicAttempt,
@@ -19,7 +22,7 @@ data class Attempt(
         entityColumn = "attemptUuid"
     )
     val attemptItems: List<AtomicAttemptItem>,
-) {
+): Parcelable {
     val uuid: UUID
         get() = UUID.fromString(attempt.uuid)
 

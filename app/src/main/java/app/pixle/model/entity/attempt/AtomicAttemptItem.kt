@@ -1,10 +1,13 @@
 package app.pixle.model.entity.attempt
 
+import android.os.Parcelable
 import androidx.room.Entity
 import kotlinx.serialization.Serializable
+import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
 
+@Parcelize
 @Serializable
 @Entity(primaryKeys = ["attemptUuid", "positionInAttempt"])
 data class AtomicAttemptItem(
@@ -27,7 +30,7 @@ data class AtomicAttemptItem(
      * The kind of this attempt item, which is either "exact", "similar", or "none"
      */
     var kind: String
-) {
+): Parcelable {
     companion object {
         const val KIND_EXACT = "exact"
         const val KIND_SIMILAR = "similar"
