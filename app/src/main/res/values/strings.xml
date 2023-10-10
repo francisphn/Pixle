@@ -9,6 +9,7 @@
     <string name="forfeit">Forfeit today\'s attempts?</string>
     <string name="unknown">Unknown</string>
     <string name="confirm">Confirm</string>
+    <string name="enable">Enable</string>
     <string name="cancel">Cancel</string>
     <string name="history_error">Cannot load all attempts history</string>
     <string name="no_games">You haven\'t played any game yet</string>
@@ -71,4 +72,7 @@
     <string name="go_outside">No winning photo, time to go outside!</string>
     <string name="edit_profile">Edit profile</string>
     <string name="game_desc">%d items • %s difficulty</string>
+    <string name="smart_preview">Smart Preview</string>
+    <string name="smart_preview_desc">Automatically show the expected result of your photo while your device is not in motion</string>
+    <string name="smart_preview_warning">Smart preview is not recommended for low-end devices as it may cause the camera to lag.</string>
 </resources>

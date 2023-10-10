@@ -2,11 +2,8 @@ package app.pixle.ui.composable.camera
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.location.Geocoder
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -20,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -32,7 +28,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -43,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,15 +63,11 @@ import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.PhotoItem
 import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.composition.GameAnimation
-import app.pixle.ui.composition.LocalGameAnimation
-import app.pixle.ui.composition.LocalObjectDetection
 import app.pixle.ui.composition.rememberGameAnimation
 import app.pixle.ui.composition.rememberObjectDetection
-import app.pixle.ui.state.ObjectDetectionModel
 import app.pixle.ui.state.rememberFusedLocation
 import app.pixle.ui.state.rememberInvalidate
 import app.pixle.ui.state.rememberMutable
-import app.pixle.ui.state.rememberObjectDetector
 import app.pixle.ui.state.rememberPreference
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
@@ -238,9 +228,10 @@ fun PhotoAnalysisSheet(
             )
         }
 
-        setAttempt(Attempt(currentAttempt, result))
         bitmap.recycle()
         Log.d("pixle:analyse", "result: ${result.map { it.icon }.joinToString(", ")}")
+
+        setAttempt(Attempt(currentAttempt, result))
     }
 
     if (uri != null) {

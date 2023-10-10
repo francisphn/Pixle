@@ -79,7 +79,12 @@ fun Hint(goal: Solution, attempts: List<Attempt>, color: Color) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val (isShowingHint, setIsShowingHint) = rememberSaveable { mutableStateOf(false) }
 
-    val hintLevel = remember(attempts.size) { (attempts.size - 2).coerceAtLeast(1) }
+    val hintLevel = remember(gameMode, attempts.size) {
+        if (gameMode == GameMode.Easy)
+            (attempts.size + 1).coerceAtLeast(1)
+        else
+            (attempts.size - 2).coerceAtLeast(1)
+    }
     val symbol = remember(hintLevel) { runes[(hintLevel - 1).coerceAtMost(runes.size - 1)] }
 
     
