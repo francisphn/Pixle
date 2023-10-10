@@ -24,7 +24,8 @@ import app.pixle.model.entity.solution.AtomicSolutionItem
     AtomicAttemptItem::class,
     Item::class,
                      ],
-    version = 1)
+    version = 1,
+    exportSchema = true)
 abstract class PixleDatabase : RoomDatabase() {
     protected abstract fun solutionDao(): SolutionDao
 
