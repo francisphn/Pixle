@@ -70,7 +70,6 @@ fun MainScreen() {
     val connInfo = rememberConnectionInformation()
 
     val (attempts, attemptsError) = rememberQueryable(AttemptsOfToday)
-    val context = LocalContext.current
 
     val today = remember(goal) { Utils.utcDate() }
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }

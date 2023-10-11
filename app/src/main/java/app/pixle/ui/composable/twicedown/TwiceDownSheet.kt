@@ -17,11 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import app.pixle.R
 import app.pixle.asset.requiredPermissions
 import app.pixle.ui.composition.ConnectionInformation
 import app.pixle.ui.composition.rememberConnectionInformation
@@ -67,7 +69,7 @@ fun TwiceDownSheet(onDismiss: () -> Unit) {
             )
 
             Text(
-                text = "Twice Down",
+                text = stringResource(R.string.twice_down),
                 fontFamily = Manrope,
                 fontSize = 18.sp,
                 lineHeight = 28.sp,
@@ -77,7 +79,7 @@ fun TwiceDownSheet(onDismiss: () -> Unit) {
             )
 
             Text(
-                text = "Play with a friend",
+                text = stringResource(R.string.twice_down_desc),
                 fontFamily = Manrope,
                 fontSize = 18.sp,
                 lineHeight = 28.sp,

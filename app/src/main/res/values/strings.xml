@@ -75,4 +75,10 @@
     <string name="smart_preview">Smart Preview</string>
     <string name="smart_preview_desc">Automatically show the expected result of your photo while your device is not in motion</string>
     <string name="smart_preview_warning">Smart preview is not recommended for low-end devices as it may cause the camera to lag.</string>
+    <string name="permissions">Permissions</string>
+    <string name="permissions_twicedown_desc">Twice Down Mode requires Pixle to have permission to access Bluetooth, WiFi, and fine-grained location.</string>
+    <string name="twice_down">Twice Down</string>
+    <string name="twice_down_desc">Play with a friend</string>
+    <string name="twice_down_paired">You\'re currently paired up.</string>
+    <string name="twice_down_unpair">Unpair</string>
 </resources>

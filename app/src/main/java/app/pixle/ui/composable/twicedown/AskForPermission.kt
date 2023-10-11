@@ -15,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import app.pixle.R
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.theme.Manrope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -31,17 +33,14 @@ fun AskForPermission(permissionState: MultiplePermissionsState) {
             .padding(horizontal = 30.dp)
     ) {
         Text(
-            text = "Permissions",
-
+            text = stringResource(R.string.permissions),
             fontFamily = Manrope,
             fontWeight = FontWeight.Bold
         )
 
         Text(
-            text = "Twice Down Mode requires Pixle to have permission to access Bluetooth, WiFi, and fine-grained location.",
-
+            text = stringResource(R.string.permissions_twicedown_desc),
             modifier = Modifier.padding(bottom = 30.dp),
-
             fontFamily = Manrope,
             fontWeight = FontWeight.Normal
         )
@@ -62,7 +61,7 @@ fun AskForPermission(permissionState: MultiplePermissionsState) {
             contentAlignment = Alignment.Center) {
 
             Text(
-                text = "Continue",
+                text = stringResource(R.string.continue_text),
                 fontFamily = Manrope,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.surface,

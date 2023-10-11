@@ -15,6 +15,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.twotone.CenterFocusStrong
+import androidx.compose.material.icons.twotone.CenterFocusWeak
 import androidx.compose.material.icons.twotone.FiberManualRecord
 import androidx.compose.material.icons.twotone.FiberSmartRecord
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,8 +54,8 @@ fun SmartPreviewToggle(
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val color = remember { Color(45, 212, 191) }
-    val icon = remember(isDetectingMotion) { if (isDetectingMotion) Icons.TwoTone.FiberSmartRecord else Icons.TwoTone.FiberManualRecord }
+    val color = remember(isDetectingMotion) { if (isDetectingMotion) Color(45, 212, 191) else Color.White }
+    val icon = remember(isDetectingMotion) { if (isDetectingMotion) Icons.TwoTone.CenterFocusStrong else Icons.TwoTone.CenterFocusWeak }
 
     val (isConfirming, setIsConfirming) = rememberSaveable { mutableStateOf(false) }
 
@@ -69,7 +71,7 @@ fun SmartPreviewToggle(
         Icon(
             imageVector = icon,
             contentDescription = "auto-detect",
-            tint = Color.White,
+            tint = color,
             modifier = Modifier
                 .size(28.dp)
         )
@@ -79,7 +81,7 @@ fun SmartPreviewToggle(
         ModalBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(380.dp),
+                .height(400.dp),
             sheetState = sheetState,
             onDismissRequest = { setIsConfirming(false) }
         ) {
@@ -87,18 +89,16 @@ fun SmartPreviewToggle(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        imageVector = Icons.TwoTone.FiberSmartRecord,
+                        imageVector = Icons.TwoTone.CenterFocusStrong,
                         contentDescription = "smart-preview",
-                        modifier = Modifier.size(40.dp),
-                        tint = color
+                        modifier = Modifier.size(50.dp),
                     )
                     Text(
                         text = stringResource(R.string.smart_preview),
@@ -166,7 +166,7 @@ fun SmartPreviewToggle(
                                 }
                         }
                         .background(
-                            color = MaterialTheme.colorScheme.onBackground.opacity(0.8f),
+                            color = MaterialTheme.colorScheme.onBackground,
                             shape = CircleShape
                         )
                         .padding(horizontal = 14.dp, vertical = 6.dp),

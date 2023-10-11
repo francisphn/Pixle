@@ -195,7 +195,7 @@ fun SmartPreview(
     ) {
         Spacer(modifier = Modifier.fillMaxWidth(.45f).aspectRatio(1F))
         AnimatedVisibility(
-            visible = attempt != null,
+            visible = attempt != null && isDetectingMotion,
             enter = fadeIn(),
             exit = fadeOut()
         ) {

@@ -17,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import app.pixle.R
 import app.pixle.lib.asPayload
 import app.pixle.ui.composition.ConnectionInformation
 import app.pixle.ui.composition.rememberConnectionInformation
@@ -44,7 +46,7 @@ fun Unpair(onUnpair: () -> Unit) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "You're currently paired up.",
+                text = stringResource(R.string.twice_down_paired),
                 fontFamily = Manrope,
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center,
@@ -77,7 +79,7 @@ fun Unpair(onUnpair: () -> Unit) {
             contentAlignment = Alignment.Center) {
 
             Text(
-                text = "Unpair",
+                text = stringResource(R.string.twice_down_unpair),
                 fontFamily = Manrope,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.surface,
