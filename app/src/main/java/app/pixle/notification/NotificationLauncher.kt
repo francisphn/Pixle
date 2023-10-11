@@ -1,15 +1,12 @@
 package app.pixle.notification
 
-import android.Manifest
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
-import android.app.PendingIntent.FLAG_MUTABLE
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -18,7 +15,6 @@ import androidx.core.app.NotificationManagerCompat
 import app.pixle.MainActivity
 import app.pixle.R
 import app.pixle.database.AppPreferences
-import kotlinx.coroutines.flow.collect
 
 private const val CHANNEL_ID = "Pixle_Daily_Reminder"
 private const val CHANNEL_NAME = "Pixle Daily Reminder"

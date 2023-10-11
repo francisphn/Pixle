@@ -36,6 +36,7 @@ import app.pixle.ui.composable.NavigationBuilder
 import app.pixle.ui.composable.main.OnboardingSheet
 import app.pixle.ui.composition.GameAnimationProvider
 import app.pixle.ui.composition.ObjectDetectionProvider
+import app.pixle.ui.composition.TwiceDownProvider
 import app.pixle.ui.state.rememberQueryablePreload
 import app.pixle.ui.tabs.CameraScreen
 import app.pixle.ui.tabs.MainScreen
@@ -57,13 +58,15 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             PixleTheme {
-                GameAnimationProvider {
-                    ObjectDetectionProvider {
-                        Surface(
-                            modifier = Modifier.fillMaxSize(),
-                            color = MaterialTheme.colorScheme.background
-                        ) {
-                            App()
+                TwiceDownProvider {
+                    GameAnimationProvider {
+                        ObjectDetectionProvider {
+                            Surface(
+                                modifier = Modifier.fillMaxSize(),
+                                color = MaterialTheme.colorScheme.background
+                            ) {
+                                App()
+                            }
                         }
                     }
                 }

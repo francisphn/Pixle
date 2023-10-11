@@ -1,7 +1,6 @@
 package app.pixle.database.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -10,7 +9,6 @@ import androidx.room.Transaction
 import app.pixle.model.entity.attempt.AtomicAttempt
 import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.model.entity.attempt.Attempt
-import java.time.LocalDate
 
 @Dao
 interface AttemptDao {

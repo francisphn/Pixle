@@ -14,13 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FiberSmartRecord
-import androidx.compose.material.icons.filled.MotionPhotosAuto
-import androidx.compose.material.icons.filled.MotionPhotosPause
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.twotone.FiberManualRecord
 import androidx.compose.material.icons.twotone.FiberSmartRecord
-import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,7 +42,6 @@ import app.pixle.R
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.theme.Manrope
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -17,6 +17,7 @@ fun <KEY, ARG, DATA> rememberMutable(
     options: SWRTriggerConfig<KEY, DATA>.() -> Unit = {},
 ): SWRMutationState<KEY, DATA, ARG> {
     val context = LocalContext.current
+
     return useSWRMutation(
         key = mutable.key,
         fetcher = { key, arg -> mutable.mutationFn(key, arg, context) },

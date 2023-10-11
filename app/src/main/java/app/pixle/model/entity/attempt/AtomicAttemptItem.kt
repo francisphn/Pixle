@@ -3,10 +3,11 @@ package app.pixle.model.entity.attempt
 import android.os.Parcelable
 import androidx.room.Entity
 import kotlinx.parcelize.Parcelize
-import java.util.UUID
+import kotlinx.serialization.Serializable
 
 
 @Parcelize
+@Serializable
 @Entity(primaryKeys = ["attemptUuid", "positionInAttempt"])
 data class AtomicAttemptItem(
     /**

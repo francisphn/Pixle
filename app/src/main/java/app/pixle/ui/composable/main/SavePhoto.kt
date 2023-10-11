@@ -1,7 +1,5 @@
 package app.pixle.ui.composable.main
 
-import android.content.Intent
-import android.media.MediaScannerConnection
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,7 +44,6 @@ import app.pixle.ui.theme.Manrope
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
 import java.time.format.TextStyle
 import java.util.Locale
 

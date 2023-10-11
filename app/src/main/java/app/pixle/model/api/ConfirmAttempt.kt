@@ -3,10 +3,10 @@ package app.pixle.model.api
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import app.pixle.model.entity.attempt.Attempt
 import app.pixle.database.PixleDatabase
 import app.pixle.lib.GameMode
 import app.pixle.model.api.contracts.Mutable
+import app.pixle.model.entity.attempt.Attempt
 
 object ConfirmAttempt: Mutable<List<String>, Triple<Attempt, Uri, GameMode>, Unit> {
     override val key: List<String>
@@ -22,9 +22,11 @@ object ConfirmAttempt: Mutable<List<String>, Triple<Attempt, Uri, GameMode>, Uni
         }
 
         Log.d("database", "Saving attempt to database...")
+
         args.takeIf { it.first.isWinningAttempt }?.let {
             it.first.winningPhoto = it.second
             repo.add(it.first)
+
         } ?: repo.add(args.first)
     }
 }

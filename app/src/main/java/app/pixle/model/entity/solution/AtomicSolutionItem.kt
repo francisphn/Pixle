@@ -1,7 +1,6 @@
 package app.pixle.model.entity.solution
 
 import androidx.room.Entity
-import java.time.LocalDate
 
 @Entity(primaryKeys = ["solutionDate", "positionInSolution", "category", "icon", "name"])
 data class AtomicSolutionItem(

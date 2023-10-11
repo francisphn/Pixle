@@ -1,0 +1,72 @@
+package app.pixle.ui.composable.twicedown
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import app.pixle.ui.modifier.opacity
+import app.pixle.ui.theme.Manrope
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun AskForPermission(permissionState: MultiplePermissionsState) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = 30.dp)
+    ) {
+        Text(
+            text = "Permissions",
+
+            fontFamily = Manrope,
+            fontWeight = FontWeight.Bold
+        )
+
+        Text(
+            text = "Twice Down Mode requires Pixle to have permission to access Bluetooth, WiFi, and fine-grained location.",
+
+            modifier = Modifier.padding(bottom = 30.dp),
+
+            fontFamily = Manrope,
+            fontWeight = FontWeight.Normal
+        )
+
+        Box(modifier = Modifier
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.onTertiaryContainer)
+            .clickable {
+                permissionState.launchMultiplePermissionRequest()
+            }
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onBackground.opacity(0.25f),
+                shape = CircleShape
+            )
+            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .fillMaxWidth(),
+            contentAlignment = Alignment.Center) {
+
+            Text(
+                text = "Continue",
+                fontFamily = Manrope,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.surface,
+            )
+        }
+    }
+}

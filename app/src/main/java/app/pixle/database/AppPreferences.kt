@@ -1,7 +1,6 @@
 package app.pixle.database
 
 import android.content.Context
-import androidx.compose.ui.res.stringResource
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -10,7 +9,6 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import app.pixle.R
 import app.pixle.lib.GameMode
 import app.pixle.ui.state.ObjectDetectionModel
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +25,19 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
     private val modelKey = stringPreferencesKey("ml_model")
     private val onboardedKey = booleanPreferencesKey("onboarded")
     private val nextNotificationIdKey = intPreferencesKey("next_notification_id")
+    private val usernameKey = stringPreferencesKey("username")
+
+
+    val getUserName: Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[usernameKey] ?: "Siri"
+        }
+
+    suspend fun saveUserName(username: String) {
+        dataStore.edit { preferences ->
+            preferences[usernameKey] = username
+        }
+    }
 
     val getGameModePreference: Flow<GameMode> = dataStore.data
         .map { preferences ->

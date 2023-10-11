@@ -67,9 +67,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import app.pixle.R
 import app.pixle.ui.composable.NavigationBuilder
+import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.composable.camera.SmartPreview
 import app.pixle.ui.composable.camera.SmartPreviewToggle
-import app.pixle.ui.composable.camera.PhotoAnalysisSheet
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberSoundEffect
 import app.pixle.ui.theme.Translucent
