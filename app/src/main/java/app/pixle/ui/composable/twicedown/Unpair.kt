@@ -1,6 +1,5 @@
 package app.pixle.ui.composable.twicedown
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,14 +14,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import app.pixle.asset.NEARBY_CONN_D_TAG
 import app.pixle.lib.asPayload
 import app.pixle.ui.composition.ConnectionInformation
 import app.pixle.ui.composition.rememberConnectionInformation
