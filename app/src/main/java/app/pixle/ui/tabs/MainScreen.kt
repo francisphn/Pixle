@@ -26,9 +26,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +61,7 @@ import app.pixle.ui.composition.ConnectionInformation
 import app.pixle.ui.composition.rememberConnectionInformation
 import app.pixle.ui.modifier.leftBorder
 import app.pixle.ui.modifier.opacity
+import app.pixle.ui.state.rememberPreferences
 import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import app.pixle.ui.theme.rarityColour
@@ -74,6 +81,9 @@ fun MainScreen() {
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
 
     var shouldLaunchTwiceDown by remember { mutableStateOf(false) }
+
+    val preferences = rememberPreferences()
+    val playerName by preferences.getPlayerName.collectAsState(initial = stringResource(R.string.initial_player_name))
 
     AnimatedVisibility(
         visible = goalError != null,
@@ -146,7 +156,7 @@ fun MainScreen() {
                         ) {
                             // TODO: Show user's name
                             Text(
-                                text = stringResource(R.string.hi_player, "player"),
+                                text = stringResource(R.string.hi_player, playerName),
                                 fontFamily = Manrope,
                                 fontSize = 12.sp,
                                 lineHeight = 18.sp,
