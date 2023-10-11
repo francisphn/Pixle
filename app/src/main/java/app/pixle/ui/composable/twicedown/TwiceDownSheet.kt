@@ -2,7 +2,6 @@ package app.pixle.ui.composable.twicedown
 
 import android.Manifest
 import android.net.Uri
-
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,7 +46,6 @@ import app.pixle.asset.APP_NAME
 import app.pixle.asset.NEARBY_CONN_D_TAG
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
-import app.pixle.lib.bA
 import app.pixle.lib.stringify
 import app.pixle.model.api.AttemptsHistory
 import app.pixle.model.api.AttemptsOfToday
@@ -64,9 +61,6 @@ import app.pixle.ui.composition.rememberNearbyConnections
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.state.rememberInvalidate
 import app.pixle.ui.state.rememberMutable
-import app.pixle.ui.state.rememberPreference
-import app.pixle.ui.state.rememberPreferences
-import app.pixle.ui.state.rememberQueryable
 import app.pixle.ui.theme.Manrope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
@@ -86,7 +80,6 @@ import com.google.android.gms.nearby.connection.Strategy
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 private val advertisingOptions = AdvertisingOptions.Builder()

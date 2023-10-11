@@ -3,14 +3,9 @@ package app.pixle.model.dto
 import app.pixle.asset.SERVER_ENDPOINT
 import app.pixle.lib.Utils
 import app.pixle.model.entity.item.Item
-import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
-import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @Serializable
 data class SolutionItemDto(

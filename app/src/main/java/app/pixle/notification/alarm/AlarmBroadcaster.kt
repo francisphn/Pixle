@@ -1,16 +1,11 @@
 package app.pixle.notification.alarm
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.SystemClock
-import android.util.Log
-import androidx.core.content.getSystemService
 import app.pixle.asset.NOTIFICATION_HOUR_OF_DAY
-import java.time.LocalDateTime
-import java.util.*
+import java.util.Calendar
 
 class AlarmBroadcaster private constructor(
     private val alarmManager: AlarmManager?,

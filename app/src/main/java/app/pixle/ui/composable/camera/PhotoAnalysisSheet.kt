@@ -54,20 +54,17 @@ import app.pixle.asset.NEARBY_CONN_D_TAG
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
 import app.pixle.lib.asPayload
-import app.pixle.lib.bA
 import app.pixle.model.api.AttemptsHistory
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.ConfirmAttempt
-import app.pixle.model.api.SolutionOfToday
 import app.pixle.model.api.Library
-import app.pixle.model.entity.attempt.AtomicAttemptItem
+import app.pixle.model.api.SolutionOfToday
 import app.pixle.model.entity.attempt.AtomicAttempt
+import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.PhotoItem
 import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.composition.GameAnimation
-import app.pixle.ui.composition.LocalGameAnimation
-import app.pixle.ui.composition.LocalObjectDetection
 import app.pixle.ui.composition.rememberConnectionInformation
 import app.pixle.ui.composition.rememberGameAnimation
 import app.pixle.ui.composition.rememberNearbyConnections
@@ -82,7 +79,6 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonEncoder
 import org.tensorflow.lite.support.image.TensorImage
 import java.util.UUID
 

@@ -1,16 +1,12 @@
 package app.pixle.database.repository
 
-import android.util.Log
 import app.pixle.database.dao.AttemptDao
 import app.pixle.lib.Utils
-import app.pixle.model.entity.attempt.AtomicAttempt
-import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.model.entity.attempt.Attempt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.util.UUID
 
 class AttemptRepository(private val attemptDao: AttemptDao) {
 

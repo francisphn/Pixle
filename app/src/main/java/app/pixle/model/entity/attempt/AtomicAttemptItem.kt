@@ -2,9 +2,8 @@ package app.pixle.model.entity.attempt
 
 import android.os.Parcelable
 import androidx.room.Entity
-import kotlinx.serialization.Serializable
 import kotlinx.parcelize.Parcelize
-import java.util.UUID
+import kotlinx.serialization.Serializable
 
 
 @Parcelize

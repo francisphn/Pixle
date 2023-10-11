@@ -1,17 +1,14 @@
 package app.pixle.database
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import app.pixle.asset.NEARBY_CONN_D_TAG
 import app.pixle.lib.GameMode
 import app.pixle.ui.state.ObjectDetectionModel
 import kotlinx.coroutines.Dispatchers

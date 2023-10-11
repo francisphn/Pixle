@@ -2,7 +2,6 @@ package app.pixle.model.entity.solution
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDate
 
 
 @Entity

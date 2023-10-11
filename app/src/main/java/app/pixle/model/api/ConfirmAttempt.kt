@@ -3,12 +3,10 @@ package app.pixle.model.api
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import app.pixle.model.entity.attempt.Attempt
 import app.pixle.database.PixleDatabase
 import app.pixle.lib.GameMode
-import app.pixle.lib.Quadruple
 import app.pixle.model.api.contracts.Mutable
-import app.pixle.ui.composition.ConnectionInformation
+import app.pixle.model.entity.attempt.Attempt
 
 object ConfirmAttempt: Mutable<List<String>, Triple<Attempt, Uri, GameMode>, Unit> {
     override val key: List<String>

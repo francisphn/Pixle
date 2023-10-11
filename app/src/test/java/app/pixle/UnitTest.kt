@@ -3,8 +3,9 @@ package app.pixle
 import app.pixle.lib.Utils
 import app.pixle.model.dto.SolutionDto
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Test
-import org.junit.Assert.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

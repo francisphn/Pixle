@@ -1,8 +1,6 @@
 package app.pixle.ui.composable.main
 
-import android.icu.util.TimeZone
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -50,15 +47,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.datastore.dataStore
 import app.pixle.R
 import app.pixle.database.AppPreferences
 import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.ui.composable.PhotoItem
 import app.pixle.ui.composable.PolaroidFrame
-import app.pixle.ui.composable.RandomTextmojiMessage
-import app.pixle.ui.composable.TextmojiSize
-import app.pixle.ui.composable.TextmojiTone
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.theme.Manrope
 import kotlinx.coroutines.Dispatchers
@@ -67,9 +60,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.time.Clock
-import java.time.Instant
 import java.time.LocalDateTime
-import java.util.Date
 import kotlin.math.abs
 
 
