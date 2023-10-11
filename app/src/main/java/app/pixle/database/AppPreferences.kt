@@ -1,6 +1,7 @@
 package app.pixle.database
 
 import android.content.Context
+import androidx.compose.ui.res.stringResource
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -9,6 +10,7 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import app.pixle.R
 import app.pixle.lib.GameMode
 import app.pixle.ui.state.ObjectDetectionModel
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +22,8 @@ import kotlinx.coroutines.flow.map
 class AppPreferences private constructor(private val dataStore: DataStore<Preferences>) {
     private val gameModeKey = stringPreferencesKey("game_mode")
     private val sensitivityKey = floatPreferencesKey("detection_sensitivity")
+    private val nameKey = stringPreferencesKey("player_name")
+    private val bioKey = stringPreferencesKey("player_bio")
     private val modelKey = stringPreferencesKey("ml_model")
     private val onboardedKey = booleanPreferencesKey("onboarded")
     private val nextNotificationIdKey = intPreferencesKey("next_notification_id")
@@ -87,6 +91,28 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
             }
 
             it[nextNotificationIdKey] = currentCounterValue + 1
+        }
+    }
+
+    val getPlayerName: Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[nameKey] ?: "Player"
+        }
+
+    suspend fun savePlayerName(name: String) {
+        dataStore.edit { preferences ->
+            preferences[nameKey] = name
+        }
+    }
+
+    val getPlayerBio: Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[bioKey] ?: "No bio provided. It's okay to be shy :)"
+        }
+
+    suspend fun savePlayerBio(bio: String) {
+        dataStore.edit { preferences ->
+            preferences[bioKey] = bio
         }
     }
 
