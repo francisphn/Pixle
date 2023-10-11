@@ -2,6 +2,7 @@ package app.pixle.ui.composable.twicedown
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,8 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,7 +65,7 @@ import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CreateConnection(permissionState: MultiplePermissionsState, onPair: () -> Unit) {
+fun CreateConnection(permissionState: MultiplePermissionsState, onPairStateChange: () -> Unit) {
 
     val context = LocalContext.current
     val nearby = rememberNearbyConnections()
@@ -98,7 +99,7 @@ fun CreateConnection(permissionState: MultiplePermissionsState, onPair: () -> Un
                         this.connectionState = ConnectionInformation.ConnectionState.PAIRED_TWICEDOWN
                     })
 
-                    onPair()
+                    onPairStateChange()
                 }
             }
         }
@@ -117,7 +118,7 @@ fun CreateConnection(permissionState: MultiplePermissionsState, onPair: () -> Un
         object : ConnectionLifecycleCallback() {
 
             override fun onConnectionInitiated(endpointId: String, info: ConnectionInfo) {
-                primaryText = "Connecting"
+                primaryText = "Finalising connection"
                 secondaryText = "Hang in there"
 
                 setConnInfo(connInfo.apply {
@@ -147,6 +148,10 @@ fun CreateConnection(permissionState: MultiplePermissionsState, onPair: () -> Un
                                     val win = attempt.attemptItems.all { it.kind == AtomicAttemptItem.KIND_EXACT }
                                     setAnimationState(if (win) GameAnimation.State.WIN else GameAnimation.State.ATTEMPT)
                                 }
+                            }
+
+                            if (it.startsWith("DISCONNECT|||")) {
+                                onPairStateChange()
                             }
                         }
 
@@ -193,6 +198,8 @@ fun CreateConnection(permissionState: MultiplePermissionsState, onPair: () -> Un
 
 
             override fun onDisconnected(endpointId: String) {
+                Log.d(NEARBY_CONN_D_TAG, "Disconnecting from other device...")
+
                 primaryText = "Disconnected"
                 secondaryText = null
 
@@ -206,6 +213,8 @@ fun CreateConnection(permissionState: MultiplePermissionsState, onPair: () -> Un
     val endpointDiscoveryCallback = remember(connectionLifecycleCallback) {
         object : EndpointDiscoveryCallback() {
             override fun onEndpointFound(endpointId: String, endpointInfo: DiscoveredEndpointInfo) {
+                primaryText = "Connecting"
+                secondaryText = "Sending a request to connect"
 
                 Log.d(NEARBY_CONN_D_TAG, "Endpoint found $endpointId, ${endpointInfo.endpointName}")
 
@@ -281,41 +290,47 @@ fun CreateConnection(permissionState: MultiplePermissionsState, onPair: () -> Un
             .padding(top = 30.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-
-        if (connInfo.connectionState != ConnectionInformation.ConnectionState.CONNECTED) {
-            CircularProgressIndicator(Modifier.size(50.dp))
-        } else {
+        AnimatedVisibility(visible = connInfo.connectionState != ConnectionInformation.ConnectionState.CONNECTED) {
+            LinearProgressIndicator()
+        }
+        AnimatedVisibility(visible = connInfo.connectionState == ConnectionInformation.ConnectionState.CONNECTED) {
             Icon(
                 imageVector = Icons.Default.CheckCircle,
                 contentDescription = "Paired up",
                 modifier = Modifier.size(50.dp)
             )
         }
+
     }
 
-    Text(
-        text = primaryText,
-        fontFamily = Manrope,
-        fontSize = 18.sp,
-        lineHeight = 28.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier
-            .padding(top = 30.dp)
-            .fillMaxWidth(),
-        textAlign = TextAlign.Center
-    )
-
-    secondaryText?.let {
+    AnimatedVisibility(visible = true) {
         Text(
-            text = it,
+            text = primaryText,
             fontFamily = Manrope,
-            fontSize = 13.sp,
+            fontSize = 18.sp,
             lineHeight = 28.sp,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(bottom = 30.dp)
+                .padding(top = 30.dp)
                 .fillMaxWidth(),
             textAlign = TextAlign.Center
         )
+    }
+
+    AnimatedVisibility(visible = secondaryText != null) {
+        secondaryText?.let {
+            Text(
+                text = it,
+                fontFamily = Manrope,
+                fontSize = 13.sp,
+                lineHeight = 28.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .padding(bottom = 30.dp)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        }
+
     }
 }
