@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,7 +78,7 @@ fun OnboardingSheet() {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    var shouldLaunchOnboarding by remember { mutableStateOf(true) }
+    var shouldLaunchOnboarding by rememberSaveable { mutableStateOf(true) }
 
     val offsetHour = LocalDateTime.now().hour - LocalDateTime.now(Clock.systemUTC()).hour
     val offsetMinute = LocalDateTime.now().minute - LocalDateTime.now(Clock.systemUTC()).minute

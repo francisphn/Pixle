@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,7 +76,7 @@ fun MainScreen() {
     val today = remember(goal) { Utils.utcDate() }
     val difficultyColour = remember(goal) { goal?.difficulty?.let { rarityColour(it) } }
 
-    var shouldLaunchTwiceDown by remember { mutableStateOf(false) }
+    var shouldLaunchTwiceDown by rememberSaveable { mutableStateOf(false) }
 
     val preferences = rememberPreferences()
     val playerName by preferences.getPlayerName.collectAsState(initial = stringResource(R.string.initial_player_name))

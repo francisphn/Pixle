@@ -107,7 +107,7 @@ fun CameraScreen(navBuilder: NavigationBuilder) {
     }
 
     // Keep track of how many times we've captured an image
-    val captureCount = remember { mutableIntStateOf(0) }
+    val captureCount = rememberSaveable { mutableIntStateOf(0) }
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current

@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +50,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfile() {
-    val (isEditing, setIsEditing) = remember { mutableStateOf(false) }
+    val (isEditing, setIsEditing) = rememberSaveable { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val scope = rememberCoroutineScope()
@@ -57,8 +58,8 @@ fun EditProfile() {
     val playerName by preferences.getPlayerName.collectAsState(initial = stringResource(R.string.initial_player_name))
     val playerBio by preferences.getPlayerBio.collectAsState(initial = "")
 
-    var name by remember { mutableStateOf(playerName) }
-    var bio by remember { mutableStateOf(playerBio) }
+    var name by rememberSaveable { mutableStateOf(playerName) }
+    var bio by rememberSaveable { mutableStateOf(playerBio) }
 
     LaunchedEffect(playerBio, playerName) {
         name = playerName
