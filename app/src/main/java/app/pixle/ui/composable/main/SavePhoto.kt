@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.R
 import app.pixle.lib.Utils
+import app.pixle.lib.notEmptyOrNull
 import app.pixle.lib.saveImageToGallery
 import app.pixle.ui.composable.SmallButton
 import app.pixle.ui.modifier.opacity
@@ -109,7 +110,7 @@ fun SavePhoto(image: Uri) {
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         AsyncImage(
-                            model = image,
+                            model = image.notEmptyOrNull(),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))

@@ -55,6 +55,7 @@ import app.pixle.asset.NEARBY_CONN_D_TAG
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
 import app.pixle.lib.asPayload
+import app.pixle.lib.notEmptyOrNull
 import app.pixle.model.api.AttemptsHistory
 import app.pixle.model.api.AttemptsOfToday
 import app.pixle.model.api.ConfirmAttempt
@@ -282,7 +283,7 @@ fun PhotoAnalysisSheet(
                         .rotate(animatedRotation.value)
                 ) {
                     AsyncImage(
-                        model = uri,
+                        model = uri.notEmptyOrNull(),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .width(250.dp)

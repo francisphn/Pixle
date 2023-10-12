@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pixle.R
+import app.pixle.lib.notEmptyOrNull
 import app.pixle.model.api.AttemptsHistory
 import app.pixle.ui.composable.LoadingScreen
 import app.pixle.ui.composable.RandomTextmojiMessage
@@ -120,7 +121,7 @@ fun History() {
                         winningAttempt?.let {
                             AsyncImage(
                                 model = ImageRequest.Builder(LocalContext.current)
-                                    .data(it.winningPhoto)
+                                    .data(it.winningPhoto?.notEmptyOrNull())
                                     .build(),
                                 contentDescription = date.toString(),
                                 contentScale = ContentScale.Crop,

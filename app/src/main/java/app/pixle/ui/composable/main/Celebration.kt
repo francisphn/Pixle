@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import app.pixle.R
+import app.pixle.lib.notEmptyOrNull
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.composition.GameAnimation
@@ -112,7 +113,7 @@ fun Celebration(
                         .rotate(animatedRotation.value)
                 ) {
                     AsyncImage(
-                        model = uri,
+                        model = uri?.notEmptyOrNull(),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .width(250.dp)

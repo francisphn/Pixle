@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import app.pixle.R
 import app.pixle.database.AppPreferences
 import app.pixle.lib.GameMode
+import app.pixle.lib.notEmptyOrNull
 import app.pixle.model.entity.attempt.Attempt
 import app.pixle.ui.composable.PolaroidFrame
 import app.pixle.ui.composable.RandomTextmojiMessage
@@ -77,7 +78,7 @@ fun WinningPhoto(attempts: List<Attempt>) {
                 padding = Pair(10.dp, 24.dp),
             ) {
                 AsyncImage(
-                    model = it,
+                    model = it.notEmptyOrNull(),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .width(100.dp)
