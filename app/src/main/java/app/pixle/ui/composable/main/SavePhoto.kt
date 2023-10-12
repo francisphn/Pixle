@@ -155,13 +155,17 @@ fun SavePhoto(image: Uri) {
                         .clickable {
                             if (isSaving) return@clickable
                             scope.launch {
-                                context.saveImageToGallery(image, filename)
-                                setIsSaving(true)
-                                delay(500)
-                                setIsSaving(false)
-                                sheetState.hide()
-                                delay(100)
-                                setIsConfirming(false)
+                                try {
+                                    context.saveImageToGallery(image, filename)
+                                } catch (e: Exception) {
+                                } finally {
+                                    setIsSaving(true)
+                                    delay(500)
+                                    setIsSaving(false)
+                                    sheetState.hide()
+                                    delay(100)
+                                    setIsConfirming(false)
+                                }
                             }
                         }
                         .background(

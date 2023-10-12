@@ -62,7 +62,7 @@
     <string name="onboarding_desc">Pixle gives you a daily puzzle of objects around you, represented by emojis, and this puzzle resets at %s (local time) each day. Your job is to use the camera to capture these objects,and Pixle will then infer emojis from them.</string>
     <string name="file_name">pixle-photo-%s.webp</string>
     <string name="save_winning_photo">Save to photo gallery</string>
-    <string name="save_photo">Save photo</string>
+    <string name="save_photo">Save</string>
     <string name="on_date">on %s %s %s</string>
     <string name="share_spoiler_free">Share your spoiler-free game result</string>
     <string name="share">Share</string>

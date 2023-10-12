@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import app.pixle.R
 import app.pixle.ui.modifier.opacity
 import app.pixle.ui.theme.Manrope
@@ -35,14 +36,18 @@ fun AskForPermission(permissionState: MultiplePermissionsState) {
         Text(
             text = stringResource(R.string.permissions),
             fontFamily = Manrope,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
         )
 
         Text(
             text = stringResource(R.string.permissions_twicedown_desc),
             modifier = Modifier.padding(bottom = 30.dp),
             fontFamily = Manrope,
-            fontWeight = FontWeight.Normal
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
         )
 
         Box(modifier = Modifier
@@ -65,6 +70,8 @@ fun AskForPermission(permissionState: MultiplePermissionsState) {
                 fontFamily = Manrope,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.surface,
+                fontSize = 16.sp,
+                lineHeight = 24.sp
             )
         }
     }

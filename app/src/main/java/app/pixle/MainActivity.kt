@@ -1,5 +1,6 @@
 package app.pixle
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -43,6 +44,7 @@ import app.pixle.ui.tabs.MainScreen
 import app.pixle.ui.tabs.Preferences
 import app.pixle.ui.tabs.ProfileScreen
 import app.pixle.ui.theme.PixleTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
@@ -55,6 +57,8 @@ class MainActivity : ComponentActivity() {
         AlarmBroadcaster
             .getInstance(this)
             .setRepeatingAlarm()
+
+
 
         setContent {
             PixleTheme {
@@ -76,6 +80,8 @@ class MainActivity : ComponentActivity() {
 
 }
 
+@SuppressLint("MissingPermission")
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun App() {
     val scope = rememberCoroutineScope()
@@ -90,6 +96,8 @@ fun App() {
 
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+
 
     val systemUiController = rememberSystemUiController()
     val defaultNavBarColour = MaterialTheme.colorScheme.surfaceVariant

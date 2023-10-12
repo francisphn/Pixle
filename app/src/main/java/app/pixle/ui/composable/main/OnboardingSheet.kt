@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -64,7 +66,7 @@ import java.time.LocalDateTime
 import kotlin.math.abs
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingSheet() {
     val scope = rememberCoroutineScope()
@@ -126,102 +128,118 @@ fun OnboardingSheet() {
             },
         ) {
 
-            Column(
+            LazyColumn(
                 Modifier
                     .fillMaxSize()
                     .padding(30.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.welcome_to_pixle),
-                    fontFamily = Manrope,
-                    fontSize = 18.sp,
-                    lineHeight = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = 30.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-                
-                Row(
-                    modifier = Modifier
-                        .padding(bottom = 20.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    PolaroidFrame(Modifier.rotate(animatedRotation.value)) {
-                        Image(
-                            painter = painterResource(id = R.drawable.demo_photo),
-                            contentScale = ContentScale.Crop,
-                            contentDescription = "Demo photo of a bird",
-                            modifier = Modifier.size(100.dp, 100.dp)
+                stickyHeader {
+                    Text(
+                        text = stringResource(R.string.welcome_to_pixle),
+                        fontFamily = Manrope,
+                        fontSize = 18.sp,
+                        lineHeight = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(bottom = 30.dp)
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier
+                            .padding(bottom = 20.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        PolaroidFrame(Modifier.rotate(animatedRotation.value)) {
+                            Image(
+                                painter = painterResource(id = R.drawable.demo_photo),
+                                contentScale = ContentScale.Crop,
+                                contentDescription = "Demo photo of a bird",
+                                modifier = Modifier.size(100.dp, 100.dp)
+                            )
+                        }
+
+                        Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "")
+
+                        PhotoItem(
+                            item = stringResource(R.string.bird_icon),
+                            AtomicAttemptItem.KIND_NONE
                         )
                     }
-
-                    Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "")
-
-                    PhotoItem(item = stringResource(R.string.bird_icon), AtomicAttemptItem.KIND_NONE)
                 }
 
 
-
-                Text(
-                    text = stringResource(R.string.how_to_play),
-
-                    fontFamily = Manrope,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Text(
-                    text = stringResource(R.string.onboarding_desc, localTimeOfReset),
-                    modifier = Modifier.padding(bottom = 20.dp),
-                    fontFamily = Manrope,
-                    fontWeight = FontWeight.Normal
-                )
-
-                Text(
-                    text = stringResource(R.string.notifications),
-
-                    fontFamily = Manrope,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Text(
-                    text = stringResource(R.string.notifications_desc),
-
-                    modifier = Modifier.padding(bottom = 30.dp),
-
-                    fontFamily = Manrope,
-                    fontWeight = FontWeight.Normal
-                )
-
-                Box(modifier = Modifier
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.onTertiaryContainer)
-                    .clickable {
-                        scope.launch {
-                            sheetState.hide()
-
-                            appPreferences.dismissOnboardingPane()
-
-                            permissionsLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-                        }
-                    }
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.onBackground.opacity(0.25f),
-                        shape = CircleShape
-                    )
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
-                    .fillMaxWidth(),
-                    contentAlignment = Alignment.Center) {
+                item {
                     Text(
-                        text = stringResource(R.string.continue_text),
+                        text = stringResource(R.string.how_to_play),
+
                         fontFamily = Manrope,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.surface,
+                        fontWeight = FontWeight.Bold
                     )
+                }
+
+                item {
+                    Text(
+                        text = stringResource(R.string.onboarding_desc, localTimeOfReset),
+                        modifier = Modifier.padding(bottom = 20.dp),
+                        fontFamily = Manrope,
+                        fontWeight = FontWeight.Normal
+                    )
+                }
+
+                item {
+                    Text(
+                        text = stringResource(R.string.notifications),
+
+                        fontFamily = Manrope,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                item {
+                    Text(
+                        text = stringResource(R.string.notifications_desc),
+
+                        modifier = Modifier.padding(bottom = 30.dp),
+
+                        fontFamily = Manrope,
+                        fontWeight = FontWeight.Normal
+                    )
+                }
+
+                item {
+                    Box(modifier = Modifier
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.onTertiaryContainer)
+                        .clickable {
+                            scope.launch {
+                                sheetState.hide()
+
+                                appPreferences.dismissOnboardingPane()
+
+                                permissionsLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        }
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.onBackground.opacity(0.25f),
+                            shape = CircleShape
+                        )
+                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                        .fillMaxWidth(),
+                        contentAlignment = Alignment.Center) {
+                        Text(
+                            text = stringResource(R.string.continue_text),
+                            fontFamily = Manrope,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.surface,
+                        )
+                    }
                 }
             }
         }

@@ -39,6 +39,7 @@ import app.pixle.model.api.ConfirmAttempt
 import app.pixle.model.api.Forfeit
 import app.pixle.model.entity.attempt.AtomicAttemptItem
 import app.pixle.model.entity.attempt.Attempt
+import app.pixle.notification.launchNotification
 import app.pixle.ui.composition.ConnectionInformation
 import app.pixle.ui.composition.GameAnimation
 import app.pixle.ui.composition.rememberConnectionInformation
@@ -174,6 +175,9 @@ fun CreateConnection(permissionState: MultiplePermissionsState, onPairStateChang
 
                         nearby.stopAdvertising()
                         nearby.stopDiscovery()
+                        context.launchNotification(
+                            "You are now connected to another device. Enjoy Twice Down mode!"
+                        )
                     }
 
                     ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
@@ -206,6 +210,10 @@ fun CreateConnection(permissionState: MultiplePermissionsState, onPairStateChang
                 setConnInfo(connInfo.apply {
                     this.connectionState = ConnectionInformation.ConnectionState.NOT_CONNECTED
                 })
+
+                context.launchNotification(
+                    "Your opponent has disconnected. Exiting Twice Down mode"
+                )
             }
         }
     }

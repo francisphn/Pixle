@@ -37,14 +37,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun TwiceDownSheet(onDismiss: () -> Unit) {
     val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val permissionsState = rememberMultiplePermissionsState(permissions = requiredPermissions)
     val connInfo = rememberConnectionInformation()
 
     ModalBottomSheet(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.90f)
+            .size(450.dp)
             .zIndex(40f),
         sheetState = sheetState,
         onDismissRequest = {

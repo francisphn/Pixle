@@ -1,6 +1,7 @@
 package app.pixle.notification
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -57,4 +58,21 @@ class NotificationLauncher(private val context: Context) {
             }
         }
     }
+}
+
+@SuppressLint("MissingPermission")
+fun Context.launchNotification(content: String) {
+    val intent = Intent(this, MainActivity::class.java).apply {
+        this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    }
+    val channel = NotificationChannel("pixle-1", "yo", NotificationManager.IMPORTANCE_HIGH)
+    val notificationBuilder = NotificationCompat.Builder(this, "pixle-1")
+        .setSmallIcon(R.drawable.bling)
+        .setContentTitle(content)
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
+        .setContentIntent(PendingIntent.getActivity(this, 0, intent, FLAG_IMMUTABLE))
+        .setAutoCancel(true)
+    val notificationManager = NotificationManagerCompat.from(this)
+        .also { it.createNotificationChannel(channel) }
+    notificationManager.notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
 }

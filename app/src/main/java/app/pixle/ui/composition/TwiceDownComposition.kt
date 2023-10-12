@@ -43,6 +43,7 @@ private val localConnectionInformation = compositionLocalOf<ConnectionInformatio
     error("No connection information context provided")
 }
 
+
 @Composable
 fun rememberNearbyConnections(): ConnectionsClient {
     return localNearbyConnections.current
@@ -51,6 +52,7 @@ fun rememberNearbyConnections(): ConnectionsClient {
 fun rememberConnectionInformation() : ConnectionInformation {
     return localConnectionInformation.current
 }
+
 
 @Composable
 fun TwiceDownProvider(
