@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import app.pixle.R
@@ -117,6 +118,7 @@ fun Celebration(
                             .width(250.dp)
                             .height(250.dp),
                         contentDescription = null,
+                        fallback = painterResource(R.drawable.image)
                     )
                 }
             }

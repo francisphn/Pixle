@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -123,6 +124,7 @@ fun History() {
                                     .build(),
                                 contentDescription = date.toString(),
                                 contentScale = ContentScale.Crop,
+                                fallback = painterResource(R.drawable.image),
                                 modifier = Modifier
                                     .clip(RoundedCornerShape((12 - (8 / 2)).dp))
                                     .fillMaxSize()
