@@ -35,7 +35,7 @@ fun About() {
     val (history, _) = rememberQueryable(AttemptsHistory)
     val preferences = rememberPreferences()
     val playerName by preferences.getPlayerName.collectAsState(initial = stringResource(R.string.initial_player_name))
-    val playerBio by preferences.getPlayerBio.collectAsState(initial = stringResource(R.string.initial_player_bio))
+    val playerBio by preferences.getPlayerBio.collectAsState(initial = "")
 
     // Profile picture and edit button
     Row(
@@ -77,13 +77,15 @@ fun About() {
             lineHeight = 24.sp,
             fontWeight = FontWeight.Bold,
         )
+
+
         Text(
-            text = playerBio,
+            text = playerBio.ifBlank { stringResource(R.string.initial_player_bio) },
             fontFamily = Manrope,
             fontSize = 14.sp,
             lineHeight = 20.sp,
             color = MaterialTheme.colorScheme.onBackground.opacity(0.5f),
-            fontStyle = FontStyle.Italic
+            fontStyle = if (playerBio.isBlank()) FontStyle.Italic else FontStyle.Normal,
         )
 
 
